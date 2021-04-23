@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>Rigidbody必須</summary>
-[RequireComponent(typeof(Rigidbody))]
+///// <summary>Rigidbody必須</summary>
+//[RequireComponent(typeof(Rigidbody))]
 
 /// <summary>動くものはこのクラスを継承する</summary>
 public class MoveBass : MonoBehaviour
@@ -15,9 +15,14 @@ public class MoveBass : MonoBehaviour
     Vector3 m_direction;
     Vector2 m_inputDirection;
 
-    void Start()
+    private void Awake()
     {
         m_rb = gameObject.GetComponent<Rigidbody>();
+    }
+
+    void Start()
+    {
+        
     }
 
     /// <summary>移動の処理</summary>
@@ -43,6 +48,7 @@ public class MoveBass : MonoBehaviour
         else
         {
             m_velocity.x = 0;
+            m_velocity.y = m_rb.velocity.y;
             m_velocity.z = 0;
             m_rb.velocity = m_velocity; //ピタッと止まるようにする
         }
@@ -81,7 +87,7 @@ public class MoveBass : MonoBehaviour
     /// <returns>判定結果</returns>
     bool IsFall(float jumpPower)
     {
-        if (m_rb.velocity.y < jumpPower)
+        if (m_rb.velocity.y < jumpPower)//最大値に達したら落ちはじめる
         {
             return true;
         }
