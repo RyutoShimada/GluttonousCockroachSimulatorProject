@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-///// <summary>Rigidbody必須</summary>
-//[RequireComponent(typeof(Rigidbody))]
+/// <summary>Rigidbody必須</summary>
+[RequireComponent(typeof(Rigidbody))]
 
 /// <summary>動くものはこのクラスを継承する</summary>
 public class MoveBass : MonoBehaviour

@@ -5,15 +5,14 @@ using UnityEngine;
 public class CockroachMoveController : MoveBass
 {
     [SerializeField] float m_jumpPower = 1f;
-    [SerializeField] bool m_isWall = false;
+    bool m_isWall = false;
 
     /// <summary>Rigidbodyが無効かどうか</summary>
-    bool m_unRb;
-
+    Wall wall;
 
     void Start()
     {
-        m_unRb = this.gameObject.GetComponent<Rigidbody>().isKinematic;
+        wall = new Wall();
     }
 
     void Update()
@@ -26,7 +25,7 @@ public class CockroachMoveController : MoveBass
     {
         if (m_isWall)
         {
-
+            WallMove();
         }
         else
         {
@@ -34,11 +33,63 @@ public class CockroachMoveController : MoveBass
         }
     }
 
+    void WallMove()
+    {
+        this.gameObject.GetComponent<Rigidbody>().useGravity = false;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        //壁や天井に接触した時
-        m_unRb = true;
+        if (other.tag == "Wall" || other.tag == "Ceiling")
+        {
+            //壁または天井に接触した時
+            m_isWall = true;
+            Debug.Log(m_isWall);
+
+            if (other.gameObject.name == "NorthWall")
+            {
+                wall = Wall.North;
+            }
+            else if (other.gameObject.name == "SouthWall")
+            {
+                wall = Wall.South;
+            }
+            else if (other.gameObject.name == "WestWall")
+            {
+                wall = Wall.West;
+            }
+            else if (other.gameObject.name == "EastWall")
+            {
+                wall = Wall.East;
+            }
+
+            switch (wall)
+            {
+                case Wall.North:
+                    //Debug.Log("North");
+                    //this.gameObject.transform.rotation = Quaternion.Euler(-90, 0, 0);
+                    this.gameObject.transform.forward = Vector3.up;
+                    break;
+                case Wall.South:
+                    break;
+                case Wall.West:
+                    break;
+                case Wall.East:
+                    break;
+                default:
+                    break;
+            }
+        }
     }
+
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (other.tag == "Wall" || other.tag == "Ceiling")
+    //    {
+    //        m_isWall = false;
+    //        Debug.Log(m_isWall);
+    //    }
+    //}
 
     enum Wall
     {
