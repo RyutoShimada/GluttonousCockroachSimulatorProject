@@ -11,10 +11,10 @@ public class CockroachMoveController : MonoBehaviour
     Vector3 m_gravityDir;
     Vector3 m_velocity;
     Vector3 m_direction;
-    /// <summary>落下速度</summary>
-    float m_velocityY;
     /// <summary>重力方向を管理</summary>
     GravityDirection m_gravityDirection;
+    /// <summary>Rayを飛ばす距離</summary>
+    const float m_rayDis = 0.19f;
 
     void Start()
     {
@@ -28,160 +28,116 @@ public class CockroachMoveController : MonoBehaviour
     void Update()
     {
         Move(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        IsGround();
         Jump(m_jumpPower);
     }
 
+    /// <summary>
+    /// 移動
+    /// </summary>
+    /// <param name="h">Horizontal</param>
+    /// <param name="v">Vertical</param>
     void Move(float h, float v)
     {
         m_rb.AddForce(m_gravityDir * m_gravityPower, ForceMode.Force);//重力
-
-        ChangeVector(h, v);
-
+        ChangeGravity(h, v);
         //落下速度を早くする
-        if (IsFall(m_jumpPower))
+        if (!IsGround())
         {
-            m_rb.AddForce(m_gravityDir * m_jumpPower, ForceMode.Force);
+            m_rb.AddForce(Vector3.down * m_jumpPower, ForceMode.Force);
         }
     }
 
-    void ChangeVector(float h, float v)
+    /// <summary>
+    /// 重力方向変更後の処理
+    /// </summary>
+    /// <param name="h">Horizontal</param>
+    /// <param name="v">Vertical</param>
+    void ChangeGravity(float h, float v)
     {
         switch (m_gravityDirection)
         {
             case GravityDirection.Floor:
-                m_gravityDir = Vector3.down;//重力方向を変更
+
                 m_direction = new Vector3(h, 0, v);//方向を変換
+                float fallSpeed;//速度保存用
 
                 if (h != 0 || v != 0) //入力されている時
                 {
                     transform.forward = m_direction; //向きを保存
                     m_velocity = new Vector3(h, 0, v);//方向を入力
-                    m_velocityY = m_rb.velocity.y;//Y軸速度を保存
+                    fallSpeed = m_rb.velocity.y;//Y軸速度を保存
                     m_rb.velocity = m_velocity.normalized * m_speed;//ベクトルを正規化してスピードをかける
-                    m_rb.velocity = new Vector3(m_rb.velocity.x, m_velocityY, m_rb.velocity.z);//落下速度を維持
+                    m_rb.velocity = new Vector3(m_rb.velocity.x, fallSpeed, m_rb.velocity.z);//落下速度を維持
                 }
                 else
                 {
-                    m_velocity = new Vector3(0, m_rb.velocity.y, 0);
-                    m_rb.velocity = m_velocity; //ピタッと止まるようにする
+                    m_velocity = new Vector3(0, m_rb.velocity.y, 0);//ピタッと止まるようにする
+                    m_rb.velocity = m_velocity;
                 }
                 break;
 
             case GravityDirection.Ceiling:
-                m_gravityDir = Vector3.up;//重力方向を変更
-                //m_direction = new Vector3(h, 0, v);//方向を変換
 
-                if (h != 0 || v != 0) //入力されている時
-                {
-                    //forwardに方向を代入すると、オブジェクトが逆さまにならないので直接向きを変えている
-                    if (h == 1)//右
-                    {
-                        transform.rotation = Quaternion.Euler(0, 90, 180);
-                    }
-                    if (h == -1)//左
-                    {
-                        transform.rotation = Quaternion.Euler(0, -90, 180);
-                    }
-                    if (v == 1)//上
-                    {
-                        transform.rotation = Quaternion.Euler(0, 0, 180);
-                    }
-                    if (v == -1)//下
-                    {
-                        transform.rotation = Quaternion.Euler(0, 180, 180);
-                    }
-
-                    //transform.forward = m_direction; //向きを保存
-                    m_velocity = new Vector3(h, 0, v);//方向を入力
-                    m_velocityY = m_rb.velocity.y;//Y軸速度を保存
-                    m_rb.velocity = m_velocity.normalized * m_speed;//ベクトルを正規化してスピードをかける
-                    m_rb.velocity = new Vector3(m_rb.velocity.x, m_velocityY, m_rb.velocity.z);//落下速度を維持
-                }
-                else
-                {
-                    m_velocity = new Vector3(0, m_rb.velocity.y, 0);
-                    m_rb.velocity = m_velocity; //ピタッと止まるようにする
-                }
+                ChangeDirection(h, v, new Vector3(-h, m_rb.velocity.y, -v), Vector3.up, Vector3.down, new Vector3(-h, 0, -v));
                 break;
 
             case GravityDirection.NorthWall:
-                m_gravityDir = Vector3.forward;//重力方向を変更
-                m_direction = new Vector3(h, 0, v);//方向を変換
 
-                if (h != 0 || v != 0) //入力されている時
-                {
-                    transform.forward = m_direction; //向きを保存
-                    m_velocity = new Vector3(h, 0, v);//方向を入力
-                    m_velocityY = m_rb.velocity.y;//Y軸速度を保存
-                    m_rb.velocity = m_velocity.normalized * m_speed;//ベクトルを正規化してスピードをかける
-                    m_rb.velocity = new Vector3(m_rb.velocity.x, m_velocityY, m_rb.velocity.z);//落下速度を維持
-                }
-                else
-                {
-                    m_velocity = new Vector3(0, m_rb.velocity.y, 0);
-                    m_rb.velocity = m_velocity; //ピタッと止まるようにする
-                }
+                ChangeDirection(h, v, new Vector3(h, v, m_rb.velocity.z), Vector3.forward, Vector3.back, new Vector3(h, v, 0));
                 break;
 
             case GravityDirection.SouthWall:
-                m_gravityDir = Vector3.back;//重力方向を変更
-                m_direction = new Vector3(h, 0, v);//方向を変換
 
-                if (h != 0 || v != 0) //入力されている時
-                {
-                    transform.forward = m_direction; //向きを保存
-                    m_velocity = new Vector3(h, 0, v);//方向を入力
-                    m_velocityY = m_rb.velocity.y;//Y軸速度を保存
-                    m_rb.velocity = m_velocity.normalized * m_speed;//ベクトルを正規化してスピードをかける
-                    m_rb.velocity = new Vector3(m_rb.velocity.x, m_velocityY, m_rb.velocity.z);//落下速度を維持
-                }
-                else
-                {
-                    m_velocity = new Vector3(0, m_rb.velocity.y, 0);
-                    m_rb.velocity = m_velocity; //ピタッと止まるようにする
-                }
+                ChangeDirection(h, v, new Vector3(h, -v, m_rb.velocity.z), Vector3.back, Vector3.forward, new Vector3(h, -v, 0));
                 break;
 
             case GravityDirection.WestWall:
-                m_gravityDir = Vector3.left;//重力方向を変更
-                m_direction = new Vector3(h, 0, v);//方向を変換
 
-                if (h != 0 || v != 0) //入力されている時
-                {
-                    transform.forward = m_direction; //向きを保存
-                    m_velocity = new Vector3(h, 0, v);//方向を入力
-                    m_velocityY = m_rb.velocity.y;//Y軸速度を保存
-                    m_rb.velocity = m_velocity.normalized * m_speed;//ベクトルを正規化してスピードをかける
-                    m_rb.velocity = new Vector3(m_rb.velocity.x, m_velocityY, m_rb.velocity.z);//落下速度を維持
-                }
-                else
-                {
-                    m_velocity = new Vector3(0, m_rb.velocity.y, 0);
-                    m_rb.velocity = m_velocity; //ピタッと止まるようにする
-                }
+                ChangeDirection(h, v, new Vector3(m_rb.velocity.x, -h, v), Vector3.left, Vector3.right, new Vector3(0, -h, v));
                 break;
 
             case GravityDirection.EastWall:
-                m_gravityDir = Vector3.right;//重力方向を変更
-                m_direction = new Vector3(h, 0, v);//方向を変換
 
-                if (h != 0 || v != 0) //入力されている時
-                {
-                    transform.forward = m_direction; //向きを保存
-                    m_velocity = new Vector3(h, 0, v);//方向を入力
-                    m_velocityY = m_rb.velocity.y;//Y軸速度を保存
-                    m_rb.velocity = m_velocity.normalized * m_speed;//ベクトルを正規化してスピードをかける
-                    m_rb.velocity = new Vector3(m_rb.velocity.x, m_velocityY, m_rb.velocity.z);//落下速度を維持
-                }
-                else
-                {
-                    m_velocity = new Vector3(0, m_rb.velocity.y, 0);
-                    m_rb.velocity = m_velocity; //ピタッと止まるようにする
-                }
+                ChangeDirection(h, v, new Vector3(m_rb.velocity.x, h, v), Vector3.right, Vector3.left, new Vector3(0, h, v));
+                break;
+
+            case GravityDirection.Fall:
+
+                m_gravityDir = Vector3.down;
                 break;
 
             default:
                 break;
+        }
+    }
+
+    /// <summary>
+    /// 方向変換
+    /// </summary>
+    /// <param name="h">Horizontal</param>
+    /// <param name="v">Vertical</param>
+    /// <param name="velocity">変換した速度ベクトル</param>
+    /// <param name="stop">止まった時の速度ベクトル</param>
+    /// <param name="gravity">重力方向</param>
+    /// <param name="transformUp">オブジェクトの上方向</param>
+    /// <param name="dir">オブジェクトの正面</param>
+    void ChangeDirection(float h, float v, Vector3 velocity, Vector3 gravity, Vector3 transformUp, Vector3 dir)
+    {
+        Quaternion look;
+        m_gravityDir = gravity;//重力方向を変更
+        m_direction = dir;//方向を変換
+        m_velocity = velocity;//方向を入力
+
+        if (h != 0 || v != 0)//入力されている時
+        {
+            look = Quaternion.LookRotation(m_direction, transformUp);
+            this.transform.localRotation = look;
+            m_rb.velocity = m_velocity.normalized * m_speed;//ベクトルを正規化してスピードをかける
+        }
+        else
+        {
+            m_rb.velocity = m_velocity;//ピタッと止まるようにする
         }
     }
 
@@ -199,26 +155,13 @@ public class CockroachMoveController : MonoBehaviour
     /// <returns>判定結果</returns>
     bool IsGround()
     {
-        if (Physics.Raycast(this.transform.position, m_gravityDir, 0.1f))
+        if (Physics.Raycast(this.transform.position, m_gravityDir, m_rayDis))
         {
             return true;
         }
         else
         {
-            return false;
-        }
-    }
-
-    /// <summary>落下判定</summary>
-    /// <returns>判定結果</returns>
-    bool IsFall(float jumpPower)
-    {
-        if (m_rb.velocity.y <= jumpPower)//最大値に達したら落ちはじめる
-        {
-            return true;
-        }
-        else
-        {
+            m_gravityDirection = GravityDirection.Fall;
             return false;
         }
     }
@@ -276,6 +219,7 @@ public class CockroachMoveController : MonoBehaviour
         NorthWall,
         SouthWall,
         WestWall,
-        EastWall
+        EastWall,
+        Fall
     }
 }
