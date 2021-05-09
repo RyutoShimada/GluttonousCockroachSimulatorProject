@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class CockroachMoveController : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class CockroachMoveController : MonoBehaviour
     GravityDirection m_gravityDirection;
     /// <summary>Rayを飛ばす距離</summary>
     const float m_rayDis = 0.19f;
+    /// <summary>家具の位置</summary>
+    Vector3 m_FurniturePos;
 
     void Start()
     {
@@ -27,6 +30,7 @@ public class CockroachMoveController : MonoBehaviour
 
     void Update()
     {
+        GetPorigon();
         Move(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         IsGround();
         Jump(m_jumpPower);
@@ -46,6 +50,29 @@ public class CockroachMoveController : MonoBehaviour
         {
             m_rb.AddForce(Vector3.down * m_jumpPower, ForceMode.Force);
         }
+    }
+
+    void GetPorigon()
+    {
+        //RaycastHit hit;
+        //if (Physics.Raycast(transform.Find("RayOriginPos").transform.position, transform.forward, out hit, 1f))
+        //{
+        //    //https://docs.unity3d.com/2019.3/Documentation/Manual/ComputingNormalPerpendicularVector.html
+        //    //https://unitylab.wiki.fc2.com/wiki/%E3%83%A1%E3%83%83%E3%82%B7%E3%83%A5%E3%82%B3%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%8D%E3%83%B3%E3%83%88%E3%81%AE%E9%A0%82%E7%82%B9%E4%BD%8D%E7%BD%AE%EF%BC%88Vector3%E9%85%8D%E5%88%97%EF%BC%89%E3%82%92%E5%BE%97%E3%82%8B
+        //    //Debug.Log("nom" + hit.point.normalized);
+        //    //Vector3 a;
+        //    //Vector3 b;
+        //    //Vector3 c;
+        //    //Vector3[] mf = hit.collider.gameObject.GetComponent<MeshFilter>().mesh.normals;
+        //    //a = mf[0];
+        //    //b = mf[1];
+        //    //c = mf[2];
+        //    //Vector3 side1 = b - a;
+        //    //Vector3 side2 = c - a;
+        //    //Vector3 prep = Vector3.Cross(side1, side2);
+        //    //Debug.Log(prep);
+        //}
+        //Debug.DrawRay(transform.Find("RayOriginPos").transform.position, transform.forward, Color.red, 1f);
     }
 
     /// <summary>
