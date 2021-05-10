@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
+using Cinemachine;
 
 public class CockroachMoveController : MonoBehaviour
 {
     [SerializeField] float m_speed = 5f;
     [SerializeField] float m_gravityPower = 1f;
     [SerializeField] float m_jumpPower = 1f;
+    [SerializeField] float m_turnSpeed = 1f;
+    [SerializeField] CinemachineVirtualCameraBase m_vcam = null;
     Rigidbody m_rb;
     Vector3 m_gravityDir;
     Vector3 m_velocity;
@@ -44,12 +46,16 @@ public class CockroachMoveController : MonoBehaviour
     void Move(float h, float v)
     {
         m_rb.AddForce(m_gravityDir * m_gravityPower, ForceMode.Force);//重力
+
         ChangeGravity(h, v);
+
         //落下速度を早くする
         if (!IsGround())
         {
             m_rb.AddForce(Vector3.down * m_jumpPower, ForceMode.Force);
         }
+
+        transform.forward = Camera.main.transform.forward;
     }
 
     void GetPorigon()
@@ -87,15 +93,23 @@ public class CockroachMoveController : MonoBehaviour
             case GravityDirection.Floor:
 
                 m_direction = new Vector3(h, 0, v);//方向を変換
-                float fallSpeed;//速度保存用
+                //float fallSpeed;//速度保存用
 
                 if (h != 0 || v != 0) //入力されている時
                 {
-                    transform.forward = m_direction; //向きを保存
-                    m_velocity = new Vector3(h, 0, v);//方向を入力
-                    fallSpeed = m_rb.velocity.y;//Y軸速度を保存
-                    m_rb.velocity = m_velocity.normalized * m_speed;//ベクトルを正規化してスピードをかける
-                    m_rb.velocity = new Vector3(m_rb.velocity.x, fallSpeed, m_rb.velocity.z);//落下速度を維持
+                    //カメラが向いている方向を基準にキャラクターが動くように、入力のベクトルを変換する
+                    m_direction = Camera.main.transform.TransformDirection(m_direction);
+                    m_direction.y = 0;//y軸方向はゼロにして水平方向のベクトルにする
+
+                    m_velocity = m_direction.normalized * m_speed;
+                    m_velocity.y = m_rb.velocity.y;
+                    m_rb.velocity = m_velocity;
+
+                    //transform.forward = m_direction; //向きを保存
+                    //m_velocity = new Vector3(h, 0, v);//方向を入力
+                    //fallSpeed = m_rb.velocity.y;//Y軸速度を保存
+                    //m_rb.velocity = m_velocity.normalized * m_speed;//ベクトルを正規化してスピードをかける
+                    //m_rb.velocity = new Vector3(m_rb.velocity.x, fallSpeed, m_rb.velocity.z);//落下速度を維持
                 }
                 else
                 {
@@ -160,6 +174,8 @@ public class CockroachMoveController : MonoBehaviour
         {
             look = Quaternion.LookRotation(m_direction, transformUp);
             this.transform.localRotation = look;
+            ((CinemachineVirtualCamera)m_vcam).GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.Value = 0f;
+            //Camera.main.transform.localRotation = look;
             m_rb.velocity = m_velocity.normalized * m_speed;//ベクトルを正規化してスピードをかける
         }
         else
