@@ -1,3 +1,5 @@
+# GluttonousCockroachSimulator
+日本語 : 食いしん坊なゴキブリシミュレーター
 2年次前期審査会に向けて開発しているゲーム
 
 # 概要
