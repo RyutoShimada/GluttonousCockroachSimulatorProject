@@ -8,31 +8,24 @@ public class CockroachMoveController : MonoBehaviour
     [SerializeField] float m_speed = 5f;
     [SerializeField] float m_gravityPower = 1f;
     [SerializeField] float m_jumpPower = 1f;
-    [SerializeField] float m_turnSpeed = 1f;
+    //[SerializeField] float m_turnSpeed = 1f;
     [SerializeField] CinemachineVirtualCameraBase m_vcam = null;
     Rigidbody m_rb;
     Vector3 m_gravityDir;
     Vector3 m_velocity;
     Vector3 m_direction;
-    /// <summary>重力方向を管理</summary>
-    GravityDirection m_gravityDirection;
     /// <summary>Rayを飛ばす距離</summary>
     const float m_rayDis = 0.19f;
-    /// <summary>家具の位置</summary>
-    Vector3 m_FurniturePos;
 
     void Start()
     {
         this.gameObject.GetComponent<Rigidbody>().useGravity = false;
         m_rb = this.gameObject.GetComponent<Rigidbody>();
-        m_gravityDirection = new GravityDirection();
-        m_gravityDirection = GravityDirection.Floor;
         m_gravityDir = Vector3.down;
     }
 
     void Update()
     {
-        GetPorigon();
         Move(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         IsGround();
         Jump(m_jumpPower);
@@ -47,7 +40,7 @@ public class CockroachMoveController : MonoBehaviour
     {
         m_rb.AddForce(m_gravityDir * m_gravityPower, ForceMode.Force);//重力
 
-        ChangeGravity(h, v);
+        ChangeDirection(h, v, m_gravityDir, ref m_direction, ref m_rb, ref m_velocity);//方向を変換
 
         //落下速度を早くする
         if (!IsGround())
@@ -58,130 +51,70 @@ public class CockroachMoveController : MonoBehaviour
         transform.forward = Camera.main.transform.forward;
     }
 
-    void GetPorigon()
+
+    void ChangeDirection(float h, float v, Vector3 gravity, ref Vector3 direction, ref Rigidbody rb, ref Vector3 velo)
     {
-        //RaycastHit hit;
-        //if (Physics.Raycast(transform.Find("RayOriginPos").transform.position, transform.forward, out hit, 1f))
-        //{
-        //    //https://docs.unity3d.com/2019.3/Documentation/Manual/ComputingNormalPerpendicularVector.html
-        //    //https://unitylab.wiki.fc2.com/wiki/%E3%83%A1%E3%83%83%E3%82%B7%E3%83%A5%E3%82%B3%E3%83%B3%E3%83%9D%E3%83%BC%E3%83%8D%E3%83%B3%E3%83%88%E3%81%AE%E9%A0%82%E7%82%B9%E4%BD%8D%E7%BD%AE%EF%BC%88Vector3%E9%85%8D%E5%88%97%EF%BC%89%E3%82%92%E5%BE%97%E3%82%8B
-        //    //Debug.Log("nom" + hit.point.normalized);
-        //    //Vector3 a;
-        //    //Vector3 b;
-        //    //Vector3 c;
-        //    //Vector3[] mf = hit.collider.gameObject.GetComponent<MeshFilter>().mesh.normals;
-        //    //a = mf[0];
-        //    //b = mf[1];
-        //    //c = mf[2];
-        //    //Vector3 side1 = b - a;
-        //    //Vector3 side2 = c - a;
-        //    //Vector3 prep = Vector3.Cross(side1, side2);
-        //    //Debug.Log(prep);
-        //}
-        //Debug.DrawRay(transform.Find("RayOriginPos").transform.position, transform.forward, Color.red, 1f);
-    }
-
-    /// <summary>
-    /// 重力方向変更後の処理
-    /// </summary>
-    /// <param name="h">Horizontal</param>
-    /// <param name="v">Vertical</param>
-    void ChangeGravity(float h, float v)
-    {
-        switch (m_gravityDirection)
+        if (gravity.x != 0)
         {
-            case GravityDirection.Floor:
+            direction = new Vector3(0, v, h);
 
-                m_direction = new Vector3(h, 0, v);//方向を変換
-                //float fallSpeed;//速度保存用
+            if (h != 0 || v != 0) //入力されている時
+            {
+                //カメラが向いている方向を基準にキャラクターが動くように、入力のベクトルを変換する
+                direction = Camera.main.transform.TransformDirection(direction);
+                direction.x = 0;//y軸方向はゼロにして水平方向のベクトルにする
 
-                if (h != 0 || v != 0) //入力されている時
-                {
-                    //カメラが向いている方向を基準にキャラクターが動くように、入力のベクトルを変換する
-                    m_direction = Camera.main.transform.TransformDirection(m_direction);
-                    m_direction.y = 0;//y軸方向はゼロにして水平方向のベクトルにする
-
-                    m_velocity = m_direction.normalized * m_speed;
-                    m_velocity.y = m_rb.velocity.y;
-                    m_rb.velocity = m_velocity;
-
-                    //transform.forward = m_direction; //向きを保存
-                    //m_velocity = new Vector3(h, 0, v);//方向を入力
-                    //fallSpeed = m_rb.velocity.y;//Y軸速度を保存
-                    //m_rb.velocity = m_velocity.normalized * m_speed;//ベクトルを正規化してスピードをかける
-                    //m_rb.velocity = new Vector3(m_rb.velocity.x, fallSpeed, m_rb.velocity.z);//落下速度を維持
-                }
-                else
-                {
-                    m_velocity = new Vector3(0, m_rb.velocity.y, 0);//ピタッと止まるようにする
-                    m_rb.velocity = m_velocity;
-                }
-                break;
-
-            case GravityDirection.Ceiling:
-
-                ChangeDirection(h, v, new Vector3(-h, m_rb.velocity.y, -v), Vector3.up, Vector3.down, new Vector3(-h, 0, -v));
-                break;
-
-            case GravityDirection.NorthWall:
-
-                ChangeDirection(h, v, new Vector3(h, v, m_rb.velocity.z), Vector3.forward, Vector3.back, new Vector3(h, v, 0));
-                break;
-
-            case GravityDirection.SouthWall:
-
-                ChangeDirection(h, v, new Vector3(h, -v, m_rb.velocity.z), Vector3.back, Vector3.forward, new Vector3(h, -v, 0));
-                break;
-
-            case GravityDirection.WestWall:
-
-                ChangeDirection(h, v, new Vector3(m_rb.velocity.x, -h, v), Vector3.left, Vector3.right, new Vector3(0, -h, v));
-                break;
-
-            case GravityDirection.EastWall:
-
-                ChangeDirection(h, v, new Vector3(m_rb.velocity.x, h, v), Vector3.right, Vector3.left, new Vector3(0, h, v));
-                break;
-
-            case GravityDirection.Fall:
-
-                m_gravityDir = Vector3.down;
-                break;
-
-            default:
-                break;
+                velo = direction.normalized * m_speed;
+                velo.x = rb.velocity.x;
+                rb.velocity = velo;
+            }
+            else
+            {
+                velo = new Vector3(rb.velocity.x, 0, 0);//ピタッと止まるようにする
+                rb.velocity = velo;
+            }
         }
-    }
-
-    /// <summary>
-    /// 方向変換
-    /// </summary>
-    /// <param name="h">Horizontal</param>
-    /// <param name="v">Vertical</param>
-    /// <param name="velocity">変換した速度ベクトル</param>
-    /// <param name="stop">止まった時の速度ベクトル</param>
-    /// <param name="gravity">重力方向</param>
-    /// <param name="transformUp">オブジェクトの上方向</param>
-    /// <param name="dir">オブジェクトの正面</param>
-    void ChangeDirection(float h, float v, Vector3 velocity, Vector3 gravity, Vector3 transformUp, Vector3 dir)
-    {
-        Quaternion look;
-        m_gravityDir = gravity;//重力方向を変更
-        m_direction = dir;//方向を変換
-        m_velocity = velocity;//方向を入力
-
-        if (h != 0 || v != 0)//入力されている時
+        else if (gravity.y != 0)
         {
-            look = Quaternion.LookRotation(m_direction, transformUp);
-            this.transform.localRotation = look;
-            ((CinemachineVirtualCamera)m_vcam).GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.Value = 0f;
-            //Camera.main.transform.localRotation = look;
-            m_rb.velocity = m_velocity.normalized * m_speed;//ベクトルを正規化してスピードをかける
+            direction = new Vector3(h, 0, v);
+
+            if (h != 0 || v != 0) //入力されている時
+            {
+                //カメラが向いている方向を基準にキャラクターが動くように、入力のベクトルを変換する
+                direction = Camera.main.transform.TransformDirection(direction);
+                direction.y = 0;//y軸方向はゼロにして水平方向のベクトルにする
+
+                velo = direction.normalized * m_speed;
+                velo.y = rb.velocity.y;
+                rb.velocity = velo;
+            }
+            else
+            {
+                velo = new Vector3(0, rb.velocity.y, 0);//ピタッと止まるようにする
+                rb.velocity = velo;
+            }
         }
-        else
+        else if (gravity.z != 0)
         {
-            m_rb.velocity = m_velocity;//ピタッと止まるようにする
+            direction = new Vector3(h, v, 0);
+
+            if (h != 0 || v != 0) //入力されている時
+            {
+                //カメラが向いている方向を基準にキャラクターが動くように、入力のベクトルを変換する
+                direction = Camera.main.transform.TransformDirection(direction);
+                direction.z = 0;//y軸方向はゼロにして水平方向のベクトルにする
+
+                velo = direction.normalized * m_speed;
+                velo.z = rb.velocity.z;
+                rb.velocity = velo;
+            }
+            else
+            {
+                velo = new Vector3(0, 0, rb.velocity.z);//ピタッと止まるようにする
+                rb.velocity = velo;
+            }
         }
+        //Debug.Log(m_gravityDir);
     }
 
     /// <summary>ジャンプする</summary>
@@ -204,65 +137,29 @@ public class CockroachMoveController : MonoBehaviour
         }
         else
         {
-            m_gravityDirection = GravityDirection.Fall;
             return false;
-        }
-    }
-
-    /// <summary>
-    /// 重力方向を判定する
-    /// </summary>
-    /// <param name="tag">タグ</param>
-    /// <param name="name">名前</param>
-    void SwapGravityDirection(string tag, string name)
-    {
-        if (tag == "Wall")
-        {
-            if (name == "NorthWall")
-            {
-                m_gravityDirection = GravityDirection.NorthWall;
-            }
-            else if (name == "SouthWall")
-            {
-                m_gravityDirection = GravityDirection.SouthWall;
-            }
-            else if (name == "WestWall")
-            {
-                m_gravityDirection = GravityDirection.WestWall;
-            }
-            else if (name == "EastWall")
-            {
-                m_gravityDirection = GravityDirection.EastWall;
-            }
-        }
-        else if (tag == "Floor")
-        {
-            m_gravityDirection = GravityDirection.Floor;
-        }
-        else if (tag == "Ceiling")
-        {
-            m_gravityDirection = GravityDirection.Ceiling;
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        SwapGravityDirection(collision.gameObject.tag, collision.gameObject.name);
+        RaycastHit hit;
+        Vector3 dir = collision.transform.position - transform.position;//Rayを飛ばす方向
+        //自分のColliderにRayが当たらないようにInspctorのLayerをlgnore Raycastに設定しておくこと
+        if (Physics.Raycast(transform.position, dir, out hit, 10f))
+        {
+            m_gravityDir = -hit.normal;
+        }
     }
 
     private void OnCollisionStay(Collision collision)
     {
-        SwapGravityDirection(collision.gameObject.tag, collision.gameObject.name);
-    }
-
-    enum GravityDirection
-    {
-        Floor,
-        Ceiling,
-        NorthWall,
-        SouthWall,
-        WestWall,
-        EastWall,
-        Fall
+        RaycastHit hit;
+        Vector3 dir = collision.transform.position - transform.position;//Rayを飛ばす方向
+        //自分のColliderにRayが当たらないようにInspctorのLayerをlgnore Raycastに設定しておくこと
+        if (Physics.Raycast(transform.position, dir, out hit, 10f))
+        {
+            m_gravityDir = -hit.normal;
+        }
     }
 }
