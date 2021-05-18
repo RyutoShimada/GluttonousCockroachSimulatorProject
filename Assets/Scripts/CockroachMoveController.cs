@@ -9,7 +9,7 @@ public class CockroachMoveController : MonoBehaviour
     [SerializeField] float m_gravityPower = 1f;
     [SerializeField] float m_jumpPower = 1f;
     //[SerializeField] float m_turnSpeed = 1f;
-    [SerializeField] CinemachineVirtualCameraBase m_vcam = null;
+    [SerializeField] CinemachineVirtualCamera m_vcam = null;
     Rigidbody m_rb;
     Vector3 m_gravityDir;
     Vector3 m_velocity;
@@ -58,6 +58,8 @@ public class CockroachMoveController : MonoBehaviour
         {
             direction = new Vector3(0, v, h);
 
+            m_vcam.GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.Value = -90f;
+
             if (h != 0 || v != 0) //入力されている時
             {
                 //カメラが向いている方向を基準にキャラクターが動くように、入力のベクトルを変換する
@@ -78,6 +80,15 @@ public class CockroachMoveController : MonoBehaviour
         {
             direction = new Vector3(h, 0, v);
 
+            if (gravity.y < 0)
+            {
+                m_vcam.GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.Value = 0f;
+            }
+            else
+            {
+                m_vcam.GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.Value = -180f;
+            }
+
             if (h != 0 || v != 0) //入力されている時
             {
                 //カメラが向いている方向を基準にキャラクターが動くように、入力のベクトルを変換する
@@ -97,6 +108,8 @@ public class CockroachMoveController : MonoBehaviour
         else if (gravity.z != 0)
         {
             direction = new Vector3(h, v, 0);
+
+            m_vcam.GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.Value = -90f;
 
             if (h != 0 || v != 0) //入力されている時
             {
