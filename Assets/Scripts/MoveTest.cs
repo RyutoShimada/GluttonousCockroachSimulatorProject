@@ -8,17 +8,17 @@ public class MoveTest : MonoBehaviour
     [SerializeField] float m_speed = 5f;
     [SerializeField] float m_turnSpeed = 5;
     [SerializeField] float m_gravityPower = 1f;
-    [SerializeField] float m_jumpPower = 1f;
+    //[SerializeField] float m_jumpPower = 1f;
     [SerializeField] Transform m_rayOrigin = null;
-    [SerializeField] CinemachineVirtualCamera m_vcam = null;
+    //[SerializeField] CinemachineVirtualCamera m_vcam = null;
     Rigidbody m_rb;
     Vector3 m_gravityDir;
     Vector3 m_velocity;
     Vector3 m_direction;
-    /// <summary>Rayを飛ばす距離</summary>
-    const float m_rayDis = 0.19f;
 
     Ray m_ray;
+
+    string m_touchingObj;
 
     // Start is called before the first frame update
     void Start()
@@ -26,7 +26,7 @@ public class MoveTest : MonoBehaviour
         this.gameObject.GetComponent<Rigidbody>().useGravity = false;
         m_rb = this.gameObject.GetComponent<Rigidbody>();
         m_gravityDir = Vector3.down;
-        m_ray = new Ray(m_rayOrigin.position, transform.forward + Vector3.down);
+        m_ray = new Ray(m_rayOrigin.position, (transform.forward + Vector3.down) + Vector3.down);
     }
 
     // Update is called once per frame
@@ -59,13 +59,42 @@ public class MoveTest : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    RaycastHit Raycast(Ray ray, float distance)
     {
-        
+        RaycastHit hit;
+        Physics.Raycast(ray, out hit, distance);
+        return hit;
     }
 
-    private void OnCollisionStay(Collision collision)
+    public void Toucing(string name)
     {
-        
+        m_touchingObj = name;
+    }
+
+    void ChangeGravity(Vector3 rayEndPos)
+    {
+        RaycastHit hit;
+        Physics.Raycast(transform.position, rayEndPos, out hit, Vector3.Distance(transform.position, rayEndPos));
+        Debug.Log($"name : {hit.collider.gameObject.name}");
+        Debug.Log($"nomal : { hit.normal}");
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (m_touchingObj == collision.collider.name)
+        {
+            Debug.Log(true);
+            ChangeGravity(collision.transform.position);
+        }
+        else
+        {
+            Debug.Log(false);
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        //Enterが2回以上呼ばれた時に、条件式にてTrueへ2回以上通るのを防いでいる
+        m_touchingObj = null; //後でいらなかったら消すかも
     }
 }
