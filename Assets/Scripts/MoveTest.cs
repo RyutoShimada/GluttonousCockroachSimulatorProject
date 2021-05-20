@@ -9,16 +9,16 @@ public class MoveTest : MonoBehaviour
     [SerializeField] float m_turnSpeed = 5;
     [SerializeField] float m_gravityPower = 1f;
     //[SerializeField] float m_jumpPower = 1f;
-    [SerializeField] Transform m_rayOrigin = null;
     //[SerializeField] CinemachineVirtualCamera m_vcam = null;
     Rigidbody m_rb;
     Vector3 m_gravityDir;
     Vector3 m_velocity;
     Vector3 m_direction;
 
-    Ray m_ray;
+    RaycastHit m_hit;
 
-    string m_touchingObj;
+    Transform m_rayOriginPos;
+    Transform m_rayEndPos;
 
     // Start is called before the first frame update
     void Start()
@@ -26,13 +26,18 @@ public class MoveTest : MonoBehaviour
         this.gameObject.GetComponent<Rigidbody>().useGravity = false;
         m_rb = this.gameObject.GetComponent<Rigidbody>();
         m_gravityDir = Vector3.down;
-        m_ray = new Ray(m_rayOrigin.position, (transform.forward + Vector3.down) + Vector3.down);
+        m_rayOriginPos = transform.Find("RayOriginPos").gameObject.transform;
+        m_rayEndPos = transform.Find("RayEndPos").gameObject.transform;
+        m_hit = new RaycastHit();
     }
 
     // Update is called once per frame
     void Update()
     {
         Move(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        Physics.Raycast(m_rayOriginPos.position, m_rayEndPos.position, out m_hit);
+        Debug.DrawLine(m_rayOriginPos.position, m_rayEndPos.position, Color.red);
+        Debug.Log(m_hit.collider.name);
     }
 
     void Move(float h, float v)
@@ -43,13 +48,36 @@ public class MoveTest : MonoBehaviour
 
         if (v > 0)
         {
-            m_velocity = m_direction.normalized * m_speed;
-            m_velocity.y = m_rb.velocity.y;
+            if (m_gravityDir == Vector3.up || m_gravityDir == Vector3.down)
+            {
+                m_velocity = m_direction.normalized * m_speed;
+                m_velocity.y = m_rb.velocity.y;
+            }
+            else if (m_gravityDir == Vector3.left || m_gravityDir == Vector3.right)
+            {
+                m_velocity = m_direction.normalized * m_speed;
+                m_velocity.x = m_rb.velocity.x;
+            }
+            else if (m_gravityDir == Vector3.forward || m_gravityDir == Vector3.back)
+            {
+                m_velocity = m_direction.normalized * m_speed;
+                m_velocity.z = m_rb.velocity.z;
+            }
+
             m_rb.velocity = m_velocity;
         }
         else if (v <= 0)
         {
-            m_velocity = new Vector3(0, m_rb.velocity.y, 0);//ピタッと止まるようにする
+            //ピタッと止まるようにする
+            if (m_gravityDir == Vector3.up || m_gravityDir == Vector3.down)
+            {
+                m_velocity = new Vector3(0, m_rb.velocity.y, 0);
+            }
+            else
+            {
+                m_velocity = Vector3.zero;
+            }
+
             m_rb.velocity = m_velocity;
         }
 
@@ -59,42 +87,39 @@ public class MoveTest : MonoBehaviour
         }
     }
 
-    RaycastHit Raycast(Ray ray, float distance)
+    void ChangeGravity()
     {
-        RaycastHit hit;
-        Physics.Raycast(ray, out hit, distance);
-        return hit;
+        m_gravityDir = -m_hit.normal;
+        ChangeRotate(m_hit.normal);
     }
 
-    public void Toucing(string name)
+    void ChangeRotate(Vector3 nomal)
     {
-        m_touchingObj = name;
-    }
-
-    void ChangeGravity(Vector3 rayEndPos)
-    {
-        RaycastHit hit;
-        Physics.Raycast(transform.position, rayEndPos, out hit, Vector3.Distance(transform.position, rayEndPos));
-        Debug.Log($"name : {hit.collider.gameObject.name}");
-        Debug.Log($"nomal : { hit.normal}");
+        //https://teratail.com/questions/290578
+        Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation;
+        transform.rotation = toRotate;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (m_touchingObj == collision.collider.name)
+        if (!m_hit.collider) return;
+        if (m_hit.collider.name == collision.collider.name)
         {
             Debug.Log(true);
-            ChangeGravity(collision.transform.position);
+            ChangeGravity();
         }
         else
         {
             Debug.Log(false);
+            
         }
+
+        Debug.Log($"Enter : {collision.gameObject.name}");
+        Debug.Log($"name : { m_hit.collider.gameObject.name }");
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        //Enterが2回以上呼ばれた時に、条件式にてTrueへ2回以上通るのを防いでいる
-        m_touchingObj = null; //後でいらなかったら消すかも
+        m_hit = new RaycastHit();
     }
 }
