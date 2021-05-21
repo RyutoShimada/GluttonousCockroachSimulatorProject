@@ -35,9 +35,7 @@ public class MoveTest : MonoBehaviour
     void Update()
     {
         Move(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        Physics.Raycast(m_rayOriginPos.position, m_rayEndPos.position, out m_hit);
-        Debug.DrawLine(m_rayOriginPos.position, m_rayEndPos.position, Color.red);
-        Debug.Log(m_hit.collider.name);
+        Physics.Raycast(transform.position, m_direction, out m_hit);
     }
 
     void Move(float h, float v)
