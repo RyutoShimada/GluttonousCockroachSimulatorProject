@@ -6,19 +6,16 @@ using Cinemachine;
 public class MoveTest : MonoBehaviour
 {
     [SerializeField] float m_speed = 5f;
+    [SerializeField] float m_jumpPower = 1f;
     [SerializeField] float m_turnSpeed = 5;
     [SerializeField] float m_gravityPower = 1f;
-    //[SerializeField] float m_jumpPower = 1f;
-    //[SerializeField] CinemachineVirtualCamera m_vcam = null;
     Rigidbody m_rb;
     Vector3 m_gravityDir;
     Vector3 m_velocity;
     Vector3 m_direction;
-
     RaycastHit m_hit;
-
-    Transform m_rayOriginPos;
-    Transform m_rayEndPos;
+    /// <summary>Rayを飛ばす距離</summary>
+    const float m_rayDis = 0.05f;
 
     // Start is called before the first frame update
     void Start()
@@ -26,8 +23,6 @@ public class MoveTest : MonoBehaviour
         this.gameObject.GetComponent<Rigidbody>().useGravity = false;
         m_rb = this.gameObject.GetComponent<Rigidbody>();
         m_gravityDir = Vector3.down;
-        m_rayOriginPos = transform.Find("RayOriginPos").gameObject.transform;
-        m_rayEndPos = transform.Find("RayEndPos").gameObject.transform;
         m_hit = new RaycastHit();
     }
 
@@ -36,6 +31,7 @@ public class MoveTest : MonoBehaviour
     {
         Move(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         Physics.Raycast(transform.position, m_direction, out m_hit);
+        Jump(m_jumpPower);
     }
 
     void Move(float h, float v)
@@ -54,12 +50,10 @@ public class MoveTest : MonoBehaviour
             else if (m_gravityDir == Vector3.left || m_gravityDir == Vector3.right)
             {
                 m_velocity = m_direction.normalized * m_speed;
-                m_velocity.x = m_rb.velocity.x;
             }
             else if (m_gravityDir == Vector3.forward || m_gravityDir == Vector3.back)
             {
                 m_velocity = m_direction.normalized * m_speed;
-                m_velocity.z = m_rb.velocity.z;
             }
 
             m_rb.velocity = m_velocity;
@@ -85,6 +79,22 @@ public class MoveTest : MonoBehaviour
         }
     }
 
+    /// <summary>ジャンプする</summary>
+    /// <param name="jumpPower">ジャンプする力</param>
+    void Jump(float jumpPower)
+    {
+        if (Input.GetButtonDown("Jump") && Physics.Raycast(this.transform.position, m_gravityDir, m_rayDis))
+        {
+            m_rb.AddForce(-m_gravityDir.normalized * jumpPower, ForceMode.Impulse);
+            Fall();
+        }
+    }
+
+    void Fall()
+    {
+        m_gravityDir = Vector3.down;
+    }
+
     void ChangeGravity()
     {
         m_gravityDir = -m_hit.normal;
@@ -103,17 +113,23 @@ public class MoveTest : MonoBehaviour
         if (!m_hit.collider) return;
         if (m_hit.collider.name == collision.collider.name)
         {
-            Debug.Log(true);
+            //Debug.Log(true);
             ChangeGravity();
         }
         else
         {
-            Debug.Log(false);
+            //Debug.Log(false);
             
         }
 
-        Debug.Log($"Enter : {collision.gameObject.name}");
-        Debug.Log($"name : { m_hit.collider.gameObject.name }");
+        if (collision.collider.name == "Floor")
+        {
+            Quaternion toRotate = Quaternion.FromToRotation(transform.up, Vector3.up) * transform.rotation;
+            transform.rotation = toRotate;
+        }
+
+        //Debug.Log($"Enter : {collision.gameObject.name}");
+        //Debug.Log($"name : { m_hit.collider.gameObject.name }");
     }
 
     private void OnCollisionExit(Collision collision)
