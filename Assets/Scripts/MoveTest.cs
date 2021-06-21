@@ -38,8 +38,7 @@ public class MoveTest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Physics.Raycast(_rayOriginPos.position, _rotateRayPos.position - _rayOriginPos.position, out _downHit, _maxRayDistance * 2);
-        Debug.DrawRay(_rayOriginPos.position, (_rotateRayPos.position - _rayOriginPos.position).normalized * _maxRayDistance * 2, Color.green, 0, false);
+        Ray();
         Jump(_jumpPower);
         IsFall();
     }
@@ -125,6 +124,13 @@ public class MoveTest : MonoBehaviour
         }
     }
 
+    void Ray()
+    {
+        Physics.Raycast(_rayOriginPos.position, _rotateRayPos.position - _rayOriginPos.position, out _downHit, _maxRayDistance);
+        Debug.DrawRay(_rayOriginPos.position, (_rotateRayPos.position - _rayOriginPos.position).normalized * _maxRayDistance * 2, Color.green, 0, false);
+        //Debug.Log(_downHit.collider.name);
+    }
+
     void ChangeGravity(Vector3 nomal)
     {
         _gravityDir = -nomal;
@@ -149,9 +155,17 @@ public class MoveTest : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        if (_downHit.normal != -_gravityDir)
+        try
         {
-            ChangeGravity(_downHit.normal);
+            if (_downHit.normal != -_gravityDir)
+            {
+                ChangeGravity(_downHit.normal);
+            }
+        }
+        catch (System.NullReferenceException)
+        {
+            Debug.Log("Null");
+            ChangeRotate(transform.forward);
         }
     }
 }
