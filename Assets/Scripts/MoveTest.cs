@@ -5,19 +5,35 @@ using Cinemachine;
 
 public class MoveTest : MonoBehaviour
 {
+    /// <summary>移動速度</summary>
     [SerializeField] float _moveSpeed = 5f;
+    /// <summary>ジャンプ力</summary>
     [SerializeField] float _jumpPower = 1f;
+    /// <summary>方向転換の速度</summary>
     [SerializeField] float _turnSpeed = 5;
+    /// <summary>落下速度</summary>
     [SerializeField] float _fallSpeed = 5;
+    /// <summary>重力</summary>
     [SerializeField] float _gravityPower = 1f;
+    /// <summary>Rayを飛ばす距離</summary>
     [SerializeField] float _maxRayDistance = 1f;
+    /// <summary>Rayを飛ばす始点</summary>
     [SerializeField] Transform _rayOriginPos = null;
+    /// <summary>回転する時に判定するためのRayをとばす位置</summary>
     [SerializeField] Transform _rotateRayPos = null;
+    /// <summary>接地判定する時に判定するためのRayをとばす位置</summary>
+    [SerializeField] Transform _groundRayOriginPos = null;
+    /// <summary>Rigidbody</summary>
     Rigidbody _rb;
+    /// <summary>Velocity</summary>
+    Vector3 _velo;
+    /// <summary>Direction</summary>
+    Vector3 _dir;
+    /// <summary>重力方向</summary>
     Vector3 _gravityDir;
-    Vector3 _velocity;
-    Vector3 _direction;
-    RaycastHit _downHit;
+    /// <summary>法線ベクトルを取得するための変数</summary>
+    RaycastHit _rotateHit;
+    bool _changeing = false;
 
     /// <summary>Jumpした時にRayを飛ばす距離</summary>
     const float _jumpRayDis = 0.1f;
@@ -47,41 +63,47 @@ public class MoveTest : MonoBehaviour
     {
         _rb.AddForce(_gravityDir * _gravityPower, ForceMode.Force);//重力
 
-        _direction = transform.forward;
+        _dir = transform.forward;
 
-        if (v > 0)
+        if (v > 0) // 進む処理
         {
-            _velocity = _direction.normalized * _moveSpeed;
+            _velo = _dir.normalized * _moveSpeed;
 
             if (_gravityDir == Vector3.up || _gravityDir == Vector3.down)
             {
-                _velocity.y = _rb.velocity.y;
+                _velo.y = _rb.velocity.y;
             }
             else if (_gravityDir == Vector3.left || _gravityDir == Vector3.right)
             {
-                _velocity.x = _rb.velocity.x;
+                _velo.x = _rb.velocity.x;
             }
             else if (_gravityDir == Vector3.forward || _gravityDir == Vector3.down)
             {
-                _velocity.z = _rb.velocity.z;
+                _velo.z = _rb.velocity.z;
             }
-
-            _rb.velocity = _velocity;
         }
-        else if (v <= 0)
+        else // 止まる処理
         {
-            //ピタッと止まるようにする
             if (_gravityDir == Vector3.up || _gravityDir == Vector3.down)
             {
-                _velocity = new Vector3(0, _rb.velocity.y, 0);
+                _velo = new Vector3(0, _rb.velocity.y, 0);
             }
-            else
+            else if (_gravityDir == Vector3.left || _gravityDir == Vector3.right)
             {
-                _velocity = Vector3.zero;
+                _velo = new Vector3(_rb.velocity.x, 0, 0);
             }
-
-            _rb.velocity = _velocity;
+            else if (_gravityDir == Vector3.forward || _gravityDir == Vector3.down)
+            {
+                _velo = new Vector3(0, 0, _rb.velocity.z);
+            }
         }
+
+        if (_changeing)
+        {
+            _velo = Vector3.zero;
+        }
+
+        _rb.velocity = _velo;
 
         if (h != 0)
         {
@@ -104,20 +126,19 @@ public class MoveTest : MonoBehaviour
 
     bool IsGround()
     {
-        if (Physics.Raycast(transform.position, _gravityDir, _jumpRayDis))
+        if (Physics.Raycast(_rayOriginPos.position, _groundRayOriginPos.position - _rayOriginPos.position, _maxRayDistance))
         {
-            return  true;
+            return true;
         }
         else
         {
-            _gravityDir = Vector3.down;
-            return  false;
+            return false;
         }
     }
 
     void IsFall()
     {
-        if (_rb.velocity.y < 0 && !IsGround())
+        if (!IsGround())
         {
             _gravityDir = Vector3.down;
             _rb.AddForce(_gravityDir * _fallSpeed, ForceMode.Force);
@@ -126,23 +147,27 @@ public class MoveTest : MonoBehaviour
 
     void Ray()
     {
-        Physics.Raycast(_rayOriginPos.position, _rotateRayPos.position - _rayOriginPos.position, out _downHit, _maxRayDistance);
-        Debug.DrawRay(_rayOriginPos.position, (_rotateRayPos.position - _rayOriginPos.position).normalized * _maxRayDistance * 2, Color.green, 0, false);
+        Physics.Raycast(_rayOriginPos.position, _rotateRayPos.position - _rayOriginPos.position, out _rotateHit, _maxRayDistance);
+        Debug.DrawRay(_rayOriginPos.position, (_rotateRayPos.position - _rayOriginPos.position).normalized * _maxRayDistance, Color.green, 0, false);
+        Debug.DrawRay(_rayOriginPos.position, (_groundRayOriginPos.position - _rayOriginPos.position).normalized * _maxRayDistance, Color.blue, 0, false);
         //Debug.Log(_downHit.collider.name);
     }
 
     void ChangeGravity(Vector3 nomal)
     {
         _gravityDir = -nomal;
-        ChangeRotate(nomal);
+        _changeing = true;
+        StartCoroutine(ChangeRotate(nomal));
     }
 
-    void ChangeRotate(Vector3 nomal)
+    IEnumerator ChangeRotate(Vector3 nomal)
     {
         //https://teratail.com/questions/290578
         Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation;
         transform.rotation = toRotate;
         _rb.AddForce(_gravityDir * _gravityPower, ForceMode.Impulse);
+        yield return new WaitForSeconds(0.025f);
+        _changeing = false;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -155,16 +180,15 @@ public class MoveTest : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        try
+        if (_rotateHit.collider)
         {
-            if (_downHit.normal != -_gravityDir)
+            if (_rotateHit.normal != -_gravityDir)
             {
-                ChangeGravity(_downHit.normal);
+                ChangeGravity(_rotateHit.normal);
             }
         }
-        catch (System.NullReferenceException)
+        else
         {
-            Debug.Log("Null");
             ChangeRotate(transform.forward);
         }
     }
