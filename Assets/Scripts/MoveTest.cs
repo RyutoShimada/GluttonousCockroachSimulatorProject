@@ -21,8 +21,6 @@ public class MoveTest : MonoBehaviour
     [SerializeField] Transform _rayOriginPos = null;
     /// <summary>回転する時に判定するためのRayをとばす位置</summary>
     [SerializeField] Transform _rotateRayPos = null;
-    /// <summary>接地判定する時に判定するためのRayをとばす位置</summary>
-    [SerializeField] Transform _groundRayOriginPos = null;
     /// <summary>Rigidbody</summary>
     Rigidbody _rb;
     /// <summary>Velocity</summary>
@@ -33,10 +31,12 @@ public class MoveTest : MonoBehaviour
     Vector3 _gravityDir;
     /// <summary>法線ベクトルを取得するための変数</summary>
     RaycastHit _rotateHit;
-    bool _changeing = false;
 
-    /// <summary>Jumpした時にRayを飛ばす距離</summary>
-    const float _jumpRayDis = 0.1f;
+    Vector3 _jumpDir;
+    bool _changeing = false;
+    bool _isGround = true;
+    bool _isJump = false;
+    [SerializeField] bool _isGravity = false;
 
     // Start is called before the first frame update
     void Start()
@@ -44,6 +44,7 @@ public class MoveTest : MonoBehaviour
         this.gameObject.GetComponent<Rigidbody>().useGravity = false;
         _rb = this.gameObject.GetComponent<Rigidbody>();
         _gravityDir = Vector3.down;
+        _isGravity = true;
     }
 
     void FixedUpdate()
@@ -55,15 +56,16 @@ public class MoveTest : MonoBehaviour
     void Update()
     {
         Ray();
+        Gravity();
         Jump(_jumpPower);
-        IsFall();
+        FallForce();
     }
 
     void Move(float h, float v)
     {
-        _rb.AddForce(_gravityDir * _gravityPower, ForceMode.Force);//重力
-
         _dir = transform.forward;
+
+        if (_isJump) return;
 
         if (v > 0) // 進む処理
         {
@@ -92,13 +94,13 @@ public class MoveTest : MonoBehaviour
             {
                 _velo = new Vector3(_rb.velocity.x, 0, 0);
             }
-            else if (_gravityDir == Vector3.forward || _gravityDir == Vector3.down)
+            else if (_gravityDir == Vector3.forward || _gravityDir == Vector3.back)
             {
                 _velo = new Vector3(0, 0, _rb.velocity.z);
             }
         }
 
-        if (_changeing)
+        if (_changeing && !_isJump)
         {
             _velo = Vector3.zero;
         }
@@ -111,85 +113,126 @@ public class MoveTest : MonoBehaviour
         }
     }
 
+    void Gravity()
+    {
+        if (_isGravity)
+        {
+            _rb.AddForce(_gravityDir * _gravityPower, ForceMode.Force);
+        }
+    }
+
     /// <summary>ジャンプする</summary>
     /// <param name="jumpPower">ジャンプする力</param>
     void Jump(float jumpPower)
     {
-        if (Input.GetButtonDown("Jump"))
+        if (Input.GetButtonDown("Jump") && _isGround)
         {
-            if (IsGround())
+            _isJump = true;
+
+            _rb.AddForce(-_gravityDir.normalized * jumpPower, ForceMode.Impulse);
+
+            if (_gravityDir != Vector3.down)
             {
-                _rb.AddForce(-_gravityDir.normalized * jumpPower, ForceMode.Impulse);
+                _jumpDir = -_gravityDir;
+                ChangeGravity(Vector3.down);
+                StartCoroutine(ChangeRotate(Vector3.up, 0.1f));
             }
         }
     }
 
-    bool IsGround()
+    void FallForce()
     {
-        if (Physics.Raycast(_rayOriginPos.position, _groundRayOriginPos.position - _rayOriginPos.position, _maxRayDistance))
+        if (_isJump)
         {
-            return true;
-        }
-        else
-        {
-            return false;
+            _rb.AddForce(_jumpDir);
         }
     }
 
-    void IsFall()
+    /// <summary>
+    /// 子オブジェクトのTriggerから呼ぶ
+    /// </summary>
+    /// <param name="isGround"></param>
+    /// <returns></returns>
+    public void IsGround(bool isGround)
     {
-        if (!IsGround())
+        if (isGround && !_isJump)
         {
-            _gravityDir = Vector3.down;
-            _rb.AddForce(_gravityDir * _fallSpeed, ForceMode.Force);
+            _isGround = true;
+        }
+        else
+        {
+            _isGround = false;
         }
     }
 
     void Ray()
     {
         Physics.Raycast(_rayOriginPos.position, _rotateRayPos.position - _rayOriginPos.position, out _rotateHit, _maxRayDistance);
-        Debug.DrawRay(_rayOriginPos.position, (_rotateRayPos.position - _rayOriginPos.position).normalized * _maxRayDistance, Color.green, 0, false);
-        Debug.DrawRay(_rayOriginPos.position, (_groundRayOriginPos.position - _rayOriginPos.position).normalized * _maxRayDistance, Color.blue, 0, false);
-        //Debug.Log(_downHit.collider.name);
+        Debug.DrawRay(_rayOriginPos.position, (_rotateRayPos.position - _rayOriginPos.position).normalized * _maxRayDistance, Color.green);
     }
 
     void ChangeGravity(Vector3 nomal)
     {
-        _gravityDir = -nomal;
-        _changeing = true;
-        StartCoroutine(ChangeRotate(nomal));
+        _gravityDir = nomal;
     }
 
-    IEnumerator ChangeRotate(Vector3 nomal)
+    IEnumerator ChangeRotate(Vector3 nomal, float waitTime)
     {
-        //https://teratail.com/questions/290578
-        Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation;
-        transform.rotation = toRotate;
-        _rb.AddForce(_gravityDir * _gravityPower, ForceMode.Impulse);
-        yield return new WaitForSeconds(0.025f);
+        _changeing = true;
+
+        if (!_isJump) // 壁に上ったりする時だけ使う
+        {
+            Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation; // https://teratail.com/questions/290578
+            transform.rotation = toRotate;
+            _rb.AddForce(_gravityDir * _gravityPower, ForceMode.Impulse);
+        }
+
+        yield return new WaitForSeconds(waitTime); // 回転する時間を稼ぐ
+
+        if (_isJump)
+        {
+            Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation; // https://teratail.com/questions/290578
+            transform.rotation = toRotate;
+        }
+
         _changeing = false;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
+        _isJump = false;
+        _jumpDir = Vector3.zero; // 着地したらジャンプする方向をリセット
+
         foreach (ContactPoint point in collision.contacts)
         {
-            ChangeGravity(point.normal);
+            if (_gravityDir == Vector3.down && point.normal == Vector3.down)
+            {
+                return;
+            }
+            else
+            {
+                ChangeGravity(-point.normal);
+                StartCoroutine(ChangeRotate(point.normal, 0.05f));
+            }
         }
     }
 
     private void OnCollisionExit(Collision collision)
     {
+        if (_isJump) return;
+
         if (_rotateHit.collider)
         {
             if (_rotateHit.normal != -_gravityDir)
             {
-                ChangeGravity(_rotateHit.normal);
+                ChangeGravity(-_rotateHit.normal);
+                StartCoroutine(ChangeRotate(_rotateHit.normal, 0.05f));
+                Debug.Log("CHANGE");
             }
         }
         else
         {
-            ChangeRotate(transform.forward);
+            StartCoroutine(ChangeRotate(transform.forward, 0.05f));
         }
     }
 }

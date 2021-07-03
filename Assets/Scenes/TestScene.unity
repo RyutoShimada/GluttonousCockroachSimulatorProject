@@ -127,7 +127,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14382
+  m_Name: pb_Mesh14394
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -382,7 +382,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14442
+  m_Name: pb_Mesh14450
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2562,7 +2562,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14302
+  m_Name: pb_Mesh14306
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3259,13 +3259,70 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &397973186
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 397973187}
+  - component: {fileID: 397973189}
+  - component: {fileID: 397973188}
+  m_Layer: 2
+  m_Name: GroundTriggaer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &397973187
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397973186}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 634663624}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &397973188
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397973186}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.1, y: 0.3, z: 0.46}
+  m_Center: {x: 0, y: -0.12, z: 0}
+--- !u!114 &397973189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397973186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26ee707e94dc29f4c95a4c4763a3d764, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!43 &416906281
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14268
+  m_Name: pb_Mesh14272
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3428,7 +3485,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14408
+  m_Name: pb_Mesh14420
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3628,14 +3685,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _moveSpeed: 7
-  _jumpPower: 3
+  _jumpPower: 5
   _turnSpeed: 5
   _fallSpeed: 5
   _gravityPower: 10
   _maxRayDistance: 1
   _rayOriginPos: {fileID: 1221447371}
   _rotateRayPos: {fileID: 489179173}
-  _jumpRayOriginPos: {fileID: 1991123041}
+  _isGravity: 0
 --- !u!1 &586324771
 GameObject:
   m_ObjectHideFlags: 0
@@ -3684,7 +3741,7 @@ GameObject:
   - component: {fileID: 584345705}
   m_Layer: 2
   m_Name: Cockroach
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3697,13 +3754,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 634663623}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 1.152, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1869269037}
   - {fileID: 1221447371}
   - {fileID: 489179173}
   - {fileID: 1991123041}
+  - {fileID: 397973187}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3841,7 +3899,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14398
+  m_Name: pb_Mesh14410
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -4168,7 +4226,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1005934216}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.94, y: 0.5, z: 0}
+  m_LocalPosition: {x: 2.47, y: 0.5, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children: []
   m_Father: {fileID: 0}
@@ -5731,7 +5789,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14290
+  m_Name: pb_Mesh14294
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -6349,7 +6407,7 @@ GameObject:
   - component: {fileID: 1869269034}
   m_Layer: 2
   m_Name: G-Body
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -14938,7 +14996,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14278
+  m_Name: pb_Mesh14282
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -15105,7 +15163,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1991123041}
   m_Layer: 2
-  m_Name: JumpRayOrigin
+  m_Name: GroundRayOrigin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -15131,7 +15189,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh14428
+  m_Name: pb_Mesh14440
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
