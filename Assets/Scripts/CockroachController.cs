@@ -39,6 +39,8 @@ public class CockroachController : MonoBehaviour
 
     float _mouse_move_x;
 
+    float _v;
+
     [SerializeField] float _mouseSensitivity = 1f; // いわゆるマウス感度
 
     // Start is called before the first frame update
@@ -53,26 +55,27 @@ public class CockroachController : MonoBehaviour
 
     void FixedUpdate()
     {
-        Move(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        Move();
+        Gravity();
+        FallForce();
     }
 
     // Update is called once per frame
     void Update()
     {
+        _v = Input.GetAxisRaw("Vertical");
         Ray();
-        Gravity();
         Jump(_jumpPower);
-        FallForce();
         MouseMove();
     }
 
-    void Move(float h, float v)
+    void Move()
     {
         _dir = transform.forward;
 
         if (_isJump) return;
 
-        if (v > 0) // 進む処理
+        if (_v > 0) // 進む処理
         {
             _velo = _dir.normalized * _moveSpeed;
 
