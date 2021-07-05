@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using DG.Tweening;
 
-public class MoveTest : MonoBehaviour
+public class CockroachController : MonoBehaviour
 {
     /// <summary>移動速度</summary>
     [SerializeField] float _moveSpeed = 5f;
@@ -11,8 +12,6 @@ public class MoveTest : MonoBehaviour
     [SerializeField] float _jumpPower = 1f;
     /// <summary>方向転換の速度</summary>
     [SerializeField] float _turnSpeed = 5;
-    /// <summary>落下速度</summary>
-    [SerializeField] float _fallSpeed = 5;
     /// <summary>重力</summary>
     [SerializeField] float _gravityPower = 1f;
     /// <summary>Rayを飛ばす距離</summary>
@@ -33,10 +32,14 @@ public class MoveTest : MonoBehaviour
     RaycastHit _rotateHit;
 
     Vector3 _jumpDir;
-    bool _changeing = false;
+    public bool _changeing { get; private set; }
     bool _isGround = true;
     bool _isJump = false;
     [SerializeField] bool _isGravity = false;
+
+    float _mouse_move_x;
+
+    [SerializeField] float _mouseSensitivity = 1f; // いわゆるマウス感度
 
     // Start is called before the first frame update
     void Start()
@@ -45,6 +48,7 @@ public class MoveTest : MonoBehaviour
         _rb = this.gameObject.GetComponent<Rigidbody>();
         _gravityDir = Vector3.down;
         _isGravity = true;
+        _changeing = false;
     }
 
     void FixedUpdate()
@@ -59,6 +63,7 @@ public class MoveTest : MonoBehaviour
         Gravity();
         Jump(_jumpPower);
         FallForce();
+        MouseMove();
     }
 
     void Move(float h, float v)
@@ -79,7 +84,7 @@ public class MoveTest : MonoBehaviour
             {
                 _velo.x = _rb.velocity.x;
             }
-            else if (_gravityDir == Vector3.forward || _gravityDir == Vector3.down)
+            else if (_gravityDir == Vector3.forward || _gravityDir == Vector3.back)
             {
                 _velo.z = _rb.velocity.z;
             }
@@ -88,15 +93,15 @@ public class MoveTest : MonoBehaviour
         {
             if (_gravityDir == Vector3.up || _gravityDir == Vector3.down)
             {
-                _velo = new Vector3(0, _rb.velocity.y, 0);
+                _velo = new Vector3(0f, _rb.velocity.y, 0f);
             }
             else if (_gravityDir == Vector3.left || _gravityDir == Vector3.right)
             {
-                _velo = new Vector3(_rb.velocity.x, 0, 0);
+                _velo = new Vector3(_rb.velocity.x, 0f, 0f);
             }
             else if (_gravityDir == Vector3.forward || _gravityDir == Vector3.back)
             {
-                _velo = new Vector3(0, 0, _rb.velocity.z);
+                _velo = new Vector3(0f, 0f, _rb.velocity.z);
             }
         }
 
@@ -107,10 +112,16 @@ public class MoveTest : MonoBehaviour
 
         _rb.velocity = _velo;
 
-        if (h != 0)
-        {
-            transform.Rotate(new Vector3(0f, h * _turnSpeed, 0f));
-        }
+        //if (h != 0)
+        //{
+        //    transform.Rotate(new Vector3(0f, h * _turnSpeed, 0f));
+        //}
+    }
+
+    private void MouseMove()
+    {
+        _mouse_move_x = Input.GetAxis("Mouse X") * _mouseSensitivity;
+        transform.Rotate(new Vector3(0f, _mouse_move_x, 0f));
     }
 
     void Gravity()
@@ -129,6 +140,8 @@ public class MoveTest : MonoBehaviour
         {
             _isJump = true;
 
+            _isGround = false;
+
             _rb.AddForce(-_gravityDir.normalized * jumpPower, ForceMode.Impulse);
 
             if (_gravityDir != Vector3.down)
@@ -142,7 +155,7 @@ public class MoveTest : MonoBehaviour
 
     void FallForce()
     {
-        if (_isJump)
+        if (_isJump && _gravityDir != Vector3.down)
         {
             _rb.AddForce(_jumpDir);
         }
@@ -155,7 +168,9 @@ public class MoveTest : MonoBehaviour
     /// <returns></returns>
     public void IsGround(bool isGround)
     {
-        if (isGround && !_isJump)
+        if (_isJump) return;
+
+        if (isGround)
         {
             _isGround = true;
         }
@@ -183,8 +198,11 @@ public class MoveTest : MonoBehaviour
         if (!_isJump) // 壁に上ったりする時だけ使う
         {
             Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation; // https://teratail.com/questions/290578
-            transform.rotation = toRotate;
-            _rb.AddForce(_gravityDir * _gravityPower, ForceMode.Impulse);
+            transform.DORotateQuaternion(toRotate, 0.25f).OnComplete(() =>
+            {
+                // 回転した時にできた隙間を強制的に埋める
+                _rb.AddForce(_gravityDir * _gravityPower, ForceMode.Impulse);
+            });
         }
 
         yield return new WaitForSeconds(waitTime); // 回転する時間を稼ぐ
@@ -192,7 +210,7 @@ public class MoveTest : MonoBehaviour
         if (_isJump)
         {
             Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation; // https://teratail.com/questions/290578
-            transform.rotation = toRotate;
+            transform.DORotateQuaternion(toRotate, 0.25f);
         }
 
         _changeing = false;
@@ -201,11 +219,12 @@ public class MoveTest : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         _isJump = false;
+
         _jumpDir = Vector3.zero; // 着地したらジャンプする方向をリセット
 
         foreach (ContactPoint point in collision.contacts)
         {
-            if (_gravityDir == Vector3.down && point.normal == Vector3.down)
+            if (_gravityDir == Vector3.down && point.normal == Vector3.up)
             {
                 return;
             }
@@ -219,7 +238,7 @@ public class MoveTest : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        if (_isJump) return;
+        if (_isJump || _changeing) return;
 
         if (_rotateHit.collider)
         {
@@ -227,12 +246,13 @@ public class MoveTest : MonoBehaviour
             {
                 ChangeGravity(-_rotateHit.normal);
                 StartCoroutine(ChangeRotate(_rotateHit.normal, 0.05f));
-                Debug.Log("CHANGE");
             }
         }
-        else
+
+        if (!_isGround)
         {
-            StartCoroutine(ChangeRotate(transform.forward, 0.05f));
+            ChangeGravity(Vector3.down);
+            StartCoroutine(ChangeRotate(Vector3.up, 0.05f));
         }
     }
 }

@@ -9,6 +9,7 @@ TagManager:
   - Ceiling
   - Furniture
   - Collider
+  - Cockroach
   layers:
   - Default
   - TransparentFX

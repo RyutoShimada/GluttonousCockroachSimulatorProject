@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class IsGround : MonoBehaviour
 {
-    MoveTest _parent = null;
+    CockroachController _parent = null;
 
     // Start is called before the first frame update
     void Start()
     {
-        _parent = transform.parent.gameObject.GetComponent<MoveTest>();
+        _parent = transform.parent.gameObject.GetComponent<CockroachController>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag != "Player")
+        if (other.tag != "Cockroach")
         {
             _parent.IsGround(true);
         }
@@ -22,7 +22,7 @@ public class IsGround : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.tag != "Player")
+        if (other.tag != "Cockroach")
         {
             _parent.IsGround(true);
         }
@@ -30,7 +30,7 @@ public class IsGround : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag != "Player")
+        if (other.tag != "Cockroach")
         {
             _parent.IsGround(false);
         }
