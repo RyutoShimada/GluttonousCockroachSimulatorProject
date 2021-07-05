@@ -168,7 +168,7 @@ public class CockroachController : MonoBehaviour
     /// <returns></returns>
     public void IsGround(bool isGround)
     {
-        if (_isJump) return;
+        //if (_isJump) return;
 
         if (isGround)
         {
