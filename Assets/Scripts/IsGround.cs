@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class IsGround : MonoBehaviour
 {
-    CockroachMoveController _parent = null;
+    CockroachMoveController m_parent = null;
 
     // Start is called before the first frame update
     void Start()
     {
-        _parent = transform.parent.gameObject.GetComponent<CockroachMoveController>();
+        m_parent = transform.parent.gameObject.GetComponent<CockroachMoveController>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag != "Cockroach")
         {
-            _parent.IsGround(true);
+            m_parent.IsGround(true);
         }
     }
 
@@ -24,7 +24,7 @@ public class IsGround : MonoBehaviour
     {
         if (other.tag != "Cockroach")
         {
-            _parent.IsGround(true);
+            m_parent.IsGround(true);
         }
     }
 
@@ -32,7 +32,7 @@ public class IsGround : MonoBehaviour
     {
         if (other.tag != "Cockroach")
         {
-            _parent.IsGround(false);
+            m_parent.IsGround(false);
         }
     }
 }
