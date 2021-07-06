@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class IsGround : MonoBehaviour
 {
-    CockroachController _parent = null;
+    CockroachMoveController _parent = null;
 
     // Start is called before the first frame update
     void Start()
     {
-        _parent = transform.parent.gameObject.GetComponent<CockroachController>();
+        _parent = transform.parent.gameObject.GetComponent<CockroachMoveController>();
     }
 
     private void OnTriggerEnter(Collider other)

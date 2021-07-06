@@ -4,22 +4,22 @@ using UnityEngine;
 using Cinemachine;
 using DG.Tweening;
 
-public class CockroachController : MonoBehaviour
+public class CockroachMoveController : MonoBehaviour
 {
     /// <summary>移動速度</summary>
-    [SerializeField] float _moveSpeed = 5f;
+    [SerializeField] float _moveSpeed = 7f;
     /// <summary>ジャンプ力</summary>
-    [SerializeField] float _jumpPower = 1f;
-    /// <summary>方向転換の速度</summary>
-    [SerializeField] float _turnSpeed = 5;
+    [SerializeField] float _jumpPower = 4f;
     /// <summary>重力</summary>
-    [SerializeField] float _gravityPower = 1f;
+    [SerializeField] float _gravityPower = 10f;
     /// <summary>Rayを飛ばす距離</summary>
     [SerializeField] float _maxRayDistance = 1f;
     /// <summary>Rayを飛ばす始点</summary>
     [SerializeField] Transform _rayOriginPos = null;
     /// <summary>回転する時に判定するためのRayをとばす位置</summary>
     [SerializeField] Transform _rotateRayPos = null;
+    /// <summary>マウスの感度</summary>
+    [SerializeField] float _mouseSensitivity = 5f;
     /// <summary>Rigidbody</summary>
     Rigidbody _rb;
     /// <summary>Velocity</summary>
@@ -27,36 +27,32 @@ public class CockroachController : MonoBehaviour
     /// <summary>Direction</summary>
     Vector3 _dir;
     /// <summary>重力方向</summary>
-    Vector3 _gravityDir;
-    /// <summary>法線ベクトルを取得するための変数</summary>
-    RaycastHit _rotateHit;
-
+    Vector3 _gravityDir = Vector3.down;
+    /// <summary>ジャンプする方向(床以外でのジャンプ時のみ)</summary>
     Vector3 _jumpDir;
-    public bool _changeing { get; private set; }
-    bool _isGround = true;
-    bool _isJump = false;
-    [SerializeField] bool _isGravity = false;
-
-    float _mouse_move_x;
-
+    /// <summary>回転する時に必要な法線ベクトルを取得するためのRay</summary>
+    RaycastHit _rotateHit;
+    /// <summary>Vertical</summary>
     float _v;
+    /// <summary>マウスのX軸の動いた量</summary>
+    float _mouseMoveX;
+    /// <summary>回転中かどうか</summary>
+    bool _isRotate = false;
+    /// <summary>接地しているかどうか</summary>
+    bool _isGrounded = true;
+    /// <summary>ジャンプ中かどうか</summary>
+    bool _isJumping = false;
 
-    [SerializeField] float _mouseSensitivity = 1f; // いわゆるマウス感度
-
-    // Start is called before the first frame update
     void Start()
     {
         this.gameObject.GetComponent<Rigidbody>().useGravity = false;
         _rb = this.gameObject.GetComponent<Rigidbody>();
-        _gravityDir = Vector3.down;
-        _isGravity = true;
-        _changeing = false;
     }
 
     void FixedUpdate()
     {
-        Move();
         Gravity();
+        Move();
         FallForce();
     }
 
@@ -69,11 +65,14 @@ public class CockroachController : MonoBehaviour
         MouseMove();
     }
 
+    /// <summary>
+    /// 移動
+    /// </summary>
     void Move()
     {
         _dir = transform.forward;
 
-        if (_isJump) return;
+        if (_isJumping) return;
 
         if (_v > 0) // 進む処理
         {
@@ -81,14 +80,17 @@ public class CockroachController : MonoBehaviour
 
             if (_gravityDir == Vector3.up || _gravityDir == Vector3.down)
             {
+                // 床か天井にいる時は、Y軸方向の速度を維持
                 _velo.y = _rb.velocity.y;
             }
             else if (_gravityDir == Vector3.left || _gravityDir == Vector3.right)
             {
+                // X軸の壁にいる時は、X軸方向の速度を維持
                 _velo.x = _rb.velocity.x;
             }
             else if (_gravityDir == Vector3.forward || _gravityDir == Vector3.back)
             {
+                // Z軸の壁にいる時は、Z軸方向の速度を維持
                 _velo.z = _rb.velocity.z;
             }
         }
@@ -96,54 +98,50 @@ public class CockroachController : MonoBehaviour
         {
             if (_gravityDir == Vector3.up || _gravityDir == Vector3.down)
             {
+                // 床か天井にいる時は、Y軸方向の速度以外を0
                 _velo = new Vector3(0f, _rb.velocity.y, 0f);
             }
             else if (_gravityDir == Vector3.left || _gravityDir == Vector3.right)
             {
+                // X軸の壁にいる時は、X軸方向の速度以外を0
                 _velo = new Vector3(_rb.velocity.x, 0f, 0f);
             }
             else if (_gravityDir == Vector3.forward || _gravityDir == Vector3.back)
             {
+                // Z軸の壁にいる時は、Z軸方向の速度以外を0
                 _velo = new Vector3(0f, 0f, _rb.velocity.z);
             }
         }
 
-        if (_changeing && !_isJump)
+        if (_isRotate && !_isJumping)
         {
+            // 回転中かつジャンプ中ではないとき
             _velo = Vector3.zero;
         }
 
         _rb.velocity = _velo;
-
-        //if (h != 0)
-        //{
-        //    transform.Rotate(new Vector3(0f, h * _turnSpeed, 0f));
-        //}
     }
 
     private void MouseMove()
     {
-        _mouse_move_x = Input.GetAxis("Mouse X") * _mouseSensitivity;
-        transform.Rotate(new Vector3(0f, _mouse_move_x, 0f));
+        _mouseMoveX = Input.GetAxis("Mouse X") * _mouseSensitivity;
+        transform.Rotate(new Vector3(0f, _mouseMoveX, 0f));
     }
 
     void Gravity()
     {
-        if (_isGravity)
-        {
-            _rb.AddForce(_gravityDir * _gravityPower, ForceMode.Force);
-        }
+        _rb.AddForce(_gravityDir * _gravityPower, ForceMode.Force);
     }
 
     /// <summary>ジャンプする</summary>
     /// <param name="jumpPower">ジャンプする力</param>
     void Jump(float jumpPower)
     {
-        if (Input.GetButtonDown("Jump") && _isGround)
+        if (Input.GetButtonDown("Jump") && _isGrounded)
         {
-            _isJump = true;
+            _isJumping = true;
 
-            _isGround = false;
+            _isGrounded = false;
 
             _rb.AddForce(-_gravityDir.normalized * jumpPower, ForceMode.Impulse);
 
@@ -158,7 +156,7 @@ public class CockroachController : MonoBehaviour
 
     void FallForce()
     {
-        if (_isJump && _gravityDir != Vector3.down)
+        if (_isJumping && _gravityDir != Vector3.down)
         {
             _rb.AddForce(_jumpDir);
         }
@@ -175,11 +173,11 @@ public class CockroachController : MonoBehaviour
 
         if (isGround)
         {
-            _isGround = true;
+            _isGrounded = true;
         }
         else
         {
-            _isGround = false;
+            _isGrounded = false;
         }
     }
 
@@ -196,9 +194,9 @@ public class CockroachController : MonoBehaviour
 
     IEnumerator ChangeRotate(Vector3 nomal, float waitTime)
     {
-        _changeing = true;
+        _isRotate = true;
 
-        if (!_isJump) // 壁に上ったりする時だけ使う
+        if (!_isJumping) // 壁に上ったりする時だけ使う
         {
             Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation; // https://teratail.com/questions/290578
             transform.DORotateQuaternion(toRotate, 0.25f).OnComplete(() =>
@@ -210,18 +208,18 @@ public class CockroachController : MonoBehaviour
 
         yield return new WaitForSeconds(waitTime); // 回転する時間を稼ぐ
 
-        if (_isJump)
+        if (_isJumping)
         {
             Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation; // https://teratail.com/questions/290578
             transform.DORotateQuaternion(toRotate, 0.25f);
         }
 
-        _changeing = false;
+        _isRotate = false;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        _isJump = false;
+        _isJumping = false;
 
         _jumpDir = Vector3.zero; // 着地したらジャンプする方向をリセット
 
@@ -241,7 +239,7 @@ public class CockroachController : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        if (_isJump || _changeing) return;
+        if (_isJumping || _isRotate) return;
 
         if (_rotateHit.collider)
         {
@@ -252,7 +250,7 @@ public class CockroachController : MonoBehaviour
             }
         }
 
-        if (!_isGround)
+        if (!_isGrounded)
         {
             ChangeGravity(Vector3.down);
             StartCoroutine(ChangeRotate(Vector3.up, 0.05f));
