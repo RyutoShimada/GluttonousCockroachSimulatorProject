@@ -4,34 +4,28 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] float _sensitivity = 1f; // いわゆるマウス感度
-    [SerializeField] float _mouseYMaxRange = 10f;
-    [SerializeField] float _mouseYMinRange = -10f;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] float m_sensitivity = 1f; // いわゆるマウス感度
+    [SerializeField] float m_mouseYMaxRange = 10f;
+    [SerializeField] float m_mouseYMinRange = -10f;
 
     // Update is called once per frame
     void Update()
     {
-        float mouse_move_y = Input.GetAxis("Mouse Y") * _sensitivity;
+        float mouse_move_y = Input.GetAxis("Mouse Y") * m_sensitivity;
 
         transform.Rotate(new Vector3(-mouse_move_y, 0f, 0f));
 
-        if (transform.localEulerAngles.x < _mouseYMaxRange && transform.localEulerAngles.x > 90)
+        if (transform.localEulerAngles.x < m_mouseYMaxRange && transform.localEulerAngles.x > 90)
         {
             Vector3 v3 = transform.localEulerAngles;
-            v3.x = _mouseYMaxRange;
+            v3.x = m_mouseYMaxRange;
             transform.localEulerAngles = v3;
         }
         
-        if (transform.localEulerAngles.x > _mouseYMinRange && transform.localEulerAngles.x < 90)
+        if (transform.localEulerAngles.x > m_mouseYMinRange && transform.localEulerAngles.x < 90)
         {
             Vector3 v3 = transform.localEulerAngles;
-            v3.x = _mouseYMinRange;
+            v3.x = m_mouseYMinRange;
             transform.localEulerAngles = v3;
         }
     }
