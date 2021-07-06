@@ -7,46 +7,46 @@ using DG.Tweening;
 public class CockroachMoveController : MonoBehaviour
 {
     /// <summary>移動速度</summary>
-    [SerializeField] float _moveSpeed = 7f;
+    [SerializeField] float m_moveSpeed = 7f;
     /// <summary>ジャンプ力</summary>
-    [SerializeField] float _jumpPower = 4f;
+    [SerializeField] float m_jumpPower = 4f;
     /// <summary>重力</summary>
-    [SerializeField] float _gravityPower = 10f;
+    [SerializeField] float m_gravityPower = 10f;
     /// <summary>Rayを飛ばす距離</summary>
-    [SerializeField] float _maxRayDistance = 1f;
+    [SerializeField] float m_maxRayDistance = 1f;
     /// <summary>Rayを飛ばす始点</summary>
-    [SerializeField] Transform _rayOriginPos = null;
+    [SerializeField] Transform m_rayOriginPos = null;
     /// <summary>回転する時に判定するためのRayをとばす位置</summary>
-    [SerializeField] Transform _rotateRayPos = null;
+    [SerializeField] Transform m_rotateRayPos = null;
     /// <summary>マウスの感度</summary>
-    [SerializeField] float _mouseSensitivity = 5f;
+    [SerializeField] float m_mouseSensitivity = 5f;
     /// <summary>Rigidbody</summary>
-    Rigidbody _rb;
+    Rigidbody m_rb;
     /// <summary>Velocity</summary>
-    Vector3 _velo;
+    Vector3 m_velo;
     /// <summary>Direction</summary>
-    Vector3 _dir;
+    Vector3 m_dir;
     /// <summary>重力方向</summary>
-    Vector3 _gravityDir = Vector3.down;
+    Vector3 m_gravityDir = Vector3.down;
     /// <summary>ジャンプする方向(床以外でのジャンプ時のみ)</summary>
-    Vector3 _jumpDir;
+    Vector3 m_jumpDir;
     /// <summary>回転する時に必要な法線ベクトルを取得するためのRay</summary>
-    RaycastHit _rotateHit;
+    RaycastHit m_rotateHit;
     /// <summary>Vertical</summary>
-    float _v;
+    float m_v;
     /// <summary>マウスのX軸の動いた量</summary>
-    float _mouseMoveX;
+    float m_mouseMoveX;
     /// <summary>回転中かどうか</summary>
-    bool _isRotate = false;
+    bool m_isRotate = false;
     /// <summary>接地しているかどうか</summary>
-    bool _isGrounded = true;
+    bool m_isGrounded = true;
     /// <summary>ジャンプ中かどうか</summary>
-    bool _isJumping = false;
+    bool m_isJumping = false;
 
     void Start()
     {
         this.gameObject.GetComponent<Rigidbody>().useGravity = false;
-        _rb = this.gameObject.GetComponent<Rigidbody>();
+        m_rb = this.gameObject.GetComponent<Rigidbody>();
     }
 
     void FixedUpdate()
@@ -59,9 +59,9 @@ public class CockroachMoveController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _v = Input.GetAxisRaw("Vertical");
+        m_v = Input.GetAxisRaw("Vertical");
         Ray();
-        Jump(_jumpPower);
+        Jump(m_jumpPower);
         MouseMove();
     }
 
@@ -70,84 +70,84 @@ public class CockroachMoveController : MonoBehaviour
     /// </summary>
     void Move()
     {
-        _dir = transform.forward;
+        m_dir = transform.forward;
 
-        if (_isJumping) return;
+        if (m_isJumping) return;
 
-        if (_v > 0) // 進む処理
+        if (m_v > 0) // 進む処理
         {
-            _velo = _dir.normalized * _moveSpeed;
+            m_velo = m_dir.normalized * m_moveSpeed;
 
-            if (_gravityDir == Vector3.up || _gravityDir == Vector3.down)
+            if (m_gravityDir == Vector3.up || m_gravityDir == Vector3.down)
             {
                 // 床か天井にいる時は、Y軸方向の速度を維持
-                _velo.y = _rb.velocity.y;
+                m_velo.y = m_rb.velocity.y;
             }
-            else if (_gravityDir == Vector3.left || _gravityDir == Vector3.right)
+            else if (m_gravityDir == Vector3.left || m_gravityDir == Vector3.right)
             {
                 // X軸の壁にいる時は、X軸方向の速度を維持
-                _velo.x = _rb.velocity.x;
+                m_velo.x = m_rb.velocity.x;
             }
-            else if (_gravityDir == Vector3.forward || _gravityDir == Vector3.back)
+            else if (m_gravityDir == Vector3.forward || m_gravityDir == Vector3.back)
             {
                 // Z軸の壁にいる時は、Z軸方向の速度を維持
-                _velo.z = _rb.velocity.z;
+                m_velo.z = m_rb.velocity.z;
             }
         }
         else // 止まる処理
         {
-            if (_gravityDir == Vector3.up || _gravityDir == Vector3.down)
+            if (m_gravityDir == Vector3.up || m_gravityDir == Vector3.down)
             {
                 // 床か天井にいる時は、Y軸方向の速度以外を0
-                _velo = new Vector3(0f, _rb.velocity.y, 0f);
+                m_velo = new Vector3(0f, m_rb.velocity.y, 0f);
             }
-            else if (_gravityDir == Vector3.left || _gravityDir == Vector3.right)
+            else if (m_gravityDir == Vector3.left || m_gravityDir == Vector3.right)
             {
                 // X軸の壁にいる時は、X軸方向の速度以外を0
-                _velo = new Vector3(_rb.velocity.x, 0f, 0f);
+                m_velo = new Vector3(m_rb.velocity.x, 0f, 0f);
             }
-            else if (_gravityDir == Vector3.forward || _gravityDir == Vector3.back)
+            else if (m_gravityDir == Vector3.forward || m_gravityDir == Vector3.back)
             {
                 // Z軸の壁にいる時は、Z軸方向の速度以外を0
-                _velo = new Vector3(0f, 0f, _rb.velocity.z);
+                m_velo = new Vector3(0f, 0f, m_rb.velocity.z);
             }
         }
 
-        if (_isRotate && !_isJumping)
+        if (m_isRotate && !m_isJumping)
         {
             // 回転中かつジャンプ中ではないとき
-            _velo = Vector3.zero;
+            m_velo = Vector3.zero;
         }
 
-        _rb.velocity = _velo;
+        m_rb.velocity = m_velo;
     }
 
     private void MouseMove()
     {
-        _mouseMoveX = Input.GetAxis("Mouse X") * _mouseSensitivity;
-        transform.Rotate(new Vector3(0f, _mouseMoveX, 0f));
+        m_mouseMoveX = Input.GetAxis("Mouse X") * m_mouseSensitivity;
+        transform.Rotate(new Vector3(0f, m_mouseMoveX, 0f));
     }
 
     void Gravity()
     {
-        _rb.AddForce(_gravityDir * _gravityPower, ForceMode.Force);
+        m_rb.AddForce(m_gravityDir * m_gravityPower, ForceMode.Force);
     }
 
     /// <summary>ジャンプする</summary>
     /// <param name="jumpPower">ジャンプする力</param>
     void Jump(float jumpPower)
     {
-        if (Input.GetButtonDown("Jump") && _isGrounded)
+        if (Input.GetButtonDown("Jump") && m_isGrounded)
         {
-            _isJumping = true;
+            m_isJumping = true;
 
-            _isGrounded = false;
+            m_isGrounded = false;
 
-            _rb.AddForce(-_gravityDir.normalized * jumpPower, ForceMode.Impulse);
+            m_rb.AddForce(-m_gravityDir.normalized * jumpPower, ForceMode.Impulse);
 
-            if (_gravityDir != Vector3.down)
+            if (m_gravityDir != Vector3.down)
             {
-                _jumpDir = -_gravityDir;
+                m_jumpDir = -m_gravityDir;
                 ChangeGravity(Vector3.down);
                 StartCoroutine(ChangeRotate(Vector3.up, 0.1f));
             }
@@ -156,9 +156,9 @@ public class CockroachMoveController : MonoBehaviour
 
     void FallForce()
     {
-        if (_isJumping && _gravityDir != Vector3.down)
+        if (m_isJumping && m_gravityDir != Vector3.down)
         {
-            _rb.AddForce(_jumpDir);
+            m_rb.AddForce(m_jumpDir);
         }
     }
 
@@ -173,59 +173,59 @@ public class CockroachMoveController : MonoBehaviour
 
         if (isGround)
         {
-            _isGrounded = true;
+            m_isGrounded = true;
         }
         else
         {
-            _isGrounded = false;
+            m_isGrounded = false;
         }
     }
 
     void Ray()
     {
-        Physics.Raycast(_rayOriginPos.position, _rotateRayPos.position - _rayOriginPos.position, out _rotateHit, _maxRayDistance);
-        Debug.DrawRay(_rayOriginPos.position, (_rotateRayPos.position - _rayOriginPos.position).normalized * _maxRayDistance, Color.green);
+        Physics.Raycast(m_rayOriginPos.position, m_rotateRayPos.position - m_rayOriginPos.position, out m_rotateHit, m_maxRayDistance);
+        Debug.DrawRay(m_rayOriginPos.position, (m_rotateRayPos.position - m_rayOriginPos.position).normalized * m_maxRayDistance, Color.green);
     }
 
     void ChangeGravity(Vector3 nomal)
     {
-        _gravityDir = nomal;
+        m_gravityDir = nomal;
     }
 
     IEnumerator ChangeRotate(Vector3 nomal, float waitTime)
     {
-        _isRotate = true;
+        m_isRotate = true;
 
-        if (!_isJumping) // 壁に上ったりする時だけ使う
+        if (!m_isJumping) // 壁に上ったりする時だけ使う
         {
             Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation; // https://teratail.com/questions/290578
             transform.DORotateQuaternion(toRotate, 0.25f).OnComplete(() =>
             {
                 // 回転した時にできた隙間を強制的に埋める
-                _rb.AddForce(_gravityDir * _gravityPower, ForceMode.Impulse);
+                m_rb.AddForce(m_gravityDir * m_gravityPower, ForceMode.Impulse);
             });
         }
 
         yield return new WaitForSeconds(waitTime); // 回転する時間を稼ぐ
 
-        if (_isJumping)
+        if (m_isJumping)
         {
             Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation; // https://teratail.com/questions/290578
             transform.DORotateQuaternion(toRotate, 0.25f);
         }
 
-        _isRotate = false;
+        m_isRotate = false;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        _isJumping = false;
+        m_isJumping = false;
 
-        _jumpDir = Vector3.zero; // 着地したらジャンプする方向をリセット
+        m_jumpDir = Vector3.zero; // 着地したらジャンプする方向をリセット
 
         foreach (ContactPoint point in collision.contacts)
         {
-            if (_gravityDir == Vector3.down && point.normal == Vector3.up)
+            if (m_gravityDir == Vector3.down && point.normal == Vector3.up)
             {
                 return;
             }
@@ -239,18 +239,18 @@ public class CockroachMoveController : MonoBehaviour
 
     private void OnCollisionExit(Collision collision)
     {
-        if (_isJumping || _isRotate) return;
+        if (m_isJumping || m_isRotate) return;
 
-        if (_rotateHit.collider)
+        if (m_rotateHit.collider)
         {
-            if (_rotateHit.normal != -_gravityDir)
+            if (m_rotateHit.normal != -m_gravityDir)
             {
-                ChangeGravity(-_rotateHit.normal);
-                StartCoroutine(ChangeRotate(_rotateHit.normal, 0.05f));
+                ChangeGravity(-m_rotateHit.normal);
+                StartCoroutine(ChangeRotate(m_rotateHit.normal, 0.05f));
             }
         }
 
-        if (!_isGrounded)
+        if (!m_isGrounded)
         {
             ChangeGravity(Vector3.down);
             StartCoroutine(ChangeRotate(Vector3.up, 0.05f));
