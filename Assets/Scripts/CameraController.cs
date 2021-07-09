@@ -11,6 +11,11 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        CameraControlle();
+    }
+
+    void CameraControlle()
+    {
         float mouse_move_y = Input.GetAxis("Mouse Y") * m_sensitivity;
 
         transform.Rotate(new Vector3(-mouse_move_y, 0f, 0f));
@@ -21,7 +26,7 @@ public class CameraController : MonoBehaviour
             v3.x = m_mouseYMaxRange;
             transform.localEulerAngles = v3;
         }
-        
+
         if (transform.localEulerAngles.x > m_mouseYMinRange && transform.localEulerAngles.x < 90)
         {
             Vector3 v3 = transform.localEulerAngles;

@@ -42,6 +42,18 @@ public class CockroachMoveController : MonoBehaviour
     bool m_isGrounded = true;
     /// <summary>ジャンプ中かどうか</summary>
     bool m_isJumping = false;
+    /// <summary>死んでいるかどうか</summary>
+    bool m_isDed = false;
+    /// <summary>死んでいるかどうか</summary>
+    public bool IsDed
+    {
+        get => m_isDed;
+
+        set
+        {
+            m_isDed = value;
+        }
+    }
 
     void Start()
     {
@@ -51,6 +63,7 @@ public class CockroachMoveController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (m_isDed) return;
         Gravity();
         Move();
         FallForce();
@@ -59,6 +72,7 @@ public class CockroachMoveController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (m_isDed) return;
         m_v = Input.GetAxisRaw("Vertical");
         Ray();
         Jump(m_jumpPower);
