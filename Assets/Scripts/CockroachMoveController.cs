@@ -217,6 +217,27 @@ public class CockroachMoveController : MonoBehaviour
         m_isRotate = false;
     }
 
+    /// <summary>
+    /// cockroachから呼ばれる
+    /// </summary>
+    /// <param name="addSpeed">加算する速度</param>
+    /// <param name="addJump">加算するジャンプ力</param>
+    public void InvincibleMode(bool isMode, float addSpeed, float addJump)
+    {
+        if (isMode)
+        {
+            Debug.Log($"InvincibleMode : {isMode}");
+            m_moveSpeed += addSpeed;
+            m_jumpPower += addJump;
+        }
+        else
+        {
+            Debug.Log($"InvincibleMode : {isMode}");
+            m_moveSpeed -= addSpeed;
+            m_jumpPower -= addJump;
+        }
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         m_isJumping = false;
