@@ -8,7 +8,7 @@ using UnityEngine;
 public class Food : MonoBehaviour
 {
     /// <summary>回復する値</summary>
-    [SerializeField] int m_heelValue = 10;
+    public int m_heelValue = 10;
 
     /// <summary>
     /// このオブジェクトを非アクティブにする。(Cockroachから呼ばれる)

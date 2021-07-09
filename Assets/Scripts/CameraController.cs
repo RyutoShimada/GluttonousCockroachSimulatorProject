@@ -5,8 +5,8 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [SerializeField] float m_sensitivity = 1f; // いわゆるマウス感度
-    [SerializeField] float m_mouseYMaxRange = 10f;
-    [SerializeField] float m_mouseYMinRange = -10f;
+    [SerializeField] float m_mouseYMaxRange = 300f;
+    [SerializeField] float m_mouseYMinRange = 0f;
 
     // Update is called once per frame
     void Update()

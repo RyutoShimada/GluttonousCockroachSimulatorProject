@@ -10,6 +10,7 @@ TagManager:
   - Furniture
   - Collider
   - Cockroach
+  - Food
   layers:
   - Default
   - TransparentFX
