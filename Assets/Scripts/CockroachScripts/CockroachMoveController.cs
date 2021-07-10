@@ -243,13 +243,11 @@ public class CockroachMoveController : MonoBehaviour
     {
         if (isMode)
         {
-            Debug.Log($"InvincibleMode : {isMode}");
             m_moveSpeed += addSpeed;
             m_jumpPower += addJump;
         }
         else
         {
-            Debug.Log($"InvincibleMode : {isMode}");
             m_moveSpeed -= addSpeed;
             m_jumpPower -= addJump;
         }
