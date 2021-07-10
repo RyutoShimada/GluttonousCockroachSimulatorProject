@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using DG.Tweening;
 
+/// <summary>
+/// ゴキブリのスクリプト
+/// </summary>
 public class Cockroach : MonoBehaviour
 {
     /// <summary>最大の体力値</summary>
@@ -25,11 +26,8 @@ public class Cockroach : MonoBehaviour
     /// <summary>無敵モード</summary>
     [SerializeField] bool m_invincibleMode = false;
 
-    [SerializeField] Image m_satietyGaugeImage = null;
-    [SerializeField] Slider m_hpSlider = null;
-
-    /// <summary>CockroachMoveController</summary>
     CockroachMoveController m_CMC;
+    CockroachUI m_CU;
     /// <summary>1秒間を測るためのタイマー</summary>
     float m_oneSecondTimer = 0f;
     /// <summary>死んだかどうか</summary>
@@ -41,8 +39,9 @@ public class Cockroach : MonoBehaviour
         m_satietyGauge = m_maxSatietyGauge;
         m_hp = m_maxHp;
         m_CMC = GetComponent<CockroachMoveController>();
-        ReflectGauge();
-        ReflectHPSlider();
+        m_CU = GetComponent<CockroachUI>();
+        m_CU.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
+        m_CU.ReflectHPSlider(m_hp, m_maxHp);
     }
 
     private void Update()
@@ -94,17 +93,15 @@ public class Cockroach : MonoBehaviour
         {
             //満腹ゲージを減らす
             m_satietyGauge -= decreaseValue;
-            Debug.Log("満腹ゲージ : " + m_satietyGauge);
         }
         else
         {
             // 体力を減らす
             m_hp -= decreaseValue;
-            Debug.Log($"Damage! -{decreaseValue}, HP : {m_hp}");
         }
 
-        ReflectGauge();
-        ReflectHPSlider();
+        m_CU.ReflectGauge(m_satietyGauge , m_maxSatietyGauge);
+        m_CU.ReflectHPSlider(m_hp, m_maxHp);
 
         CheckAlive();
     }
@@ -123,7 +120,7 @@ public class Cockroach : MonoBehaviour
             m_satietyGauge = m_maxSatietyGauge;
         }
 
-        ReflectGauge();
+        m_CU.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
 
         Debug.Log("Heel");
     }
@@ -143,19 +140,9 @@ public class Cockroach : MonoBehaviour
 
         StartCoroutine(InvincibleMode());
 
-        ReflectHPSlider();
+        m_CU.ReflectHPSlider(m_hp, m_maxHp);
 
         Debug.Log($"Hit!Damage! -{damageValue}, HP : {m_hp}");
-    }
-
-    void ReflectGauge()
-    {
-        m_satietyGaugeImage.fillAmount = (float)m_satietyGauge / (float)m_maxSatietyGauge;
-    }
-
-    void ReflectHPSlider()
-    {
-        m_hpSlider.value = (float)m_hp / (float)m_maxHp;
     }
 
     private void OnTriggerEnter(Collider other)

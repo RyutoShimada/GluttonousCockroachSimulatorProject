@@ -4,6 +4,9 @@ using UnityEngine;
 using Cinemachine;
 using DG.Tweening;
 
+/// <summary>
+/// ゴキブリの動きに関するスクリプト
+/// </summary>
 public class CockroachMoveController : MonoBehaviour
 {
     /// <summary>移動速度</summary>
