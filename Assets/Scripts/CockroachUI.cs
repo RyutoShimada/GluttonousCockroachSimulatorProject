@@ -9,9 +9,40 @@ using DG.Tweening;
 /// </summary>
 public class CockroachUI : MonoBehaviour
 {
+    /// <summary>満腹ゲージのUI</summary>
     [SerializeField] Image m_satietyGaugeImage = null;
+    /// <summary>HPバーのUI</summary>
     [SerializeField] Slider m_hpSlider = null;
-    [SerializeField, Range(0.1f, 1.0f)] float m_secondsToDecrease = 0.5f;
+    /// <summary>ダメージを受けた時のUI</summary>
+    [SerializeField] Image m_damageImage = null;
+    /// <summary>UIの動きを何秒かけて行うか</summary>
+    [SerializeField, Range(0.1f, 1.0f)] float m_afterSeconds = 0.2f;
+    /// <summary>m_damageImageの初期colorを保存しておく変数</summary>
+    Color m_originDamageColor;
+    /// <summary>Alfa値が0のm_damageImageを保存しておく変数</summary>
+    Color m_color;
+
+    private void Start()
+    {
+        m_damageImage.gameObject.SetActive(true);
+        m_originDamageColor = m_damageImage.color;
+
+        // アルファ値を0にする
+        m_color = m_damageImage.color;
+        m_color.a = 0;
+        m_damageImage.color = m_color;
+    }
+
+    /// <summary>
+    /// ダメージを受けた時に画面を赤くする
+    /// </summary>
+    /// <returns></returns>
+    public IEnumerator DamageColor()
+    {
+        m_damageImage.DOColor(m_originDamageColor, m_afterSeconds);
+        yield return new WaitForSeconds(0.25f);
+        m_damageImage.DOColor(m_color, m_afterSeconds);
+    }
 
     /// <summary>
     /// Cockroachから満腹ゲージが減った時に呼ぶ
@@ -20,8 +51,7 @@ public class CockroachUI : MonoBehaviour
     /// <param name="maxSatietyGauge">満腹ゲージの最大値</param>
     public void ReflectGauge(float satietyGauge, float maxSatietyGauge)
     {
-        m_satietyGaugeImage.DOFillAmount(satietyGauge / maxSatietyGauge, 0.5f);
-        //m_satietyGaugeImage.fillAmount = satietyGauge / maxSatietyGauge;
+        m_satietyGaugeImage.DOFillAmount(satietyGauge / maxSatietyGauge, m_afterSeconds);
     }
 
     /// <summary>
@@ -31,7 +61,6 @@ public class CockroachUI : MonoBehaviour
     /// <param name="maxHp">体力の最大値</param>
     public void ReflectHPSlider(float hp, float maxHp)
     {
-        m_hpSlider.DOValue(hp / maxHp, 0.5f);
-        //m_hpSlider.value = hp / maxHp;
+        m_hpSlider.DOValue(hp / maxHp, m_afterSeconds);
     }
 }

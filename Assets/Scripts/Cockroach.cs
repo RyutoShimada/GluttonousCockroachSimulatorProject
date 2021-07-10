@@ -98,6 +98,7 @@ public class Cockroach : MonoBehaviour
         {
             // 体力を減らす
             m_hp -= decreaseValue;
+            StartCoroutine(m_CU.DamageColor());
         }
 
         m_CU.ReflectGauge(m_satietyGauge , m_maxSatietyGauge);
@@ -135,12 +136,10 @@ public class Cockroach : MonoBehaviour
         if (m_invincibleMode) return;
 
         m_hp -= damageValue;
-
-        CheckAlive();
-
-        StartCoroutine(InvincibleMode());
-
-        m_CU.ReflectHPSlider(m_hp, m_maxHp);
+        CheckAlive();                           // 生存確認
+        StartCoroutine(InvincibleMode());       // 無敵モード開始
+        StartCoroutine(m_CU.DamageColor());     // ダメージを受けたUI表示
+        m_CU.ReflectHPSlider(m_hp, m_maxHp);    // HPバーを減少させる
 
         Debug.Log($"Hit!Damage! -{damageValue}, HP : {m_hp}");
     }
