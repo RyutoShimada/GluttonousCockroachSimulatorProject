@@ -6,25 +6,45 @@ using UnityEngine;
 
 public class HumanMoveController : MonoBehaviour
 {
+    /// <summary>移動速度</summary>
     [SerializeField] float m_moveSpeed = 1f;
+    /// <summary>体を回転する速度</summary>
     [SerializeField] float m_turnSpeed = 1f;
-    [SerializeField] Transform m_rayOrigin = null;
+    /// <summary>攻撃する範囲のオブジェクト</summary>
     [SerializeField] GameObject m_attackRangeObj = null;
+    /// <summary>Rayを飛ばす最大距離</summary>
     [SerializeField] float m_maxRayDistance = 1f;
 
+    /// <summary>攻撃値</summary>
+    [SerializeField] int m_attackValue = 20; // 後で別のスクリプトに移すこと
+
+    /// <summary>IKで右手を移動させるターゲット</summary>
     [SerializeField] Transform m_rightHandIKTarget = null;
+    /// <summary>IKを滑らかに実行する速度</summary>
     [SerializeField] float m_rightIKPositionWeightSpeed = 1f;
+    /// <summary>攻撃時のスプレーのパーティクル</summary>
+    [SerializeField] GameObject m_sprayParticle = null;
+    /// <summary>実際に変化するのIKのアニメーション速度</summary>
     float m_IKWeight = 0f;
 
-    [SerializeField] bool isIKTest = false;
-    Rigidbody m_rb;
+    /// <summary>スクリプト</summary>
+    [SerializeField] HumanSprayAttackRange m_HSAR = null;
+    /// <summary>垂直方向と水平方向の入力を受け付ける</summary>
     Vector2 m_input;
+    /// <summary>方向</summary>
     Vector3 m_dir;
+    /// <summary>速度ベクト</summary>
     Vector3 m_vel;
+    /// <summary>攻撃しているかどうか</summary>
+    bool isSprayAttacking = false;
+    Rigidbody m_rb;
     Animator m_anim;
     RaycastHit m_hit;
 
-    bool isSprayAttacking = false;
+#if DEBUG
+    /// <summary>IKの動きを調整するときに使う</summary>
+    [SerializeField] bool isIKTest = false;
+#endif
 
     // Start is called before the first frame update
     void Start()
@@ -44,7 +64,7 @@ public class HumanMoveController : MonoBehaviour
     {
         m_input.x = Input.GetAxisRaw("Horizontal");
         m_input.y = Input.GetAxisRaw("Vertical");
-        Attack();
+        AttackSpray();
         DoRotate();
         DoAnimation();
     }
@@ -57,6 +77,7 @@ public class HumanMoveController : MonoBehaviour
         {
             //カメラが向いている方向を基準にキャラクターが動くように、入力のベクトルを変換する
             m_dir = Camera.main.transform.TransformDirection(m_dir);
+            m_dir.y = 0;
 
             m_vel = m_dir.normalized * m_moveSpeed;
             m_vel.y = m_rb.velocity.y;
@@ -68,29 +89,48 @@ public class HumanMoveController : MonoBehaviour
         }
     }
 
-    void RayOfAttack()
+    bool RayOfAttack()
     {
-        if (Physics.Raycast(m_rayOrigin.position, Camera.main.transform.forward, out m_hit, m_maxRayDistance))
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out m_hit, m_maxRayDistance))
         {
-            Debug.DrawRay(m_rayOrigin.position, Camera.main.transform.forward * m_maxRayDistance, Color.green);
-            //Debug.Log($"HitDistance : {Vector3.Distance(m_rayOrigin.position, m_hit.point)}");
+            Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * m_maxRayDistance, Color.green);
+            //Debug.Log($"HitDistance : {Vector3.Distance(Camera.main.transform.position, m_hit.point)}");
+
+            if (m_hit.collider.gameObject.tag == "Cockroach" && m_HSAR.m_sprayHit)
+            {
+                //m_hit.collider.gameObject.GetComponent<Cockroach>().BeAttacked(m_attackValue);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
         }
     }
 
-    void Attack()
+    void AttackSpray()
     {
         m_attackRangeObj.transform.rotation = Camera.main.transform.rotation;
 
         if (Input.GetButton("Fire1") || isIKTest)
         {
-            RayOfAttack();
-            m_attackRangeObj.SetActive(true);
             isSprayAttacking = true;
+            m_attackRangeObj.SetActive(true);
+            m_sprayParticle.SetActive(true);
+            if (RayOfAttack())
+            {
+                Debug.Log("Hit!");
+            }
         }
         else if (Input.GetButtonUp("Fire1") || !isIKTest)
         {
-            m_attackRangeObj.SetActive(false);
             isSprayAttacking = false;
+            m_attackRangeObj.SetActive(false);
+            m_sprayParticle.SetActive(false);
         }
     }
 
@@ -106,8 +146,15 @@ public class HumanMoveController : MonoBehaviour
     void DoAnimation()
     {
         // とりあえずのアニメーション
-        m_anim.SetFloat("Speed", Mathf.Abs(m_input.x));
-        m_anim.SetFloat("Speed", Mathf.Abs(m_input.y));
+        if (m_input.x != 0)
+        {
+            m_anim.SetFloat("Speed", Mathf.Abs(m_input.x));
+        }
+        else
+        {
+            m_anim.SetFloat("Speed", Mathf.Abs(m_input.y));
+        }
+
     }
 
 
