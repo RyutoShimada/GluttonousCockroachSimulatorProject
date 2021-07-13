@@ -31,7 +31,7 @@ public class Cockroach : MonoBehaviour
     /// <summary>1秒間を測るためのタイマー</summary>
     float m_oneSecondTimer = 0f;
     /// <summary>死んだかどうか</summary>
-    bool m_isDed = false;
+    public bool m_isDed = false;
 
     private void Start()
     {

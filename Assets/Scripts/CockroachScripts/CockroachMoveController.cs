@@ -211,6 +211,8 @@ public class CockroachMoveController : MonoBehaviour
 
     IEnumerator ChangeRotate(Vector3 nomal, float waitTime)
     {
+        if (m_isRotate) yield return null;
+
         m_isRotate = true;
 
         if (!m_isJumping) // 壁に上ったりする時だけ使う
@@ -222,14 +224,13 @@ public class CockroachMoveController : MonoBehaviour
                 m_rb.AddForce(m_gravityDir * m_gravityPower, ForceMode.Impulse);
             });
         }
-
-        yield return new WaitForSeconds(waitTime); // 回転する時間を稼ぐ
-
-        if (m_isJumping)
+        else
         {
             Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation; // https://teratail.com/questions/290578
             transform.DORotateQuaternion(toRotate, 0.25f);
         }
+
+        yield return new WaitForSeconds(waitTime); // 回転する時間を稼ぐ
 
         m_isRotate = false;
     }
@@ -255,12 +256,15 @@ public class CockroachMoveController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
+        //Debug.Log("ENTER : " + collision.gameObject.name);
+
         m_isJumping = false;
 
         m_jumpDir = Vector3.zero; // 着地したらジャンプする方向をリセット
 
         foreach (ContactPoint point in collision.contacts)
         {
+            //Debug.Log(point.normal);
             if (m_gravityDir == Vector3.down && point.normal == Vector3.up)
             {
                 return;
@@ -284,12 +288,6 @@ public class CockroachMoveController : MonoBehaviour
                 ChangeGravity(-m_rotateHit.normal);
                 StartCoroutine(ChangeRotate(m_rotateHit.normal, 0.05f));
             }
-        }
-
-        if (!m_isGrounded)
-        {
-            ChangeGravity(Vector3.down);
-            StartCoroutine(ChangeRotate(Vector3.up, 0.05f));
         }
     }
 }
