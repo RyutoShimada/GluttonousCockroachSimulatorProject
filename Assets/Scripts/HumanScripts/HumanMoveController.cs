@@ -44,6 +44,18 @@ public class HumanMoveController : MonoBehaviour
 #if DEBUG
     /// <summary>IKの動きを調整するときに使う</summary>
     [SerializeField] bool isIKTest = false;
+    /// <summary>動けるかどうか</summary>
+    bool m_isCanMove = true;
+    /// <summary>動けるかどうか</summary>
+    public bool IsCanMove
+    {
+        get => m_isCanMove;
+
+        set
+        {
+            m_isCanMove = value;
+        }
+    }
 #endif
 
     // Start is called before the first frame update
@@ -56,12 +68,14 @@ public class HumanMoveController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!m_isCanMove) return;
         Move();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!m_isCanMove) return;
         m_input.x = Input.GetAxisRaw("Horizontal");
         m_input.y = Input.GetAxisRaw("Vertical");
         AttackSpray();
@@ -98,7 +112,6 @@ public class HumanMoveController : MonoBehaviour
 
             if (m_hit.collider.gameObject.tag == "Cockroach" && m_HSAR.m_sprayHit)
             {
-                //m_hit.collider.gameObject.GetComponent<Cockroach>().BeAttacked(m_attackValue);
                 return true;
             }
             else
@@ -123,7 +136,7 @@ public class HumanMoveController : MonoBehaviour
             m_sprayParticle.SetActive(true);
             if (RayOfAttack())
             {
-                Debug.Log("Hit!");
+                m_hit.collider.gameObject.GetComponent<Cockroach>().BeAttacked(m_attackValue);
             }
         }
         else if (Input.GetButtonUp("Fire1") || !isIKTest)

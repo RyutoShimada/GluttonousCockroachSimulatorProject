@@ -7,19 +7,20 @@ public class HumanSprayAttackRange : MonoBehaviour
     /// <summary>ゴキブリに当たっているかどうか</summary>
     public bool m_sprayHit { get; private set; }
 
+    private void Start()
+    {
+        m_sprayHit = false;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag != "Cockroach") return;
-        if (m_sprayHit) return;
-       
+        if (other.gameObject.tag != "Cockroach") return;
         m_sprayHit = true;
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag != "Cockroach") return;
-        if (!m_sprayHit) return;
-        
-        m_sprayHit = false;
+        if (other.gameObject.tag != "Cockroach") return;
+         m_sprayHit = false;
     }
 }

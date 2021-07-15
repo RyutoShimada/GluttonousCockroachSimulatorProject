@@ -47,6 +47,7 @@ public class CockroachMoveController : MonoBehaviour
     bool m_isJumping = false;
     /// <summary>死んでいるかどうか</summary>
     bool m_isDed = false;
+
     /// <summary>死んでいるかどうか</summary>
     public bool IsDed
     {
@@ -58,6 +59,21 @@ public class CockroachMoveController : MonoBehaviour
         }
     }
 
+#if DEBUG
+    /// <summary>動けるかどうか</summary>
+    bool m_isCanMove = true;
+    /// <summary>動けるかどうか</summary>
+    public bool IsCanMove
+    {
+        get => m_isCanMove;
+
+        set
+        {
+            m_isCanMove = value;
+        }
+    }
+#endif
+
     void Start()
     {
         this.gameObject.GetComponent<Rigidbody>().useGravity = false;
@@ -66,6 +82,7 @@ public class CockroachMoveController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (!m_isCanMove) return;
         if (m_isDed) return;
         Gravity();
         Move();
@@ -75,6 +92,7 @@ public class CockroachMoveController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!m_isCanMove) return;
         if (m_isDed) return;
         m_v = Input.GetAxisRaw("Vertical");
         Ray();
@@ -130,10 +148,9 @@ public class CockroachMoveController : MonoBehaviour
             }
         }
 
-        if (m_isRotate && !m_isJumping)
+        if (!m_isJumping && m_isRotate)
         {
-            // 回転中かつジャンプ中ではないとき
-            m_velo = Vector3.zero;
+            m_velo *= 0.5f;
         }
 
         m_rb.velocity = m_velo;
@@ -256,8 +273,6 @@ public class CockroachMoveController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        //Debug.Log("ENTER : " + collision.gameObject.name);
-
         m_isJumping = false;
 
         m_jumpDir = Vector3.zero; // 着地したらジャンプする方向をリセット
@@ -272,7 +287,7 @@ public class CockroachMoveController : MonoBehaviour
             else
             {
                 ChangeGravity(-point.normal);
-                StartCoroutine(ChangeRotate(point.normal, 0.05f));
+                StartCoroutine(ChangeRotate(point.normal, 0.5f));
             }
         }
     }
@@ -286,7 +301,7 @@ public class CockroachMoveController : MonoBehaviour
             if (m_rotateHit.normal != -m_gravityDir)
             {
                 ChangeGravity(-m_rotateHit.normal);
-                StartCoroutine(ChangeRotate(m_rotateHit.normal, 0.05f));
+                StartCoroutine(ChangeRotate(m_rotateHit.normal, 0.5f));
             }
         }
     }
