@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &56746356485228762
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 56746356485228763}
+  - component: {fileID: 56746356485228760}
+  m_Layer: 0
+  m_Name: FoodGenerater
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &56746356485228763
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 56746356485228762}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &56746356485228760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 56746356485228762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02135a2044a354a48aefb1763b880cdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_foods:
+  - {fileID: 1178286649977641778, guid: 866bd318f261c714e875906dd347fac8, type: 3}
+  - {fileID: 5823695826454310058, guid: 798f2979d3389a441a2dac9817f0ad66, type: 3}
+  - {fileID: 1997705620550999875, guid: 62c77a8435887d74481bb6628b54e4ea, type: 3}
+  - {fileID: 6407508747041186944, guid: fe447d49bf3c4d746a2cebd310b67e84, type: 3}
+  - {fileID: 1245383205480293808, guid: 44d62cafce5fd4042a5593dd9e8ab79e, type: 3}
+  m_generatePos:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
