@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject m_cockoroach = null;
     [SerializeField] GameObject m_human = null;
     [SerializeField] GameObject m_cockroachCanvas = null;
+    [SerializeField] GameObject m_canvas = null;
     GameObject m_cockoroachCamera = null;
     GameObject m_humanCamera = null;
     [SerializeField] OperationSutate m_os = OperationSutate.CockRoach;
@@ -63,7 +64,7 @@ public class GameManager : MonoBehaviour
 
     private void ChangeOperationSutate()
     {
-        if (!m_cockoroach || !m_cockoroachCamera || !m_cockroachCanvas || !m_human || !m_humanCamera) return;
+        if (!m_cockoroach || !m_cockoroachCamera || !m_cockroachCanvas || !m_human || !m_humanCamera || !m_isGame) return;
 
         switch (m_os)
         {
@@ -108,6 +109,9 @@ public class GameManager : MonoBehaviour
                 m_seconds = 0;
                 m_isGame = false;
                 Debug.Log("TimeUp!");
+                m_canvas.transform.Find("GameOverText").gameObject.SetActive(true);
+                m_human.GetComponent<HumanMoveController>().IsCanMove = false;
+                m_cockoroach.GetComponent<CockroachMoveController>().IsCanMove = false;
             }
         }
 
