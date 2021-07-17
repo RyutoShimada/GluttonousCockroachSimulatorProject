@@ -19,6 +19,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject m_human = null;
     [SerializeField] GameObject m_cockroachCanvas = null;
     [SerializeField] GameObject m_canvas = null;
+    [SerializeField] FoodGenerater m_foodGenerater = null;
+    [SerializeField] int m_generateFoodCount = 1;
+    [SerializeField] float m_generateInterval = 3f;
     GameObject m_cockoroachCamera = null;
     GameObject m_humanCamera = null;
     [SerializeField] OperationSutate m_os = OperationSutate.CockRoach;
@@ -48,6 +51,11 @@ public class GameManager : MonoBehaviour
         {
             m_cockoroachCamera = m_cockoroach.transform.Find("Main Camera").gameObject;
             m_humanCamera = m_human.transform.Find("Main Camera").gameObject;
+        }
+
+        if (m_foodGenerater)
+        {
+            FoodGenerate();
         }
     }
 
@@ -119,5 +127,10 @@ public class GameManager : MonoBehaviour
         {
             m_timerText.text = $"{m_minutes.ToString("00")} : {m_seconds.ToString("00")}";
         }
+    }
+
+    public void FoodGenerate()
+    {
+        StartCoroutine(m_foodGenerater.Generate(m_generateFoodCount, m_generateInterval));
     }
 }

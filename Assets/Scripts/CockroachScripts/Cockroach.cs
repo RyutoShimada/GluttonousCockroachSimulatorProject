@@ -28,6 +28,7 @@ public class Cockroach : MonoBehaviour
 
     CockroachMoveController m_CMC;
     CockroachUI m_CU;
+    GameManager m_GM;
     /// <summary>1秒間を測るためのタイマー</summary>
     float m_oneSecondTimer = 0f;
     /// <summary>死んだかどうか</summary>
@@ -42,6 +43,7 @@ public class Cockroach : MonoBehaviour
         m_CU = GetComponent<CockroachUI>();
         m_CU.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
         m_CU.ReflectHPSlider(m_hp, m_maxHp);
+        m_GM = FindObjectOfType<GameManager>();
     }
 
     private void Update()
@@ -122,7 +124,7 @@ public class Cockroach : MonoBehaviour
         }
 
         m_CU.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
-
+        m_GM.FoodGenerate();
         Debug.Log("Heel");
     }
 
@@ -140,8 +142,6 @@ public class Cockroach : MonoBehaviour
         StartCoroutine(InvincibleMode());       // 無敵モード開始
         StartCoroutine(m_CU.DamageColor());     // ダメージを受けたUI表示
         m_CU.ReflectHPSlider(m_hp, m_maxHp);    // HPバーを減少させる
-
-        Debug.Log($"Hit!Damage! -{damageValue}, HP : {m_hp}");
     }
 
     private void OnTriggerEnter(Collider other)
@@ -149,8 +149,6 @@ public class Cockroach : MonoBehaviour
         if (other.tag == "Food")
         {
             Eat(other.gameObject.GetComponent<Food>().m_heelValue);
-            Debug.Log($"Eat! +{other.gameObject.GetComponent<Food>().m_heelValue}, 満腹ゲージ : {m_satietyGauge}");
-            other.gameObject.GetComponent<Food>().UnActive();
         }
     }
 }
