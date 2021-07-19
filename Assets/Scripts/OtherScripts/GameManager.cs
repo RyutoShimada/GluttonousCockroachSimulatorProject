@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+// Photon 用の名前空間を参照する
+using ExitGames.Client.Photon;
+using Photon.Pun;
+using Photon.Realtime;
 
 public enum OperationSutate
 {
@@ -17,13 +21,13 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] GameObject m_cockoroach = null;
     [SerializeField] GameObject m_human = null;
-    [SerializeField] GameObject m_cockroachCanvas = null;
+    //[SerializeField] GameObject m_cockroachCanvas = null;
     [SerializeField] GameObject m_canvas = null;
     [SerializeField] FoodGenerater m_foodGenerater = null;
     [SerializeField] int m_generateFoodCount = 1;
     [SerializeField] float m_generateInterval = 3f;
-    GameObject m_cockoroachCamera = null;
-    GameObject m_humanCamera = null;
+    //GameObject m_cockoroachCamera = null;
+    //GameObject m_humanCamera = null;
     [SerializeField] OperationSutate m_os = OperationSutate.CockRoach;
 
     bool m_isGame = false;
@@ -34,24 +38,24 @@ public class GameManager : MonoBehaviour
         set
         {
             m_os = value;
-            ChangeOperationSutate();
+            //ChangeOperationSutate();
         }
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        ChangeOperationSutate();
+        //ChangeOperationSutate();
 
         m_isGame = true;
 
-        Cursor.lockState = CursorLockMode.Locked;
+        //Cursor.lockState = CursorLockMode.Locked;
 
-        if (m_cockoroach && m_human)
-        {
-            m_cockoroachCamera = m_cockoroach.transform.Find("Main Camera").gameObject;
-            m_humanCamera = m_human.transform.Find("Main Camera").gameObject;
-        }
+        //if (m_cockoroach && m_human)
+        //{
+        //    m_cockoroachCamera = m_cockoroach.transform.Find("Main Camera").gameObject;
+        //    m_humanCamera = m_human.transform.Find("Main Camera").gameObject;
+        //}
 
         if (m_foodGenerater)
         {
@@ -65,35 +69,35 @@ public class GameManager : MonoBehaviour
         TimeCountDown();
     }
 
-    private void OnValidate()
-    {
-        ChangeOperationSutate();
-    }
+    //private void OnValidate()
+    //{
+    //    ChangeOperationSutate();
+    //}
 
-    private void ChangeOperationSutate()
-    {
-        if (!m_cockoroach || !m_cockoroachCamera || !m_cockroachCanvas || !m_human || !m_humanCamera || !m_isGame) return;
+    //private void ChangeOperationSutate()
+    //{
+    //    if (!m_cockoroach || !m_cockoroachCamera || !m_cockroachCanvas || !m_human || !m_humanCamera || !m_isGame) return;
 
-        switch (m_os)
-        {
-            case OperationSutate.CockRoach:
-                m_cockoroach.GetComponent<CockroachMoveController>().IsCanMove = true;
-                m_human.GetComponent<HumanMoveController>().IsCanMove = false;
-                m_humanCamera.SetActive(false);
-                m_cockoroachCamera.SetActive(true);
-                m_cockroachCanvas.SetActive(true);
-                break;
-            case OperationSutate.Human:
-                m_human.GetComponent<HumanMoveController>().IsCanMove = true;
-                m_cockoroach.GetComponent<CockroachMoveController>().IsCanMove = false;
-                m_cockoroachCamera.SetActive(false);
-                m_humanCamera.SetActive(true);
-                m_cockroachCanvas.SetActive(false);
-                break;
-            default:
-                break;
-        }
-    }
+    //    switch (m_os)
+    //    {
+    //        case OperationSutate.CockRoach:
+    //            m_cockoroach.GetComponent<CockroachMoveController>().IsCanMove = true;
+    //            m_human.GetComponent<HumanMoveController>().IsCanMove = false;
+    //            m_humanCamera.SetActive(false);
+    //            m_cockoroachCamera.SetActive(true);
+    //            m_cockroachCanvas.SetActive(true);
+    //            break;
+    //        case OperationSutate.Human:
+    //            m_human.GetComponent<HumanMoveController>().IsCanMove = true;
+    //            m_cockoroach.GetComponent<CockroachMoveController>().IsCanMove = false;
+    //            m_cockoroachCamera.SetActive(false);
+    //            m_humanCamera.SetActive(true);
+    //            m_cockroachCanvas.SetActive(false);
+    //            break;
+    //        default:
+    //            break;
+    //    }
+    //}
 
 
     void TimeCountDown()

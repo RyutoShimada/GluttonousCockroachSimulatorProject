@@ -73,6 +73,5 @@ public class FoodGenerater : MonoBehaviour
         m_go[randomFood[currentCount]].transform.position = m_generatePos[randomPos[currentCount]].position;
         m_beforePos = m_go[randomFood[currentCount]].transform.position;
         currentCount++;
-        Debug.Log("Generated!");
     }
 }

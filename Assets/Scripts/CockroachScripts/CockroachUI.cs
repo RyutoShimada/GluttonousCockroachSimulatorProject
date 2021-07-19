@@ -10,11 +10,11 @@ using DG.Tweening;
 public class CockroachUI : MonoBehaviour
 {
     /// <summary>満腹ゲージのUI</summary>
-    [SerializeField] Image m_satietyGaugeImage = null;
+    Image m_satietyGaugeImage = null;
     /// <summary>HPバーのUI</summary>
-    [SerializeField] Slider m_hpSlider = null;
+    Slider m_hpSlider = null;
     /// <summary>ダメージを受けた時のUI</summary>
-    [SerializeField] Image m_damageImage = null;
+    Image m_damageImage = null;
     /// <summary>UIの動きを何秒かけて行うか</summary>
     [SerializeField, Range(0.1f, 1.0f)] float m_afterSeconds = 0.2f;
     /// <summary>m_damageImageの初期colorを保存しておく変数</summary>
@@ -22,8 +22,19 @@ public class CockroachUI : MonoBehaviour
     /// <summary>Alfa値が0のm_damageImageを保存しておく変数</summary>
     Color m_color;
 
+    GameObject m_cockroachCanvas;
+
     private void Start()
     {
+        m_cockroachCanvas = GameObject.Find("CockroachCanvas");
+
+        GameObject go = m_cockroachCanvas.transform.Find("Gauge").gameObject;
+        m_satietyGaugeImage = go.transform.GetComponentInChildren<Image>();
+
+        m_damageImage = m_cockroachCanvas.transform.Find("DamageImage").gameObject.GetComponent<Image>();
+        m_hpSlider = m_cockroachCanvas.transform.Find("Slider").gameObject.GetComponent<Slider>();
+
+        m_damageImage.gameObject.SetActive(false);
         m_damageImage.gameObject.SetActive(true);
         m_originDamageColor = m_damageImage.color;
 

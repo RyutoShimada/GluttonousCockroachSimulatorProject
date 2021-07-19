@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
 using DG.Tweening;
+// Photon 用の名前空間を参照する
+using ExitGames.Client.Photon;
+using Photon.Pun;
+using Photon.Realtime;
 
 /// <summary>
 /// ゴキブリの動きに関するスクリプト
@@ -48,6 +52,8 @@ public class CockroachMoveController : MonoBehaviour
     /// <summary>死んでいるかどうか</summary>
     bool m_isDed = false;
 
+    PhotonView m_view;
+
     /// <summary>死んでいるかどうか</summary>
     public bool IsDed
     {
@@ -78,11 +84,12 @@ public class CockroachMoveController : MonoBehaviour
     {
         this.gameObject.GetComponent<Rigidbody>().useGravity = false;
         m_rb = this.gameObject.GetComponent<Rigidbody>();
+        m_view = GetComponent<PhotonView>();
     }
 
     void FixedUpdate()
     {
-        if (!m_isCanMove) return;
+        if (!m_view || !m_view.IsMine) return;
         if (m_isDed) return;
         Gravity();
         Move();
@@ -92,7 +99,7 @@ public class CockroachMoveController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!m_isCanMove) return;
+        if (!m_view || !m_view.IsMine) return;
         if (m_isDed) return;
         m_v = Input.GetAxisRaw("Vertical");
         Ray();

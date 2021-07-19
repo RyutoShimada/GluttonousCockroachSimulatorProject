@@ -1,6 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+// Photon 用の名前空間を参照する
+using ExitGames.Client.Photon;
+using Photon.Pun;
+using Photon.Realtime;
 
 [RequireComponent(typeof(Rigidbody))]
 
@@ -40,6 +44,7 @@ public class HumanMoveController : MonoBehaviour
     Rigidbody m_rb;
     Animator m_anim;
     RaycastHit m_hit;
+    PhotonView m_view;
 
 #if DEBUG
     /// <summary>IKの動きを調整するときに使う</summary>
@@ -64,18 +69,19 @@ public class HumanMoveController : MonoBehaviour
         m_rb = GetComponent<Rigidbody>();
         m_anim = GetComponent<Animator>();
         m_attackRangeObj.SetActive(false);
+        m_view = GetComponent<PhotonView>();
     }
 
     void FixedUpdate()
     {
-        if (!m_isCanMove) return;
+        if (!m_view || !m_view.IsMine) return;
         Move();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!m_isCanMove) return;
+        if (!m_view || !m_view.IsMine) return;
         m_input.x = Input.GetAxisRaw("Horizontal");
         m_input.y = Input.GetAxisRaw("Vertical");
         AttackSpray();
