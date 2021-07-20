@@ -38,14 +38,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         ChangeOperationSutate();
 
         m_isGame = true;
-
-        Cursor.lockState = CursorLockMode.Locked;
 
         if (m_cockoroach && m_human)
         {
@@ -62,7 +65,9 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!m_isGame) return;
         TimeCountDown();
+        ChangeOperateOnPlaying();
     }
 
     private void OnValidate()
@@ -98,8 +103,6 @@ public class GameManager : MonoBehaviour
 
     void TimeCountDown()
     {
-        if (!m_isGame) return;
-
         if (m_seconds > 0)
         {
             m_seconds -= Time.deltaTime;
@@ -132,5 +135,23 @@ public class GameManager : MonoBehaviour
     public void FoodGenerate()
     {
         StartCoroutine(m_foodGenerater.Generate(m_generateFoodCount, m_generateInterval));
+    }
+
+    /// <summary>
+    /// ビルドした後にプレイ中に操作キャラを変更できる
+    /// </summary>
+    void ChangeOperateOnPlaying()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.RightShift))
+        {
+            if (OperationSutate == OperationSutate.CockRoach)
+            {
+                OperationSutate = OperationSutate.Human;
+            }
+            else
+            {
+                OperationSutate = OperationSutate.CockRoach;
+            }
+        }
     }
 }

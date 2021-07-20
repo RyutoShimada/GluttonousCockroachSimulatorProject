@@ -127,7 +127,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-6528
+  m_Name: pb_Mesh35544
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -340,7 +340,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_timerText: {fileID: 1974038025}
-  m_minutes: 1
+  m_minutes: 3
   m_seconds: 0
   m_cockoroach: {fileID: 5878682469644753712}
   m_human: {fileID: 1798523862081645423}
@@ -348,7 +348,7 @@ MonoBehaviour:
   m_canvas: {fileID: 827115291}
   m_foodGenerater: {fileID: 2057322663}
   m_generateFoodCount: 1
-  m_generateInterval: 3
+  m_generateInterval: 2
   m_os: 0
 --- !u!1 &231949620
 GameObject:
@@ -450,7 +450,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-6542
+  m_Name: pb_Mesh35524
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -613,7 +613,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-6570
+  m_Name: pb_Mesh36072
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -935,7 +935,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-6572
+  m_Name: pb_Mesh35752
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1172,7 +1172,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-6578
+  m_Name: pb_Mesh35838
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1544,6 +1544,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: CockroachCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 6852235019913877346, guid: c34c6b6a74c6fab4ba2c94a1bbc4d663,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6852235019913877406, guid: c34c6b6a74c6fab4ba2c94a1bbc4d663,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1704,7 +1709,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-6580
+  m_Name: pb_Mesh35912
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1867,7 +1872,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-6532
+  m_Name: pb_Mesh35706
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2129,7 +2134,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-6536
+  m_Name: pb_Mesh36036
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2292,7 +2297,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-6540
+  m_Name: pb_Mesh35874
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2998,6 +3003,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2149442848604006778, guid: d1edcd0f8d0ae9648bda3fc525633d0b,
+        type: 3}
+      propertyPath: m_mouseSensitivity
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2149442848604006778, guid: d1edcd0f8d0ae9648bda3fc525633d0b,
+        type: 3}
+      propertyPath: m_moveSpeed
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 2149442848604006780, guid: d1edcd0f8d0ae9648bda3fc525633d0b,
         type: 3}
       propertyPath: m_satietyGaugeImage
@@ -3013,6 +3028,11 @@ PrefabInstance:
       propertyPath: m_damageImage
       value: 
       objectReference: {fileID: 71665946}
+    - target: {fileID: 2149442848604006781, guid: d1edcd0f8d0ae9648bda3fc525633d0b,
+        type: 3}
+      propertyPath: m_decreaseValueIn1second
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d1edcd0f8d0ae9648bda3fc525633d0b, type: 3}
 --- !u!1001 &5540094860185819920
