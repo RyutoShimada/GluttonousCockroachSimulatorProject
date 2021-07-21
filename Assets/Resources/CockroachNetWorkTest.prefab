@@ -145,8 +145,9 @@ GameObject:
   - component: {fileID: 1380053710197772755}
   - component: {fileID: 1380053710197772752}
   - component: {fileID: 1380053710197772754}
-  - component: {fileID: 1380053710197772757}
   - component: {fileID: 1380053710197772756}
+  - component: {fileID: -2510330566171969012}
+  - component: {fileID: -3155712619565757723}
   m_Layer: 10
   m_Name: CockroachNetWorkTest
   m_TagString: Cockroach
@@ -222,28 +223,6 @@ MonoBehaviour:
   m_rayOriginPos: {fileID: 1380053711590895058}
   m_rotateRayPos: {fileID: 1380053710338534204}
   m_mouseSensitivity: 5
---- !u!114 &1380053710197772757
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1380053710197772766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3d58a6b43ef82d4eb4cbce7b7809e81, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_maxSatietyGauge: 100
-  m_satietyGauge: 100
-  m_decreaseValueIn1second: 5
-  m_maxHp: 100
-  m_hp: 100
-  m_invincibleModeTime: 5
-  m_addSpeedValue: 3
-  m_addJumpValue: 3
-  m_invincibleMode: 0
-  m_isDed: 0
 --- !u!114 &1380053710197772756
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -256,10 +235,53 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86580b55e8846d644af22c711884c5a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_satietyGaugeImage: {fileID: 0}
-  m_hpSlider: {fileID: 0}
-  m_damageImage: {fileID: 0}
+  m_cockroachUiPrefab: {fileID: 6421866726974313622, guid: 7f7d07ba93a501345920ff005eb16c45,
+    type: 3}
   m_afterSeconds: 0.2
+--- !u!114 &-2510330566171969012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1380053710197772766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
+--- !u!114 &-3155712619565757723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1380053710197772766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 911d907844d0509499a01c822a75c8ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_maxSatietyGauge: 100
+  m_satietyGauge: 100
+  m_decreaseValueIn1second: 3
+  m_maxHp: 100
+  m_hp: 100
+  m_invincibleModeTime: 5
+  m_addSpeedValue: 3
+  m_addJumpValue: 3
+  m_invincibleMode: 0
+  m_isDed: 0
 --- !u!1 &1380053710338534205
 GameObject:
   m_ObjectHideFlags: 0
@@ -781,6 +803,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26ee707e94dc29f4c95a4c4763a3d764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_parent: {fileID: 1380053710197772754}
 --- !u!65 &1380053710429812189
 BoxCollider:
   m_ObjectHideFlags: 0
