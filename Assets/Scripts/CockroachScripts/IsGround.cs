@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class IsGround : MonoBehaviour
 {
-    CockroachMoveController m_parent = null;
+    [Tooltip("CockroachMoveController がアタッチされているオブジェクトをアサインする")]
+    [SerializeField] CockroachMoveController m_parent = null;
 
     // Start is called before the first frame update
     void Start()
     {
-        m_parent = transform.parent.gameObject.GetComponent<CockroachMoveController>();
+        //m_parent = transform.parent.gameObject.GetComponent<CockroachMoveController>();
     }
 
     private void OnTriggerEnter(Collider other)
