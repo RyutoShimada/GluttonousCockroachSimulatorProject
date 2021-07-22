@@ -9,6 +9,6 @@ EditorBuildSettings:
     path: Assets/Scenes/GameManagerTestScene.unity
     guid: 597ed651327d38143b2e78feba2cfa97
   - enabled: 1
-    path: Assets/Scenes/NetWorkTestScene.unity
+    path: Assets/Scenes/PhotonTestScene.unity
     guid: e8b25c3fba6f4684192b03676b9233fd
   m_configObjects: {}
