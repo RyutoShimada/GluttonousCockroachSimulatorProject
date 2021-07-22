@@ -8,8 +8,6 @@ namespace Photon.Pun.Demo.PunBasics
     [RequireComponent(typeof(Rigidbody))]
     public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks
     {
-        static public GameObject m_localInstance;
-
         /// <summary>移動速度</summary>
         [SerializeField] float m_moveSpeed = 1f;
         /// <summary>体を回転する速度</summary>
@@ -19,8 +17,8 @@ namespace Photon.Pun.Demo.PunBasics
         /// <summary>Rayを飛ばす最大距離</summary>
         [SerializeField] float m_maxRayDistance = 1f;
 
+        [SerializeField] GameObject m_camera = null;
         [SerializeField] GameObject m_vcamPrefab = null;
-        [SerializeField] Transform m_cameraPos = null;
 
         /// <summary>攻撃値</summary>
         [SerializeField] int m_attackValue = 20; // 後で別のスクリプトに移すこと
@@ -51,44 +49,46 @@ namespace Photon.Pun.Demo.PunBasics
 #if DEBUG
         /// <summary>IKの動きを調整するときに使う</summary>
         [SerializeField] bool isIKTest = false;
-        /// <summary>動けるかどうか</summary>
-        bool m_isCanMove = true;
-        /// <summary>動けるかどうか</summary>
-        public bool IsCanMove
-        {
-            get => m_isCanMove;
 
-            set
-            {
-                m_isCanMove = value;
-            }
-        }
 #endif
-
-        private void Awake()
-        {
-            if (photonView.IsMine)
-            {
-                m_localInstance = gameObject;
-            }
-        }
 
         // Start is called before the first frame update
         void Start()
         {
             if (photonView.IsMine)
             {
-                GameObject go = Instantiate(m_vcamPrefab, m_cameraPos.position, m_cameraPos.rotation);
-                go.GetComponent<CinemachineVirtualCameraBase>().Follow = gameObject.transform;
+                m_camera.SetActive(true);
+                GameObject go = Instantiate(m_vcamPrefab, m_camera.transform.position, m_camera.transform.rotation);
+                if (go)
+                {
+                    CinemachineVirtualCamera vcam = go.GetComponent<CinemachineVirtualCamera>();
+                    if (vcam)
+                    {
+                        vcam.Follow = m_camera.transform;
+                        //vcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = m_camera.transform.localPosition;
+                    }
+                    else
+                    {
+                        Debug.LogError("CinemachineVirtualCamera を GetComponent 出来ませんでした");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("m_vcamPrefab のインスタンス化に失敗しました");
+                }
 
                 m_rb = GetComponent<Rigidbody>();
                 m_anim = GetComponent<Animator>();
-                m_attackRangeObj = transform.Find("Main Camera").transform.Find("AttackRange").gameObject;
+                m_attackRangeObj = transform.Find("Camera").transform.Find("AttackRange").gameObject;
 
                 if (m_attackRangeObj)
                 {
                     m_attackRangeObj.SetActive(false);
                 }
+            }
+            else
+            {
+                m_camera.SetActive(false);
             }
         }
 
@@ -138,7 +138,6 @@ namespace Photon.Pun.Demo.PunBasics
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out m_hit, m_maxRayDistance))
             {
                 Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * m_maxRayDistance, Color.green);
-                //Debug.Log($"HitDistance : {Vector3.Distance(Camera.main.transform.position, m_hit.point)}");
 
                 if (m_hit.collider.gameObject.tag == "Cockroach" && m_HSAR.m_sprayHit)
                 {
@@ -157,8 +156,6 @@ namespace Photon.Pun.Demo.PunBasics
 
         void AttackSpray()
         {
-            //m_attackRangeObj.transform.rotation = Camera.main.transform.rotation;
-
             if (Input.GetButton("Fire1") || isIKTest)
             {
                 isSprayAttacking = true;
@@ -204,6 +201,7 @@ namespace Photon.Pun.Demo.PunBasics
         // IK を計算するためのコールバック
         private void OnAnimatorIK(int layerIndex)
         {
+            if (!photonView.IsMine) return;
             if (m_rightHandIKTarget == null) return;
 
             if (isSprayAttacking)
