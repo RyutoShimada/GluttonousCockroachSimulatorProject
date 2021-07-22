@@ -161,12 +161,18 @@ namespace Photon.Pun.Demo.PunBasics
             if (actorNumber == 1)
             {
                 // 部屋の中で、ローカルプレーヤー用の Cockroach を生成。PhotonNetwork.Instantiate()で同期。
-                PhotonNetwork.Instantiate(this.m_cockroachPrefab.name, m_cockroachSpawnPos.position, Quaternion.identity, 0);
+                GameObject go = PhotonNetwork.Instantiate(this.m_cockroachPrefab.name, m_cockroachSpawnPos.position, Quaternion.identity, 0);
+                Camera.main.gameObject.transform.SetParent(go.transform.Find("CameraPos").transform);
+                Camera.main.gameObject.transform.position = go.transform.Find("CameraPos").transform.position;
+                Camera.main.gameObject.transform.rotation = go.transform.Find("CameraPos").transform.rotation;
             }
             else
             {
                 // 部屋の中で、ローカルプレーヤー用の Human を生成。PhotonNetwork.Instantiate()で同期。
-                PhotonNetwork.Instantiate(this.m_humanPrefab.name, m_humanSpawnPos.position, Quaternion.identity, 0);
+                GameObject go = PhotonNetwork.Instantiate(this.m_humanPrefab.name, m_humanSpawnPos.position, Quaternion.identity, 0);
+                Camera.main.gameObject.transform.SetParent(go.transform.Find("CameraPos").transform);
+                Camera.main.gameObject.transform.position = go.transform.Find("CameraPos").transform.position;
+                Camera.main.gameObject.transform.rotation = go.transform.Find("CameraPos").transform.rotation;
             }
 
             /* **************************************************
@@ -300,7 +306,7 @@ namespace Photon.Pun.Demo.PunBasics
 
             Debug.LogFormat($"PhotonNetwork : Loading Level : { PhotonNetwork.CurrentRoom.PlayerCount }");
 
-            PhotonNetwork.LoadLevel($"PunBasics - Room for { PhotonNetwork.CurrentRoom.PlayerCount }");
+            //PhotonNetwork.LoadLevel($"PunBasics - Room for { PhotonNetwork.CurrentRoom.PlayerCount }");
         }
 
         #endregion

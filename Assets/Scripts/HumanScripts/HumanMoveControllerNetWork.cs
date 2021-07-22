@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 namespace Photon.Pun.Demo.PunBasics
 {
@@ -14,9 +15,12 @@ namespace Photon.Pun.Demo.PunBasics
         /// <summary>体を回転する速度</summary>
         [SerializeField] float m_turnSpeed = 1f;
         /// <summary>攻撃する範囲のオブジェクト</summary>
-        [SerializeField] GameObject m_attackRangeObj = null;
+        GameObject m_attackRangeObj = null;
         /// <summary>Rayを飛ばす最大距離</summary>
         [SerializeField] float m_maxRayDistance = 1f;
+
+        [SerializeField] GameObject m_vcamPrefab = null;
+        [SerializeField] Transform m_cameraPos = null;
 
         /// <summary>攻撃値</summary>
         [SerializeField] int m_attackValue = 20; // 後で別のスクリプトに移すこと
@@ -72,26 +76,41 @@ namespace Photon.Pun.Demo.PunBasics
         // Start is called before the first frame update
         void Start()
         {
-            m_rb = GetComponent<Rigidbody>();
-            m_anim = GetComponent<Animator>();
-            m_attackRangeObj.SetActive(false);
+            if (photonView.IsMine)
+            {
+                GameObject go = Instantiate(m_vcamPrefab, m_cameraPos.position, m_cameraPos.rotation);
+                go.GetComponent<CinemachineVirtualCameraBase>().Follow = gameObject.transform;
+
+                m_rb = GetComponent<Rigidbody>();
+                m_anim = GetComponent<Animator>();
+                m_attackRangeObj = transform.Find("Main Camera").transform.Find("AttackRange").gameObject;
+
+                if (m_attackRangeObj)
+                {
+                    m_attackRangeObj.SetActive(false);
+                }
+            }
         }
 
         void FixedUpdate()
         {
-            if (!m_isCanMove) return;
-            Move();
+            if (photonView.IsMine)
+            {
+                Move();
+            }
         }
 
         // Update is called once per frame
         void Update()
         {
-            if (!m_isCanMove) return;
-            m_input.x = Input.GetAxisRaw("Horizontal");
-            m_input.y = Input.GetAxisRaw("Vertical");
-            AttackSpray();
-            DoRotate();
-            DoAnimation();
+            if (photonView.IsMine)
+            {
+                m_input.x = Input.GetAxisRaw("Horizontal");
+                m_input.y = Input.GetAxisRaw("Vertical");
+                AttackSpray();
+                DoRotate();
+                DoAnimation();
+            }
         }
 
         void Move()
@@ -138,7 +157,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         void AttackSpray()
         {
-            m_attackRangeObj.transform.rotation = Camera.main.transform.rotation;
+            //m_attackRangeObj.transform.rotation = Camera.main.transform.rotation;
 
             if (Input.GetButton("Fire1") || isIKTest)
             {
@@ -214,7 +233,6 @@ namespace Photon.Pun.Demo.PunBasics
             m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, 1f);
             m_anim.SetIKPosition(AvatarIKGoal.RightHand, m_rightHandIKTarget.position);
             m_anim.SetIKRotation(AvatarIKGoal.RightHand, m_rightHandIKTarget.rotation);
-
         }
     }
 }

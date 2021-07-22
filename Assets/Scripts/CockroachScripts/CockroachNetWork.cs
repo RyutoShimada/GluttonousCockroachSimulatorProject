@@ -48,20 +48,26 @@ namespace Photon.Pun.Demo.PunBasics
 
         private void Start()
         {
-            m_isDed = false;
-            m_satietyGauge = m_maxSatietyGauge;
-            m_hp = m_maxHp;
-            m_CMC = GetComponent<CockroachMoveController>();
-            m_CU = GetComponent<CockroachUI>();
-            m_CU.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
-            m_CU.ReflectHPSlider(m_hp, m_maxHp);
-            m_GM = FindObjectOfType<GameManager>();
+            if (photonView.IsMine)
+            {
+                m_isDed = false;
+                m_satietyGauge = m_maxSatietyGauge;
+                m_hp = m_maxHp;
+                m_CMC = GetComponent<CockroachMoveController>();
+                m_CU = GetComponent<CockroachUI>();
+                m_CU.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
+                m_CU.ReflectHPSlider(m_hp, m_maxHp);
+                m_GM = FindObjectOfType<GameManager>();
+            }
         }
 
         private void Update()
         {
-            if (m_isDed) return;
-            DecreaseHitPoint(m_decreaseValueIn1second);
+            if (photonView.IsMine)
+            {
+                if (m_isDed) return;
+                DecreaseHitPoint(m_decreaseValueIn1second);
+            }
         }
 
         void CheckAlive()
