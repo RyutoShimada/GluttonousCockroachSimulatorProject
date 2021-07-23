@@ -30,9 +30,9 @@ namespace Photon.Pun.Demo.PunBasics
 
         [SerializeField] GameObject m_camera = null;
 
-        CockroachMoveControllerNetWork m_CMCNW;
-        CockroachUINetWork m_CUNW;
-        GameManager m_GM;
+        CockroachMoveControllerNetWork m_CMCNW = null;
+        CockroachUINetWork m_CUNW = null;
+        GameManager m_GM = null;
         /// <summary>1秒間を測るためのタイマー</summary>
         float m_oneSecondTimer = 0f;
         /// <summary>死んだかどうか</summary>

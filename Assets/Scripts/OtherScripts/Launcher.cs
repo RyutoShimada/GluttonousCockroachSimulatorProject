@@ -17,7 +17,7 @@ namespace Photon.Pun.Demo.PunBasics
         [SerializeField] Text m_feedbackText = null;
 
         [Tooltip("1部屋あたりの最大プレイヤー数")]
-        [SerializeField] byte m_maxPlayersPerRoom;
+        [SerializeField] byte m_maxPlayersPerRoom = 2;
 
         // todo:
         //[Tooltip("ロード中に表示させるアニメ")]

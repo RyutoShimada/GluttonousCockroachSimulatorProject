@@ -30,8 +30,6 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("Human の 生成場所")]
         [SerializeField] Transform m_humanSpawnPos = null;
 
-        byte m_maxPlayerCount = 2;
-
         #endregion
 
         #region MonoBehaviour CallBacks

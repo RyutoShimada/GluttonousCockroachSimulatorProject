@@ -65,7 +65,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
             if (!photonView.IsMine) return;
             this.gameObject.GetComponent<Rigidbody>().useGravity = false;
-            m_rb = this.gameObject.GetComponent<Rigidbody>();
+            m_rb = GetComponent<Rigidbody>();
         }
 
         void FixedUpdate()
