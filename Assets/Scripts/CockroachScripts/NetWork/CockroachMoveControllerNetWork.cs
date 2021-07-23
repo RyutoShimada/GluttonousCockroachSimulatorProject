@@ -240,6 +240,7 @@ namespace Photon.Pun.Demo.PunBasics
             m_isRotate = false;
         }
 
+        [PunRPC]
         /// <summary>
         /// cockroachから呼ばれる
         /// </summary>

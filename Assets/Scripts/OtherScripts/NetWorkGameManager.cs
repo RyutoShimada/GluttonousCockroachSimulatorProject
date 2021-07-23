@@ -57,13 +57,13 @@ namespace Photon.Pun.Demo.PunBasics
                 int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
 
                 Debug.Log($"ActorNumber : {actorNumber} がルームに参加しました");
-
-                if (actorNumber == 1)
+                
+                if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
                 {
                     // 部屋の中で、ローカルプレーヤー用の Cockroach を生成。PhotonNetwork.Instantiate()で同期。
                     PhotonNetwork.Instantiate(this.m_cockroachPrefab.name, m_cockroachSpawnPos.position, Quaternion.identity, 0);
                 }
-                else
+                else if (!HumanMoveControllerNetWork.m_Instance)
                 {
                     // 部屋の中で、ローカルプレーヤー用の Human を生成。PhotonNetwork.Instantiate()で同期。
                     PhotonNetwork.Instantiate(this.m_humanPrefab.name, m_humanSpawnPos.position, Quaternion.identity, 0);
@@ -104,7 +104,15 @@ namespace Photon.Pun.Demo.PunBasics
         /// <param name="other">Other.</param>
         public override void OnPlayerLeftRoom(Player player)
         {
-            Debug.Log($"ActorNumber : {player.ActorNumber} がルームに退出しました");
+            Debug.Log($"ActorNumber : {player.ActorNumber} がルームから退出しました");
+            SceneManager.sceneLoaded += LogFeedBack;
+            PhotonNetwork.Disconnect();
+        }
+
+        void LogFeedBack(Scene next, LoadSceneMode mode)
+        {
+            Launcher.m_Instance.LogFeedback("対戦相手が退出しました");
+            SceneManager.sceneLoaded -= LogFeedBack;
         }
 
         /// <summary>

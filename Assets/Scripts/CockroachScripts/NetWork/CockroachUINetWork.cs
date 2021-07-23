@@ -35,23 +35,22 @@ namespace Photon.Pun.Demo.PunBasics
             }
             else
             {
+                Transform t = GameObject.Find("Canvas").transform;
+                GameObject go = Instantiate(m_cockroachUiPrefab, t);
+
+                if (go)
+                {
+                    m_satietyGaugeImage = m_cockroachUiPrefab.transform.Find("Gauge").GetComponentInChildren<Image>();
+                    m_hpSlider = m_cockroachUiPrefab.transform.Find("HPSlider").GetComponent<Slider>();
+                    m_damageImage = m_cockroachUiPrefab.transform.Find("DamageImage").GetComponent<Image>();
+                }
+                else
+                {
+                    Debug.LogError("m_cockroachUiPrefab がインスタンス化されていません。", this);
+                }
+
                 if (photonView.IsMine)
                 {
-                    Transform t = GameObject.Find("Canvas").transform;
-                    GameObject go = Instantiate(m_cockroachUiPrefab, t);
-
-                    if (go)
-                    {
-                        m_satietyGaugeImage = m_cockroachUiPrefab.transform.Find("Gauge").GetComponentInChildren<Image>();
-                        m_hpSlider = m_cockroachUiPrefab.transform.Find("HPSlider").GetComponent<Slider>();
-                        m_damageImage = m_cockroachUiPrefab.transform.Find("DamageImage").GetComponent<Image>();
-                    }
-                    else
-                    {
-                        Debug.LogError("m_cockroachUiPrefab がインスタンス化されていません。", this);
-                    }
-
-
                     if (m_damageImage)
                     {
                         m_damageImage.gameObject.SetActive(true);
@@ -67,6 +66,10 @@ namespace Photon.Pun.Demo.PunBasics
                         Debug.LogError("m_damageImage を GetComponent 出来ませんでした。", this);
                     }
                 }
+                else
+                {
+                    go.SetActive(false);
+                }
             }
         }
 
@@ -76,9 +79,21 @@ namespace Photon.Pun.Demo.PunBasics
         /// <returns></returns>
         public IEnumerator DamageColor()
         {
-            m_damageImage.DOColor(m_originDamageColor, m_afterSeconds);
+            photonView.RPC(nameof(DoTweenDamegeColor), RpcTarget.All, m_originDamageColor.r, m_originDamageColor.g, m_originDamageColor.b, m_originDamageColor.a, m_afterSeconds);
             yield return new WaitForSeconds(0.25f);
-            m_damageImage.DOColor(m_color, m_afterSeconds);
+            photonView.RPC(nameof(DoTweenDamegeColor), RpcTarget.All, m_color.r, m_color.g, m_color.b, m_color.a, m_afterSeconds);
+        }
+
+        /// <summary>
+        /// RPCでダメージのアルファ値を変更する
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="seconds"></param>
+        [PunRPC]
+        void DoTweenDamegeColor(float r, float g, float b, float a, float seconds)
+        {
+            Color c = new Color(r, g, b, a);
+            m_damageImage.DOColor(c, seconds);
         }
 
         /// <summary>
@@ -91,14 +106,15 @@ namespace Photon.Pun.Demo.PunBasics
             m_satietyGaugeImage.DOFillAmount(satietyGauge / maxSatietyGauge, m_afterSeconds);
         }
 
+        [PunRPC]
         /// <summary>
         /// Cockroachから体力が減った時に呼ぶ
         /// </summary>
         /// <param name="hp">体力</param>
         /// <param name="maxHp">体力の最大値</param>
-        public void ReflectHPSlider(float hp, float maxHp)
+        public void ReflectHPSlider(int hp, int maxHp)
         {
-            m_hpSlider.DOValue(hp / maxHp, m_afterSeconds);
+            m_hpSlider.DOValue((float)hp / (float)maxHp, m_afterSeconds);
         }
     }
 }

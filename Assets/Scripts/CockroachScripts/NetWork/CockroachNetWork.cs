@@ -4,11 +4,16 @@ using UnityEngine;
 
 namespace Photon.Pun.Demo.PunBasics
 {
+    [RequireComponent(typeof(CockroachMoveControllerNetWork))]
+    [RequireComponent(typeof(CockroachUINetWork))]
+
     /// <summary>
     /// ゴキブリのスクリプト
     /// </summary>
     public class CockroachNetWork : MonoBehaviourPunCallbacks, IPunObservable
     {
+        static public GameObject m_Instance;
+
         /// <summary>最大の体力値</summary>
         [SerializeField] int m_maxSatietyGauge = 100;
         /// <summary>満腹ゲージ</summary>
@@ -30,16 +35,29 @@ namespace Photon.Pun.Demo.PunBasics
 
         [SerializeField] GameObject m_camera = null;
 
-        CockroachMoveControllerNetWork m_CMCNW = null;
-        CockroachUINetWork m_CUNW = null;
-        GameManager m_GM = null;
+        CockroachMoveControllerNetWork m_cockroachMoveControllerNetWork = null;
+        CockroachUINetWork m_cockroachUINetWork = null;
+        NetWorkGameManager m_netWorkGameManage = null;
+
         /// <summary>1秒間を測るためのタイマー</summary>
         float m_oneSecondTimer = 0f;
         /// <summary>死んだかどうか</summary>
         public bool m_isDed = false;
 
+        private void Awake()
+        {
+            if (photonView.IsMine)
+            {
+                m_Instance = gameObject;
+            }
+        }
+
         private void Start()
         {
+            m_cockroachMoveControllerNetWork = GetComponent<CockroachMoveControllerNetWork>();
+            m_cockroachUINetWork = GetComponent<CockroachUINetWork>();
+            m_netWorkGameManage = FindObjectOfType<NetWorkGameManager>();
+
             if (photonView.IsMine)
             {
                 m_camera.SetActive(true);
@@ -47,11 +65,9 @@ namespace Photon.Pun.Demo.PunBasics
                 m_isDed = false;
                 m_satietyGauge = m_maxSatietyGauge;
                 m_hp = m_maxHp;
-                m_CMCNW = GetComponent<CockroachMoveControllerNetWork>();
-                m_CUNW = GetComponent<CockroachUINetWork>();
-                m_CUNW.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
-                m_CUNW.ReflectHPSlider(m_hp, m_maxHp);
-                //m_GM = FindObjectOfType<GameManager>();
+
+                m_cockroachUINetWork.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
+                m_cockroachUINetWork.ReflectHPSlider(m_hp, m_maxHp);
             }
             else
             {
@@ -64,16 +80,17 @@ namespace Photon.Pun.Demo.PunBasics
             if (photonView.IsMine)
             {
                 if (m_isDed) return;
-                DecreaseHitPoint(m_decreaseValueIn1second);
+                photonView.RPC(nameof(DecreaseHitPoint), RpcTarget.All, m_decreaseValueIn1second);
             }
         }
 
+        [PunRPC]
         void CheckAlive()
         {
             if (m_hp > 0) return;
             m_hp = 0;
             m_isDed = true;
-            m_CMCNW.IsDed = true;
+            m_cockroachMoveControllerNetWork.IsDed = true;
             Debug.Log("Ded!");
         }
 
@@ -85,16 +102,17 @@ namespace Photon.Pun.Demo.PunBasics
             Debug.Log("無敵モード開始");
             // 無敵モード開始
             m_invincibleMode = true;
-            m_CMCNW.InvincibleMode(m_invincibleMode, m_addSpeedValue, m_addJumpValue);
+            photonView.RPC(nameof(m_cockroachMoveControllerNetWork.InvincibleMode), RpcTarget.All, m_invincibleMode, m_addSpeedValue, m_addJumpValue);
 
             yield return new WaitForSeconds(m_invincibleModeTime);
 
             Debug.Log("無敵モード停止");
             // 無敵モード停止
             m_invincibleMode = false;
-            m_CMCNW.InvincibleMode(m_invincibleMode, m_addSpeedValue, m_addJumpValue);
+            photonView.RPC(nameof(m_cockroachMoveControllerNetWork.InvincibleMode), RpcTarget.All, m_invincibleMode, m_addSpeedValue, m_addJumpValue);
         }
 
+        [PunRPC]
         /// <summary>
         /// 1秒おきにHitPointを減らす
         /// </summary>
@@ -116,15 +134,18 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 // 体力を減らす
                 m_hp -= decreaseValue;
-                StartCoroutine(m_CUNW.DamageColor());
+                if (m_cockroachUINetWork)
+                {
+                    StartCoroutine(m_cockroachUINetWork.DamageColor());
+                }
             }
 
-            m_CUNW.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
-            m_CUNW.ReflectHPSlider(m_hp, m_maxHp);
-
-            CheckAlive();
+            m_cockroachUINetWork.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
+            m_cockroachUINetWork.ReflectHPSlider(m_hp, m_maxHp);
+            photonView.RPC(nameof(CheckAlive), RpcTarget.All);
         }
 
+        [PunRPC]
         /// <summary>
         /// 食べ物を食べて、満腹ゲージを回復する。
         /// </summary>
@@ -139,8 +160,8 @@ namespace Photon.Pun.Demo.PunBasics
                 m_satietyGauge = m_maxSatietyGauge;
             }
 
-            m_CUNW.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
-            m_GM.FoodGenerate();
+            m_cockroachUINetWork.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
+            //m_netWorkGameManage.FoodGenerate();
             Debug.Log("Heel");
         }
 
@@ -154,17 +175,19 @@ namespace Photon.Pun.Demo.PunBasics
             if (m_invincibleMode) return;
 
             m_hp -= damageValue;
-            CheckAlive();                           // 生存確認
-            StartCoroutine(InvincibleMode());       // 無敵モード開始
-            StartCoroutine(m_CUNW.DamageColor());     // ダメージを受けたUI表示
-            m_CUNW.ReflectHPSlider(m_hp, m_maxHp);    // HPバーを減少させる
+            photonView.RPC(nameof(CheckAlive), RpcTarget.All);
+            StartCoroutine(InvincibleMode());                                                           // 無敵モード開始
+            StartCoroutine(m_cockroachUINetWork.DamageColor());                                         // ダメージを受けたUI表示
+            photonView.RPC(nameof(m_cockroachUINetWork.ReflectHPSlider), RpcTarget.All, m_hp, m_maxHp); // HPバーを減少させる
         }
 
         private void OnTriggerEnter(Collider other)
         {
+            if (!photonView.IsMine) return;
+
             if (other.tag == "Food")
             {
-                Eat(other.gameObject.GetComponent<Food>().m_heelValue);
+                photonView.RPC(nameof(Eat), RpcTarget.All, other.gameObject.GetComponent<Food>().m_heelValue);
             }
         }
 
@@ -172,13 +195,17 @@ namespace Photon.Pun.Demo.PunBasics
         {
             if (stream.IsWriting)
             {
-                stream.SendNext(this.m_isDed);
-                stream.SendNext(this.m_invincibleMode);
+                stream.SendNext(m_isDed);
+                stream.SendNext(m_invincibleMode);
+                stream.SendNext(m_satietyGauge);
+                stream.SendNext(m_hp);
             }
             else
             {
-                this.m_isDed = (bool)stream.ReceiveNext();
-                this.m_invincibleMode = (bool)stream.ReceiveNext();
+                m_isDed = (bool)stream.ReceiveNext();
+                m_invincibleMode = (bool)stream.ReceiveNext();
+                m_satietyGauge = (int)stream.ReceiveNext();
+                m_hp = (int)stream.ReceiveNext();
             }
         }
     }

@@ -9,6 +9,8 @@ namespace Photon.Pun.Demo.PunBasics
     [RequireComponent(typeof(Rigidbody))]
     public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObservable
     {
+        static public GameObject m_Instance;
+
         /// <summary>移動速度</summary>
         [SerializeField] float m_moveSpeed = 1f;
         /// <summary>体を回転する速度</summary>
@@ -50,8 +52,15 @@ namespace Photon.Pun.Demo.PunBasics
 #if DEBUG
         /// <summary>IKの動きを調整するときに使う</summary>
         [SerializeField] bool isIKTest = false;
-
 #endif
+
+        private void Awake()
+        {
+            if (photonView.IsMine)
+            {
+                m_Instance = gameObject;
+            }
+        }
 
         // Start is called before the first frame update
         void Start()
@@ -177,7 +186,7 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 m_attackRangeObj.SetActive(true);
             }
-            
+
             m_sprayParticle.SetActive(true);
 
             if (RayOfAttack())

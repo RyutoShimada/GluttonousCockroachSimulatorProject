@@ -8,6 +8,8 @@ namespace Photon.Pun.Demo.PunBasics
 {
     public class Launcher : MonoBehaviourPunCallbacks
     {
+        static public Launcher m_Instance;
+
         #region Private Serializable Fields
 
         [Tooltip("プレイヤーがキャラクターを選択するための UI Panel")]
@@ -50,6 +52,8 @@ namespace Photon.Pun.Demo.PunBasics
             //{
             //    Debug.LogError("<Color=Red><b>Missing</b></Color> loaderAnime Reference.", this);
             //}
+
+            m_Instance = this;
 
             // これにより、マスタークライアントでPhotonNetwork.LoadLevel()を使用すると、
             // 同じ部屋にいるすべてのクライアントが自動的にレベルを同期することができます。
@@ -99,7 +103,7 @@ namespace Photon.Pun.Demo.PunBasics
         /// 開発者用のUnity Editor内ではなく、プレイヤー用のUIビューにフィードバックを記録します。
         /// </summary>
         /// <param name="message">表示内容</param>
-        void LogFeedback(string message)
+        public void LogFeedback(string message)
         {
             if (!m_feedbackText) return;
 

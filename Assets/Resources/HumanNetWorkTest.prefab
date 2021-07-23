@@ -751,12 +751,6 @@ MonoBehaviour:
   m_rightHandIKTarget: {fileID: 1460826044077140144}
   m_rightIKPositionWeightSpeed: 3
   m_sprayParticle: {fileID: 4292593705090021826}
-  m_localBones:
-  - {fileID: 1460826044278861513}
-  - {fileID: 1460826044278861517}
-  - {fileID: 1460826044278861519}
-  - {fileID: 1460826044278861505}
-  - {fileID: 1460826044278861507}
   m_HSAR: {fileID: 1460826043751769862}
   isIKTest: 0
 --- !u!114 &-259334206307075520
