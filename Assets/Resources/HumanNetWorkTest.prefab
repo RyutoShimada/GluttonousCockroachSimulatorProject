@@ -651,10 +651,9 @@ GameObject:
   - component: {fileID: 1460826044278861497}
   - component: {fileID: 1460826044278861496}
   - component: {fileID: 6054766251985439646}
-  - component: {fileID: 683951406596350978}
-  - component: {fileID: -1539030308899697846}
   - component: {fileID: -259334206307075520}
   - component: {fileID: 9189570169451200644}
+  - component: {fileID: 647363441909792519}
   m_Layer: 11
   m_Name: HumanNetWorkTest
   m_TagString: Untagged
@@ -752,49 +751,14 @@ MonoBehaviour:
   m_rightHandIKTarget: {fileID: 1460826044077140144}
   m_rightIKPositionWeightSpeed: 3
   m_sprayParticle: {fileID: 4292593705090021826}
+  m_localBones:
+  - {fileID: 1460826044278861513}
+  - {fileID: 1460826044278861517}
+  - {fileID: 1460826044278861519}
+  - {fileID: 1460826044278861505}
+  - {fileID: 1460826044278861507}
   m_HSAR: {fileID: 1460826043751769862}
   isIKTest: 0
---- !u!114 &683951406596350978
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1460826044278861501}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ObservedComponentsFoldoutOpen: 1
-  Group: 0
-  prefixField: -1
-  Synchronization: 3
-  OwnershipTransfer: 0
-  observableSearch: 2
-  ObservedComponents:
-  - {fileID: -1539030308899697846}
-  - {fileID: -259334206307075520}
-  - {fileID: 9189570169451200644}
-  sceneViewId: 0
-  InstantiationId: 0
-  isRuntimeInstantiated: 0
---- !u!114 &-1539030308899697846
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1460826044278861501}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizeVelocity: 1
-  m_SynchronizeAngularVelocity: 0
-  m_TeleportEnabled: 0
-  m_TeleportIfDistanceGreaterThan: 3
 --- !u!114 &-259334206307075520
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -828,10 +792,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizePosition: 0
+  m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 0
+--- !u!114 &647363441909792519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1460826044278861501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents:
+  - {fileID: 6054766251985439646}
+  - {fileID: -259334206307075520}
+  - {fileID: 9189570169451200644}
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &1460826044278861505
 GameObject:
   m_ObjectHideFlags: 0

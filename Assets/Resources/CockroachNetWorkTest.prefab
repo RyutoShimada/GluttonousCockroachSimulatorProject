@@ -149,7 +149,6 @@ GameObject:
   - component: {fileID: -2510330566171969012}
   - component: {fileID: -3155712619565757723}
   - component: {fileID: 651348858237884312}
-  - component: {fileID: 3051505905458697733}
   m_Layer: 10
   m_Name: CockroachNetWorkTest
   m_TagString: Cockroach
@@ -261,7 +260,6 @@ MonoBehaviour:
   ObservedComponents:
   - {fileID: -3155712619565757723}
   - {fileID: 651348858237884312}
-  - {fileID: 3051505905458697733}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -300,26 +298,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SynchronizePosition: 0
+  m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
   m_UseLocal: 0
---- !u!114 &3051505905458697733
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1380053710197772766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64179f3720bbfe947b7724caa67b7c1d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SynchronizeVelocity: 1
-  m_SynchronizeAngularVelocity: 0
-  m_TeleportEnabled: 0
-  m_TeleportIfDistanceGreaterThan: 3
 --- !u!1 &1380053710338534205
 GameObject:
   m_ObjectHideFlags: 0
@@ -841,7 +823,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26ee707e94dc29f4c95a4c4763a3d764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parent: {fileID: 0}
+  m_parent: {fileID: 1916137964568727336}
 --- !u!65 &1380053710429812189
 BoxCollider:
   m_ObjectHideFlags: 0
