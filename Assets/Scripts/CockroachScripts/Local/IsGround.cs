@@ -3,38 +3,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IsGround : MonoBehaviour
+namespace Photon.Pun.Demo.PunBasics
 {
-    [Tooltip("CockroachMoveController がアタッチされているオブジェクトをアサインする")]
-    [SerializeField] CockroachMoveControllerNetWork m_parent = null;
-
-    // Start is called before the first frame update
-    void Start()
+    public class IsGround : MonoBehaviourPunCallbacks
     {
-        m_parent = transform.parent.gameObject.GetComponent<CockroachMoveControllerNetWork>();
-    }
+        [Tooltip("CockroachMoveController がアタッチされているオブジェクトをアサインする")]
+        [SerializeField] CockroachMoveControllerNetWork m_parent = null;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.tag != "Cockroach")
+        private void OnTriggerEnter(Collider other)
         {
-            m_parent.IsGround(true);
+            if (!photonView.IsMine) return;
+
+            if (other.tag != "Cockroach")
+            {
+                m_parent.IsGround(true);
+            }
         }
-    }
 
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.tag != "Cockroach")
+        private void OnTriggerStay(Collider other)
         {
-            m_parent.IsGround(true);
+            if (!photonView.IsMine) return;
+
+            if (other.tag != "Cockroach")
+            {
+                m_parent.IsGround(true);
+            }
         }
-    }
 
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.tag != "Cockroach")
+        private void OnTriggerExit(Collider other)
         {
-            m_parent.IsGround(false);
+            if (other.tag != "Cockroach")
+            {
+                m_parent.IsGround(false);
+            }
         }
     }
 }
