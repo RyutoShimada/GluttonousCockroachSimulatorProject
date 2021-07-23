@@ -1,12 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations;
 using Cinemachine;
 
 namespace Photon.Pun.Demo.PunBasics
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks
+    public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObservable
     {
         /// <summary>移動速度</summary>
         [SerializeField] float m_moveSpeed = 1f;
@@ -30,7 +31,10 @@ namespace Photon.Pun.Demo.PunBasics
         /// <summary>攻撃時のスプレーのパーティクル</summary>
         [SerializeField] GameObject m_sprayParticle = null;
         /// <summary>実際に変化するのIKのアニメーション速度</summary>
-        float m_IKWeight = 0f;
+        float m_localIkWeight = 0f;
+
+        [Tooltip("IKで動かすBone")]
+        [SerializeField] GameObject[] m_localBones = null;
 
         /// <summary>スクリプト</summary>
         [SerializeField] HumanSprayAttackRange m_HSAR = null;
@@ -55,30 +59,34 @@ namespace Photon.Pun.Demo.PunBasics
         // Start is called before the first frame update
         void Start()
         {
+            m_anim = GetComponent<Animator>();
+
             if (photonView.IsMine)
             {
                 m_camera.SetActive(true);
-                GameObject go = Instantiate(m_vcamPrefab, m_camera.transform.position, m_camera.transform.rotation);
-                if (go)
+
+                m_rb = GetComponent<Rigidbody>();
+
+                GameObject go = null;
+
+                if (m_vcamPrefab)
                 {
-                    CinemachineVirtualCamera vcam = go.GetComponent<CinemachineVirtualCamera>();
-                    if (vcam)
-                    {
-                        vcam.Follow = m_camera.transform;
-                        //vcam.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = m_camera.transform.localPosition;
-                    }
-                    else
-                    {
-                        Debug.LogError("CinemachineVirtualCamera を GetComponent 出来ませんでした");
-                    }
+                    go = Instantiate(m_vcamPrefab, m_camera.transform.position, m_camera.transform.rotation);
                 }
                 else
                 {
-                    Debug.LogError("m_vcamPrefab のインスタンス化に失敗しました");
+                    Debug.LogError("m_vcamPrefab がアサインされていません");
                 }
 
-                m_rb = GetComponent<Rigidbody>();
-                m_anim = GetComponent<Animator>();
+                if (go.TryGetComponent(out CinemachineVirtualCamera vcam))
+                {
+                    vcam.Follow = m_camera.transform;
+                }
+                else
+                {
+                    Debug.LogError("CinemachineVirtualCamera を GetComponent 出来ませんでした");
+                }
+
                 m_attackRangeObj = transform.Find("Camera").transform.Find("AttackRange").gameObject;
 
                 if (m_attackRangeObj)
@@ -107,9 +115,18 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 m_input.x = Input.GetAxisRaw("Horizontal");
                 m_input.y = Input.GetAxisRaw("Vertical");
-                AttackSpray();
+
                 DoRotate();
                 DoAnimation();
+
+                if (Input.GetButton("Fire1") || isIKTest)
+                {
+                    photonView.RPC(nameof(AttackSpray), RpcTarget.All);
+                }
+                else if (Input.GetButtonUp("Fire1") || !isIKTest)
+                {
+                    photonView.RPC(nameof(CancelAttackSpray), RpcTarget.All);
+                }
             }
         }
 
@@ -154,24 +171,38 @@ namespace Photon.Pun.Demo.PunBasics
             }
         }
 
+        [PunRPC]
         void AttackSpray()
         {
-            if (Input.GetButton("Fire1") || isIKTest)
+            isSprayAttacking = true;
+
+            if (m_attackRangeObj)
             {
-                isSprayAttacking = true;
                 m_attackRangeObj.SetActive(true);
-                m_sprayParticle.SetActive(true);
-                if (RayOfAttack())
+            }
+            
+            m_sprayParticle.SetActive(true);
+
+            if (RayOfAttack())
+            {
+                if (m_hit.collider.gameObject.TryGetComponent(out CockroachNetWork cockroachNetWork))
                 {
-                    m_hit.collider.gameObject.GetComponent<Cockroach>().BeAttacked(m_attackValue);
+                    cockroachNetWork.BeAttacked(m_attackValue);
                 }
             }
-            else if (Input.GetButtonUp("Fire1") || !isIKTest)
+        }
+
+        [PunRPC]
+        void CancelAttackSpray()
+        {
+            isSprayAttacking = false;
+
+            if (m_attackRangeObj)
             {
-                isSprayAttacking = false;
                 m_attackRangeObj.SetActive(false);
-                m_sprayParticle.SetActive(false);
             }
+
+            m_sprayParticle.SetActive(false);
         }
 
         void DoRotate()
@@ -197,40 +228,63 @@ namespace Photon.Pun.Demo.PunBasics
 
         }
 
-
         // IK を計算するためのコールバック
         private void OnAnimatorIK(int layerIndex)
         {
-            if (!photonView.IsMine) return;
+            //if (!photonView.IsMine) return;
             if (m_rightHandIKTarget == null) return;
 
+            // IKアニメーションを滑らかにする処理
             if (isSprayAttacking)
             {
-                if (m_IKWeight < 1.0f)
+                if (m_localIkWeight < 1.0f)
                 {
-                    m_IKWeight += m_rightIKPositionWeightSpeed * Time.deltaTime;
+                    m_localIkWeight += m_rightIKPositionWeightSpeed * Time.deltaTime;
                 }
                 else
                 {
-                    m_IKWeight = 1.0f;
+                    m_localIkWeight = 1.0f;
                 }
             }
             else
             {
-                if (m_IKWeight > 0f)
+                if (m_localIkWeight > 0f)
                 {
-                    m_IKWeight -= m_rightIKPositionWeightSpeed * Time.deltaTime;
+                    m_localIkWeight -= m_rightIKPositionWeightSpeed * Time.deltaTime;
                 }
                 else
                 {
-                    m_IKWeight = 0f;
+                    m_localIkWeight = 0f;
                 }
             }
 
-            m_anim.SetIKPositionWeight(AvatarIKGoal.RightHand, m_IKWeight);
-            m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, 1f);
-            m_anim.SetIKPosition(AvatarIKGoal.RightHand, m_rightHandIKTarget.position);
-            m_anim.SetIKRotation(AvatarIKGoal.RightHand, m_rightHandIKTarget.rotation);
+            if (m_anim)
+            {
+                m_anim.SetIKPositionWeight(AvatarIKGoal.RightHand, m_localIkWeight);
+                m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, 1f); // Rotation は滑らかにしない
+                m_anim.SetIKPosition(AvatarIKGoal.RightHand, m_rightHandIKTarget.position);
+                m_anim.SetIKRotation(AvatarIKGoal.RightHand, m_rightHandIKTarget.rotation);
+            }
+            else
+            {
+                Debug.LogError("m_anim が Null です");
+            }
+        }
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting)
+            {
+                stream.SendNext(this.m_localIkWeight);
+                stream.SendNext(this.m_rightHandIKTarget.position);
+                stream.SendNext(this.m_rightHandIKTarget.rotation);
+            }
+            else
+            {
+                this.m_localIkWeight = (float)stream.ReceiveNext();
+                m_rightHandIKTarget.position = (Vector3)stream.ReceiveNext();
+                m_rightHandIKTarget.rotation = (Quaternion)stream.ReceiveNext();
+            }
         }
     }
 }
