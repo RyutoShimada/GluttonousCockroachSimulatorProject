@@ -33,9 +33,6 @@ namespace Photon.Pun.Demo.PunBasics
         /// <summary>実際に変化するのIKのアニメーション速度</summary>
         float m_localIkWeight = 0f;
 
-        [Tooltip("IKで動かすBone")]
-        [SerializeField] GameObject[] m_localBones = null;
-
         /// <summary>スクリプト</summary>
         [SerializeField] HumanSprayAttackRange m_HSAR = null;
         /// <summary>垂直方向と水平方向の入力を受け付ける</summary>
