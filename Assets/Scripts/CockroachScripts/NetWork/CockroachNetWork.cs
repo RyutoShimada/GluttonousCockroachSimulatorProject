@@ -76,7 +76,7 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 if (m_isDed) return;
                 if (!NetWorkGameManager.m_Instance.m_isGame) return;
-                photonView.RPC(nameof(DecreaseHitPoint), RpcTarget.All, m_decreaseValueIn1second);
+                DecreaseHitPoint(m_decreaseValueIn1second);
             }
         }
 
@@ -99,17 +99,18 @@ namespace Photon.Pun.Demo.PunBasics
             Debug.Log("無敵モード開始");
             // 無敵モード開始
             m_invincibleMode = true;
-            photonView.RPC(nameof(m_cockroachMoveControllerNetWork.InvincibleMode), RpcTarget.All, m_invincibleMode, m_addSpeedValue, m_addJumpValue);
+            //photonView.RPC(nameof(m_cockroachMoveControllerNetWork.InvincibleMode), RpcTarget.All, m_invincibleMode, m_addSpeedValue, m_addJumpValue);
+            m_cockroachMoveControllerNetWork.InvincibleMode(m_invincibleMode, m_addSpeedValue, m_addJumpValue);
 
             yield return new WaitForSeconds(m_invincibleModeTime);
 
             Debug.Log("無敵モード停止");
             // 無敵モード停止
             m_invincibleMode = false;
-            photonView.RPC(nameof(m_cockroachMoveControllerNetWork.InvincibleMode), RpcTarget.All, m_invincibleMode, m_addSpeedValue, m_addJumpValue);
+            //photonView.RPC(nameof(m_cockroachMoveControllerNetWork.InvincibleMode), RpcTarget.All, m_invincibleMode, m_addSpeedValue, m_addJumpValue);
+            m_cockroachMoveControllerNetWork.InvincibleMode(m_invincibleMode, m_addSpeedValue, m_addJumpValue);
         }
 
-        [PunRPC]
         /// <summary>
         /// 1秒おきにHitPointを減らす
         /// </summary>
@@ -182,13 +183,13 @@ namespace Photon.Pun.Demo.PunBasics
             //}
             
             // 生存確認
-            photonView.RPC(nameof(CheckAlive), RpcTarget.Others);
+            photonView.RPC(nameof(CheckAlive), RpcTarget.All);
             // 無敵モード開始
-            photonView.RPC(nameof(StartCoroutineInvicibleMode), RpcTarget.Others);
+            photonView.RPC(nameof(StartCoroutineInvicibleMode), RpcTarget.All);
             // ダメージを受けたUI表示
             photonView.RPC(nameof(StartCoroutineDamegeImageChangeColor), RpcTarget.Others);
             // HPの同期（IsMine ではないオブジェクトからの同期なので OnPhotonSerializeView は使えない）
-            photonView.RPC(nameof(RefleshHp), RpcTarget.Others, m_hp, damageValue);
+            photonView.RPC(nameof(RefleshHp), RpcTarget.All, m_hp, damageValue);
             // HPバーを減少させる
             photonView.RPC(nameof(m_cockroachUINetWork.ReflectHPSlider), RpcTarget.Others, m_hp, m_maxHp);
         }
@@ -220,6 +221,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
             hp -= damage;
             this.m_hp = hp;
+            Debug.Log("HP : " + m_hp);
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -227,12 +229,16 @@ namespace Photon.Pun.Demo.PunBasics
             if (stream.IsWriting)
             {
                 stream.SendNext(m_isDed);
+                Debug.Log($"isDed SendNext : {m_isDed}");
                 stream.SendNext(m_invincibleMode);
+                Debug.Log($"m_invincibleMode SendNext : {m_invincibleMode}");
             }
             else
             {
                 m_isDed = (bool)stream.ReceiveNext();
+                Debug.Log($"m_isDed ReceiveNext : {m_isDed}");
                 m_invincibleMode = (bool)stream.ReceiveNext();
+                Debug.Log($"m_invincibleMode ReceiveNext : {m_invincibleMode}");
             }
         }
     }

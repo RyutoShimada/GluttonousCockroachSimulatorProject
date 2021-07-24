@@ -133,6 +133,7 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     m_countDownText.gameObject.SetActive(true);
                     m_countDownText.text = "そこまで！";
+                    EventSystem.Instance.Unsubscribe((EventSystem.FoodGenerate)FoodGenerate);
                 }
 
             }
@@ -268,7 +269,7 @@ namespace Photon.Pun.Demo.PunBasics
                     }
                 }
             }
-            
+
             if (m_timerText != null)
             {
                 m_timerText.text = $"{m_minutes.ToString("00")} : {m_seconds.ToString("00")}";
@@ -286,7 +287,6 @@ namespace Photon.Pun.Demo.PunBasics
             if (m_foodGeneraterNetWork)
             {
                 StartCoroutine(m_foodGeneraterNetWork.Generate(count));
-                //EventSystem.Instance.Unsubscribe((EventSystem.FoodGenerate)FoodGenerate);
             }
             else
             {
@@ -300,11 +300,13 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 stream.SendNext(m_minutes);
                 stream.SendNext(m_seconds);
+                stream.SendNext(m_isGame);
             }
             else
             {
                 m_minutes = (int)stream.ReceiveNext();
                 m_seconds = (float)stream.ReceiveNext();
+                m_isGame = (bool)stream.ReceiveNext();
             }
         }
     }

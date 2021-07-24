@@ -88,7 +88,6 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     stream.SendNext(m_go[i].transform.position);
                     stream.SendNext(m_go[i].gameObject.activeSelf);
-                    Debug.Log("SendNext");
                 }
             }
             else
@@ -97,7 +96,6 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     m_go[i].transform.position = (Vector3)stream.ReceiveNext();
                     m_go[i].gameObject.SetActive((bool)stream.ReceiveNext());
-                    Debug.Log("ReceiveNext");
                 }
             }
         }

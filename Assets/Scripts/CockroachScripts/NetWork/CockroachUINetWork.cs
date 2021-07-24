@@ -136,24 +136,22 @@ namespace Photon.Pun.Demo.PunBasics
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
         {
-            if (stream.IsWriting && !photonView.IsMine)
+            if (stream.IsWriting)
             {
                 stream.SendNext(m_damageImage.color.r);
                 stream.SendNext(m_damageImage.color.g);
                 stream.SendNext(m_damageImage.color.b);
                 stream.SendNext(m_damageImage.color.a);
+                Debug.Log($"m_damageImage.color SendNext : {m_damageImage.color}");
             }
             else
             {
-                if (m_color != null)
-                {
-                    Debug.Log(info);
-                    m_color.r = (float)stream.ReceiveNext();
-                    m_color.g = (float)stream.ReceiveNext();
-                    m_color.b = (float)stream.ReceiveNext();
-                    m_color.a = (float)stream.ReceiveNext();
-                    m_damageImage.color = m_color;
-                }
+                m_color.r = (float)stream.ReceiveNext();
+                m_color.g = (float)stream.ReceiveNext();
+                m_color.b = (float)stream.ReceiveNext();
+                m_color.a = (float)stream.ReceiveNext();
+                m_damageImage.color = m_color;
+                Debug.Log($"m_color ReceiveNext : {m_color}");
             }
         }
     }
