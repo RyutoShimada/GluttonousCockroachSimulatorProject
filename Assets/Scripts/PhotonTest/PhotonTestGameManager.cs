@@ -111,7 +111,7 @@ namespace Photon.Pun.Demo.PunBasics
         /// <summary>
         /// 同じ部屋にいたプレイヤーが参加した時に呼ばれる
         /// </summary>
-        public override void OnPlayerEnteredRoom(Player newPlayer)
+        public override void OnPlayerEnteredRoom(Realtime.Player newPlayer)
         {
             Debug.Log($"ActorNumber : {newPlayer.ActorNumber} がルームに参加しました");
         }
@@ -119,7 +119,7 @@ namespace Photon.Pun.Demo.PunBasics
         /// <summary>
         /// 同じ部屋にいたプレイヤーが退出した時に呼ばれる
         /// </summary>
-        public override void OnPlayerLeftRoom(Player player)
+        public override void OnPlayerLeftRoom(Realtime.Player player)
         {
             Debug.Log($"ActorNumber : {player.ActorNumber} がルームに退出しました");
         }

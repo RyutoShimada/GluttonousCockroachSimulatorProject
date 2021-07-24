@@ -73,6 +73,7 @@ namespace Photon.Pun.Demo.PunBasics
         void FixedUpdate()
         {
             if (!photonView.IsMine) return;
+            if (!NetWorkGameManager.m_Instance.IsGame) return;
             if (m_isDed) return;
             Gravity();
             Move();
@@ -83,6 +84,7 @@ namespace Photon.Pun.Demo.PunBasics
         void Update()
         {
             if (!photonView.IsMine) return;
+            if (!NetWorkGameManager.m_Instance.IsGame) return;
             if (m_isDed) return;
             m_v = Input.GetAxisRaw("Vertical");
             Ray();

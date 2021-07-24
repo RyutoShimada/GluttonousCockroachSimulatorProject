@@ -27,7 +27,7 @@ namespace Photon.Pun.Demo.PunBasics
         /// <summary>Alfa値が0のm_damageImageを保存しておく変数</summary>
         Color m_saveDamageColor;
 
-        Color m_color;
+        GameObject m_ui;
 
         private void Start()
         {
@@ -38,13 +38,13 @@ namespace Photon.Pun.Demo.PunBasics
             else
             {
                 Transform t = GameObject.Find("Canvas").transform;
-                GameObject go = Instantiate(m_cockroachUiPrefab, t);
+                m_ui = Instantiate(m_cockroachUiPrefab, t);
 
-                if (go)
+                if (m_ui)
                 {
-                    m_satietyGaugeImage = go.transform.Find("Gauge").transform.Find("SatietyGauge").GetComponent<Image>();
-                    m_hpSlider = go.transform.Find("HPSlider").GetComponent<Slider>();
-                    m_damageImage = go.transform.Find("DamageImage").GetComponent<Image>();
+                    m_satietyGaugeImage = m_ui.transform.Find("Gauge").transform.Find("SatietyGauge").GetComponent<Image>();
+                    m_hpSlider = m_ui.transform.Find("HPSlider").GetComponent<Slider>();
+                    m_damageImage = m_ui.transform.Find("DamageImage").GetComponent<Image>();
 
                     if (m_satietyGaugeImage)
                     {
@@ -54,11 +54,6 @@ namespace Photon.Pun.Demo.PunBasics
                     if (m_hpSlider)
                     {
                         m_hpSlider.value = 1;
-                    }
-
-                    if (m_damageImage)
-                    {
-                        m_color = m_damageImage.color;
                     }
                 }
                 else
@@ -83,7 +78,7 @@ namespace Photon.Pun.Demo.PunBasics
 
                 if (!photonView.IsMine)
                 {
-                    go.SetActive(false);
+                    UiSetActiveFalse();
                 }
             }
         }
@@ -94,23 +89,9 @@ namespace Photon.Pun.Demo.PunBasics
         /// <returns></returns>
         public IEnumerator DamageColor()
         {
-            //photonView.RPC(nameof(DoTweenDamegeColor), RpcTarget.All, m_originDamageColor.r, m_originDamageColor.g, m_originDamageColor.b, m_originDamageColor.a, m_afterSeconds);
             m_damageImage.DOColor(m_originDamageColor, m_afterSeconds);
             yield return new WaitForSeconds(m_afterSeconds);
             m_damageImage.DOColor(m_saveDamageColor, m_afterSeconds);
-            //photonView.RPC(nameof(DoTweenDamegeColor), RpcTarget.All, m_color.r, m_color.g, m_color.b, m_color.a, m_afterSeconds);
-        }
-
-        /// <summary>
-        /// RPCでダメージのアルファ値を変更する
-        /// </summary>
-        /// <param name="c"></param>
-        /// <param name="seconds"></param>
-        [PunRPC]
-        void DoTweenDamegeColor(float r, float g, float b, float a, float seconds)
-        {
-            Color c = new Color(r, g, b, a);
-            m_damageImage.DOColor(c, seconds);
         }
 
         /// <summary>
@@ -133,5 +114,10 @@ namespace Photon.Pun.Demo.PunBasics
         {
             m_hpSlider.DOValue((float)hp / (float)maxHp, m_afterSeconds);
         }
+
+        /// <summary>
+        /// Cockroach の UI を非表示にします
+        /// </summary>
+        public void UiSetActiveFalse() => m_ui.SetActive(false);
     }
 }

@@ -36,7 +36,7 @@ namespace Photon.Pun.Demo.PunBasics
         [SerializeField] GameObject m_camera = null;
 
         CockroachMoveControllerNetWork m_cockroachMoveControllerNetWork = null;
-        CockroachUINetWork m_cockroachUINetWork = null;
+        public CockroachUINetWork m_cockroachUINetWork = null;
 
         /// <summary>1秒間を測るためのタイマー</summary>
         float m_oneSecondTimer = 0f;
@@ -75,7 +75,8 @@ namespace Photon.Pun.Demo.PunBasics
             if (photonView.IsMine)
             {
                 if (m_isDed) return;
-                if (!NetWorkGameManager.m_Instance.m_isGame) return;
+                if (!NetWorkGameManager.m_Instance.IsGame) return;
+
                 DecreaseHitPoint(m_decreaseValueIn1second);
             }
         }
@@ -99,7 +100,6 @@ namespace Photon.Pun.Demo.PunBasics
             Debug.Log("無敵モード開始");
             // 無敵モード開始
             m_invincibleMode = true;
-            //photonView.RPC(nameof(m_cockroachMoveControllerNetWork.InvincibleMode), RpcTarget.All, m_invincibleMode, m_addSpeedValue, m_addJumpValue);
             m_cockroachMoveControllerNetWork.InvincibleMode(m_invincibleMode, m_addSpeedValue, m_addJumpValue);
 
             yield return new WaitForSeconds(m_invincibleModeTime);
@@ -107,7 +107,6 @@ namespace Photon.Pun.Demo.PunBasics
             Debug.Log("無敵モード停止");
             // 無敵モード停止
             m_invincibleMode = false;
-            //photonView.RPC(nameof(m_cockroachMoveControllerNetWork.InvincibleMode), RpcTarget.All, m_invincibleMode, m_addSpeedValue, m_addJumpValue);
             m_cockroachMoveControllerNetWork.InvincibleMode(m_invincibleMode, m_addSpeedValue, m_addJumpValue);
         }
 
@@ -159,12 +158,12 @@ namespace Photon.Pun.Demo.PunBasics
             }
 
             m_cockroachUINetWork.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
-            
+
             if (PhotonNetwork.IsMasterClient)
             {
                 EventSystem.Instance.Generate(1);
             }
-            
+
             Debug.Log("Heel");
         }
 

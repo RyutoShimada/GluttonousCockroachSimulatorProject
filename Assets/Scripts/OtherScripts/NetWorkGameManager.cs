@@ -7,19 +7,30 @@ using Photon.Realtime;
 
 namespace Photon.Pun.Demo.PunBasics
 {
+    public enum OperatedCharactor
+    {
+        Cockroach,
+        Human
+    }
+
     public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         #region Public Fields
 
         static public NetWorkGameManager m_Instance = null;
 
-        public bool m_isGame { get; private set; } = false;
+        bool m_isGame;
 
         #endregion
+
 
         #region Private Fields
 
         GameObject m_instance;
+
+        OperatedCharactor m_characterOperatedByPlayer;
+
+        OperatedCharactor m_victory;
 
         [Tooltip("CockroachNetWork の Prefab")]
         [SerializeField] GameObject m_cockroachPrefab = null;
@@ -48,12 +59,25 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("ゲーム開始までの秒数")]
         [SerializeField] int m_waitForSeconds = 3;
 
+        [Tooltip("Result の UI(GameObject) をアサインする")]
+        [SerializeField] GameObject m_resultUi = null;
+
+        [Tooltip("Result の ResultText をアサインする")]
+        [SerializeField] Text m_resultText = null;
+
         [SerializeField] FoodGeneraterNetWork m_foodGeneraterNetWork = null;
+
+        CockroachUINetWork m_cockroachUINetWork = null;
 
         #endregion
 
-        [HideInInspector]
-        public bool m_cockrochIsDed = false;
+
+        #region Property
+
+        public bool IsGame { get => m_isGame; }
+
+        #endregion
+
 
         #region MonoBehaviour CallBacks
 
@@ -95,12 +119,14 @@ namespace Photon.Pun.Demo.PunBasics
                 if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
                 {
                     // 部屋の中で、ローカルプレーヤー用の Cockroach を生成。PhotonNetwork.Instantiate()で同期。
-                    PhotonNetwork.Instantiate(this.m_cockroachPrefab.name, m_cockroachSpawnPos.position, Quaternion.identity, 0);
+                    m_cockroachUINetWork = PhotonNetwork.Instantiate(this.m_cockroachPrefab.name, m_cockroachSpawnPos.position, Quaternion.identity, 0).GetComponent<CockroachUINetWork>();
+                    m_characterOperatedByPlayer = OperatedCharactor.Cockroach;
                 }
                 else if (!HumanMoveControllerNetWork.m_Instance)
                 {
                     // 部屋の中で、ローカルプレーヤー用の Human を生成。PhotonNetwork.Instantiate()で同期。
                     PhotonNetwork.Instantiate(this.m_humanPrefab.name, m_humanSpawnPos.position, Quaternion.identity, 0);
+                    m_characterOperatedByPlayer = OperatedCharactor.Human;
                 }
 
                 if (PhotonNetwork.LocalPlayer.IsMasterClient)
@@ -113,11 +139,6 @@ namespace Photon.Pun.Demo.PunBasics
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                QuitApplication();
-            }
-
             if (m_isGame)
             {
                 TimeCountDown();
@@ -134,6 +155,20 @@ namespace Photon.Pun.Demo.PunBasics
                     m_countDownText.gameObject.SetActive(true);
                     m_countDownText.text = "そこまで！";
                     EventSystem.Instance.Unsubscribe((EventSystem.FoodGenerate)FoodGenerate);
+
+                    if (m_characterOperatedByPlayer == OperatedCharactor.Cockroach && m_cockroachUINetWork)
+                    {
+                        m_cockroachUINetWork.UiSetActiveFalse();
+                    }
+
+                    if (m_resultUi && m_resultText)
+                    {
+                        StartCoroutine(Result());
+                    }
+                    else
+                    {
+                        Debug.LogError("m_result もしくは m_resultText が Null です", this);
+                    }
                 }
 
             }
@@ -147,7 +182,7 @@ namespace Photon.Pun.Demo.PunBasics
         /// プレイヤーが参加した時に呼ばれる
         /// </summary>
         /// <param name="other">Other.</param>
-        public override void OnPlayerEnteredRoom(Player newPlayer)
+        public override void OnPlayerEnteredRoom(Realtime.Player newPlayer)
         {
             Debug.Log($"ActorNumber : {newPlayer.ActorNumber} がルームに参加しました");
 
@@ -161,11 +196,15 @@ namespace Photon.Pun.Demo.PunBasics
         /// 同じ部屋にいたプレイヤーが退出した時に呼ばれる
         /// </summary>
         /// <param name="other">Other.</param>
-        public override void OnPlayerLeftRoom(Player player)
+        public override void OnPlayerLeftRoom(Realtime.Player player)
         {
             Debug.Log($"ActorNumber : {player.ActorNumber} がルームから退出しました");
-            SceneManager.sceneLoaded += LogFeedBack;
-            LeaveRoom();
+
+            if (m_isGame)
+            {
+                SceneManager.sceneLoaded += LogFeedBack;
+                LeaveRoom();
+            }
         }
 
         /// <summary>
@@ -184,12 +223,6 @@ namespace Photon.Pun.Demo.PunBasics
         {
             Launcher.m_Instance.LogFeedback("対戦相手が退出しました");
             SceneManager.sceneLoaded -= LogFeedBack;
-        }
-
-
-        void GameSet()
-        {
-            // TODO : ここにリザルトとかを書く
         }
 
         #endregion
@@ -245,6 +278,21 @@ namespace Photon.Pun.Demo.PunBasics
             }
         }
 
+        IEnumerator Result()
+        {
+            yield return new WaitForSeconds(1f);
+            m_resultUi.SetActive(true);
+
+            if (m_victory == this.m_characterOperatedByPlayer)
+            {
+                m_resultText.text = "あなたの勝ちです";
+            }
+            else
+            {
+                m_resultText.text = "あなたの負けです";
+            }
+        }
+
         void TimeCountDown()
         {
             if (PhotonNetwork.IsMasterClient)
@@ -262,6 +310,7 @@ namespace Photon.Pun.Demo.PunBasics
                     }
                     else
                     {
+                        m_victory = OperatedCharactor.Cockroach;
                         m_minutes = 0;
                         m_seconds = 0;
                         m_isGame = false;
@@ -278,6 +327,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         void CockroachIsDed(bool isDed)
         {
+            m_victory = OperatedCharactor.Human;
             m_isGame = !isDed;
             EventSystem.Instance.Unsubscribe((EventSystem.CockroachIsDed)CockroachIsDed);
         }
@@ -300,12 +350,14 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 stream.SendNext(m_minutes);
                 stream.SendNext(m_seconds);
+                stream.SendNext(m_victory);
                 stream.SendNext(m_isGame);
             }
             else
             {
                 m_minutes = (int)stream.ReceiveNext();
                 m_seconds = (float)stream.ReceiveNext();
+                m_victory = (OperatedCharactor)stream.ReceiveNext();
                 m_isGame = (bool)stream.ReceiveNext();
             }
         }
