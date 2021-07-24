@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Photon.Realtime;
 
@@ -11,6 +12,8 @@ namespace Photon.Pun.Demo.PunBasics
         #region Public Fields
 
         static public NetWorkGameManager m_Instance = null;
+
+        public bool m_isGame { get; private set; } = false;
 
         #endregion
 
@@ -30,13 +33,33 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("Human の 生成場所")]
         [SerializeField] Transform m_humanSpawnPos = null;
 
+        [Tooltip("タイマーのText")]
+        [SerializeField] Text m_timerText = null;
+
+        [Tooltip("制限時間（分）")]
+        [SerializeField] int m_minutes = 5;
+
+        [Tooltip("制限時間（秒）")]
+        [SerializeField] float m_seconds = 59f;
+
+        [Tooltip("カウントダウンのText")]
+        [SerializeField] Text m_countDownText = null;
+
+        [Tooltip("ゲーム開始までの秒数")]
+        [SerializeField] int m_waitForSeconds = 3;
+
         #endregion
+
+        [HideInInspector]
+        public bool m_cockrochIsDed = false;   
 
         #region MonoBehaviour CallBacks
 
         void Start()
         {
             m_Instance = this;
+
+            EventSystem.Instance.Subscribe((EventSystem.CockroachIsDed)CockroachIsDed);
 
             if (!PhotonNetwork.IsConnected)
             {
@@ -57,7 +80,7 @@ namespace Photon.Pun.Demo.PunBasics
                 int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
 
                 Debug.Log($"ActorNumber : {actorNumber} がルームに参加しました");
-                
+
                 if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
                 {
                     // 部屋の中で、ローカルプレーヤー用の Cockroach を生成。PhotonNetwork.Instantiate()で同期。
@@ -83,6 +106,25 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 QuitApplication();
             }
+
+            if (m_isGame)
+            {
+                TimeCountDown();
+
+                if (m_countDownText.gameObject.activeSelf)
+                {
+                    m_countDownText.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                if (!m_countDownText.gameObject.activeSelf)
+                {
+                    m_countDownText.gameObject.SetActive(true);
+                    m_countDownText.text = "そこまで！";
+                }
+                
+            }
         }
 
         #endregion
@@ -90,12 +132,17 @@ namespace Photon.Pun.Demo.PunBasics
         #region Photon Callbacks
 
         /// <summary>
-        /// 同じ部屋にいたプレイヤーが参加した時に呼ばれる
+        /// プレイヤーが参加した時に呼ばれる
         /// </summary>
         /// <param name="other">Other.</param>
         public override void OnPlayerEnteredRoom(Player newPlayer)
         {
             Debug.Log($"ActorNumber : {newPlayer.ActorNumber} がルームに参加しました");
+
+            if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
+            {
+                photonView.RPC(nameof(GameStart), RpcTarget.All);
+            }
         }
 
         /// <summary>
@@ -106,13 +153,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
             Debug.Log($"ActorNumber : {player.ActorNumber} がルームから退出しました");
             SceneManager.sceneLoaded += LogFeedBack;
-            PhotonNetwork.Disconnect();
-        }
-
-        void LogFeedBack(Scene next, LoadSceneMode mode)
-        {
-            Launcher.m_Instance.LogFeedback("対戦相手が退出しました");
-            SceneManager.sceneLoaded -= LogFeedBack;
+            LeaveRoom();
         }
 
         /// <summary>
@@ -121,6 +162,22 @@ namespace Photon.Pun.Demo.PunBasics
 		public override void OnLeftRoom()
         {
             SceneManager.LoadScene("LauncherScene");
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        void LogFeedBack(Scene next, LoadSceneMode mode)
+        {
+            Launcher.m_Instance.LogFeedback("対戦相手が退出しました");
+            SceneManager.sceneLoaded -= LogFeedBack;
+        }
+
+
+        void GameSet()
+        {
+            // TODO : ここにリザルトとかを書く
         }
 
         #endregion
@@ -144,5 +201,65 @@ namespace Photon.Pun.Demo.PunBasics
         }
 
         #endregion
+
+        [PunRPC]
+        void GameStart()
+        {
+            StartCoroutine(CoroutineGameStart(m_waitForSeconds));
+        }
+
+        IEnumerator CoroutineGameStart(int waitSeconds)
+        {
+            for (int i = waitSeconds; i >= 0; i--)
+            {
+                yield return new WaitForSeconds(1f);
+
+                if (i != 0)
+                {
+                    m_countDownText.text = i.ToString();
+                }
+                else
+                {
+                    m_countDownText.text = "スタート！";
+                    yield return new WaitForSeconds(0.5f);
+                }
+            }
+
+            this.m_isGame = true;
+        }
+
+        void TimeCountDown()
+        {
+            if (m_seconds > 0)
+            {
+                m_seconds -= Time.deltaTime;
+            }
+            else
+            {
+                if (m_minutes > 0)
+                {
+                    m_minutes--;
+                    m_seconds = 59f;
+                }
+                else
+                {
+                    m_minutes = 0;
+                    m_seconds = 0;
+                    m_isGame = false;
+                    Debug.Log("TimeUp!");
+                }
+            }
+
+            if (m_timerText != null)
+            {
+                m_timerText.text = $"{m_minutes.ToString("00")} : {m_seconds.ToString("00")}";
+            }
+        }
+
+        void CockroachIsDed(bool isDed)
+        {
+            m_isGame = !isDed;
+            EventSystem.Instance.Unsubscribe((EventSystem.CockroachIsDed)CockroachIsDed);
+        }
     }
 }
