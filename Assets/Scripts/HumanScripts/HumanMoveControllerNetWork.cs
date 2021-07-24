@@ -110,6 +110,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
             if (photonView.IsMine)
             {
+                if (!NetWorkGameManager.m_Instance.m_isGame) return;
                 Move();
             }
         }
@@ -119,6 +120,8 @@ namespace Photon.Pun.Demo.PunBasics
         {
             if (photonView.IsMine)
             {
+                if (!NetWorkGameManager.m_Instance.m_isGame) return;
+
                 m_input.x = Input.GetAxisRaw("Horizontal");
                 m_input.y = Input.GetAxisRaw("Vertical");
 

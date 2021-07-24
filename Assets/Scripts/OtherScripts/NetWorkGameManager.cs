@@ -7,7 +7,7 @@ using Photon.Realtime;
 
 namespace Photon.Pun.Demo.PunBasics
 {
-    public class NetWorkGameManager : MonoBehaviourPunCallbacks
+    public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         #region Public Fields
 
@@ -48,18 +48,29 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("ゲーム開始までの秒数")]
         [SerializeField] int m_waitForSeconds = 3;
 
+        [SerializeField] FoodGeneraterNetWork m_foodGeneraterNetWork = null;
+
         #endregion
 
         [HideInInspector]
-        public bool m_cockrochIsDed = false;   
+        public bool m_cockrochIsDed = false;
 
         #region MonoBehaviour CallBacks
+
+        private void Awake()
+        {
+            if (photonView.IsMine)
+            {
+                m_Instance = this;
+            }
+        }
 
         void Start()
         {
             m_Instance = this;
 
             EventSystem.Instance.Subscribe((EventSystem.CockroachIsDed)CockroachIsDed);
+            EventSystem.Instance.Subscribe((EventSystem.FoodGenerate)FoodGenerate);
 
             if (!PhotonNetwork.IsConnected)
             {
@@ -123,7 +134,7 @@ namespace Photon.Pun.Demo.PunBasics
                     m_countDownText.gameObject.SetActive(true);
                     m_countDownText.text = "そこまで！";
                 }
-                
+
             }
         }
 
@@ -226,30 +237,38 @@ namespace Photon.Pun.Demo.PunBasics
             }
 
             this.m_isGame = true;
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                StartCoroutine(m_foodGeneraterNetWork.Generate(1));
+            }
         }
 
         void TimeCountDown()
         {
-            if (m_seconds > 0)
+            if (PhotonNetwork.IsMasterClient)
             {
-                m_seconds -= Time.deltaTime;
-            }
-            else
-            {
-                if (m_minutes > 0)
+                if (m_seconds > 0)
                 {
-                    m_minutes--;
-                    m_seconds = 59f;
+                    m_seconds -= Time.deltaTime;
                 }
                 else
                 {
-                    m_minutes = 0;
-                    m_seconds = 0;
-                    m_isGame = false;
-                    Debug.Log("TimeUp!");
+                    if (m_minutes > 0)
+                    {
+                        m_minutes--;
+                        m_seconds = 59f;
+                    }
+                    else
+                    {
+                        m_minutes = 0;
+                        m_seconds = 0;
+                        m_isGame = false;
+                        Debug.Log("TimeUp!");
+                    }
                 }
             }
-
+            
             if (m_timerText != null)
             {
                 m_timerText.text = $"{m_minutes.ToString("00")} : {m_seconds.ToString("00")}";
@@ -260,6 +279,33 @@ namespace Photon.Pun.Demo.PunBasics
         {
             m_isGame = !isDed;
             EventSystem.Instance.Unsubscribe((EventSystem.CockroachIsDed)CockroachIsDed);
+        }
+
+        void FoodGenerate(int count)
+        {
+            if (m_foodGeneraterNetWork)
+            {
+                StartCoroutine(m_foodGeneraterNetWork.Generate(count));
+                //EventSystem.Instance.Unsubscribe((EventSystem.FoodGenerate)FoodGenerate);
+            }
+            else
+            {
+                Debug.LogError("m_foodGeneraterNetWork が Null です");
+            }
+        }
+
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+            if (stream.IsWriting && PhotonNetwork.IsMasterClient)
+            {
+                stream.SendNext(m_minutes);
+                stream.SendNext(m_seconds);
+            }
+            else
+            {
+                m_minutes = (int)stream.ReceiveNext();
+                m_seconds = (float)stream.ReceiveNext();
+            }
         }
     }
 }

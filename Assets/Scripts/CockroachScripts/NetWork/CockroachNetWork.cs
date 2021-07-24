@@ -37,7 +37,6 @@ namespace Photon.Pun.Demo.PunBasics
 
         CockroachMoveControllerNetWork m_cockroachMoveControllerNetWork = null;
         CockroachUINetWork m_cockroachUINetWork = null;
-        NetWorkGameManager m_netWorkGameManage = null;
 
         /// <summary>1秒間を測るためのタイマー</summary>
         float m_oneSecondTimer = 0f;
@@ -56,7 +55,6 @@ namespace Photon.Pun.Demo.PunBasics
         {
             m_cockroachMoveControllerNetWork = GetComponent<CockroachMoveControllerNetWork>();
             m_cockroachUINetWork = GetComponent<CockroachUINetWork>();
-            m_netWorkGameManage = FindObjectOfType<NetWorkGameManager>();
 
             if (photonView.IsMine)
             {
@@ -77,7 +75,7 @@ namespace Photon.Pun.Demo.PunBasics
             if (photonView.IsMine)
             {
                 if (m_isDed) return;
-                if (!m_netWorkGameManage.m_isGame) return;
+                if (!NetWorkGameManager.m_Instance.m_isGame) return;
                 photonView.RPC(nameof(DecreaseHitPoint), RpcTarget.All, m_decreaseValueIn1second);
             }
         }
@@ -160,7 +158,12 @@ namespace Photon.Pun.Demo.PunBasics
             }
 
             m_cockroachUINetWork.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
-            //m_netWorkGameManage.FoodGenerate();
+            
+            if (PhotonNetwork.IsMasterClient)
+            {
+                EventSystem.Instance.Generate(1);
+            }
+            
             Debug.Log("Heel");
         }
 
@@ -173,17 +176,33 @@ namespace Photon.Pun.Demo.PunBasics
             if (m_isDed) return;
             if (m_invincibleMode) return;
 
-            m_hp -= damageValue;
+            //if (photonView.IsMine)
+            //{
+            //    m_hp -= damageValue;
+            //}
+            
             // 生存確認
-            photonView.RPC(nameof(CheckAlive), RpcTarget.All);
+            photonView.RPC(nameof(CheckAlive), RpcTarget.Others);
             // 無敵モード開始
-            StartCoroutine(InvincibleMode());
+            photonView.RPC(nameof(StartCoroutineInvicibleMode), RpcTarget.Others);
             // ダメージを受けたUI表示
-            StartCoroutine(m_cockroachUINetWork.DamageColor());
+            photonView.RPC(nameof(StartCoroutineDamegeImageChangeColor), RpcTarget.Others);
             // HPの同期（IsMine ではないオブジェクトからの同期なので OnPhotonSerializeView は使えない）
-            photonView.RPC(nameof(RefleshHp), RpcTarget.Others, m_hp);
+            photonView.RPC(nameof(RefleshHp), RpcTarget.Others, m_hp, damageValue);
             // HPバーを減少させる
             photonView.RPC(nameof(m_cockroachUINetWork.ReflectHPSlider), RpcTarget.Others, m_hp, m_maxHp);
+        }
+
+        [PunRPC]
+        void StartCoroutineInvicibleMode()
+        {
+            StartCoroutine(InvincibleMode());
+        }
+
+        [PunRPC]
+        void StartCoroutineDamegeImageChangeColor()
+        {
+            StartCoroutine(m_cockroachUINetWork.DamageColor());
         }
 
         private void OnTriggerEnter(Collider other)
@@ -197,8 +216,9 @@ namespace Photon.Pun.Demo.PunBasics
         }
 
         [PunRPC]
-        void RefleshHp(int hp)
+        void RefleshHp(int hp, int damage)
         {
+            hp -= damage;
             this.m_hp = hp;
         }
 
