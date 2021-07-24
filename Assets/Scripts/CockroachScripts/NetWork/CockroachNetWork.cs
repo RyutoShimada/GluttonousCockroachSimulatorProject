@@ -177,11 +177,6 @@ namespace Photon.Pun.Demo.PunBasics
             if (m_isDed) return;
             if (m_invincibleMode) return;
 
-            //if (photonView.IsMine)
-            //{
-            //    m_hp -= damageValue;
-            //}
-            
             // 生存確認
             photonView.RPC(nameof(CheckAlive), RpcTarget.All);
             // 無敵モード開始
@@ -230,15 +225,11 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 stream.SendNext(m_isDed);
                 Debug.Log($"isDed SendNext : {m_isDed}");
-                stream.SendNext(m_invincibleMode);
-                Debug.Log($"m_invincibleMode SendNext : {m_invincibleMode}");
             }
             else
             {
                 m_isDed = (bool)stream.ReceiveNext();
                 Debug.Log($"m_isDed ReceiveNext : {m_isDed}");
-                m_invincibleMode = (bool)stream.ReceiveNext();
-                Debug.Log($"m_invincibleMode ReceiveNext : {m_invincibleMode}");
             }
         }
     }
