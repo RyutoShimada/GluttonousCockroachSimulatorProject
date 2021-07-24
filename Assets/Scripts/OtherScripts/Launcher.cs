@@ -150,8 +150,11 @@ namespace Photon.Pun.Demo.PunBasics
             //m_loaderAnime.StopLoaderAnimation(); // todo:
 
             m_isConnecting = false;
-            m_controlPanel.SetActive(true);
 
+            if (m_controlPanel && !m_controlPanel.activeSelf)
+            {
+                m_controlPanel.SetActive(true);
+            }
         }
 
         /// <summary>
