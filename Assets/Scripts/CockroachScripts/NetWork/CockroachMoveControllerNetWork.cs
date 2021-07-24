@@ -37,6 +37,7 @@ namespace Photon.Pun.Demo.PunBasics
         Vector3 m_jumpDir;
         /// <summary>回転する時に必要な法線ベクトルを取得するためのRay</summary>
         RaycastHit m_rotateHit;
+        Animator m_anim;
         /// <summary>Vertical</summary>
         float m_v;
         /// <summary>マウスのX軸の動いた量</summary>
@@ -66,6 +67,7 @@ namespace Photon.Pun.Demo.PunBasics
             if (!photonView.IsMine) return;
             this.gameObject.GetComponent<Rigidbody>().useGravity = false;
             m_rb = GetComponent<Rigidbody>();
+            m_anim = GetComponent<Animator>();
         }
 
         void FixedUpdate()
@@ -142,6 +144,15 @@ namespace Photon.Pun.Demo.PunBasics
             }
 
             m_rb.velocity = m_velo;
+
+            if (m_isGrounded)
+            {
+                m_anim.SetFloat("Velocity", m_v);
+            }
+            else
+            {
+                m_anim.SetFloat("Velocity", 0);
+            }
         }
 
         private void MouseMove()
