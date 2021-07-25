@@ -54,11 +54,13 @@ namespace Photon.Pun.Demo.PunBasics
             //}
 
             m_Instance = this;
+        }
 
+        private void Start()
+        {
             // これにより、マスタークライアントでPhotonNetwork.LoadLevel()を使用すると、
             // 同じ部屋にいるすべてのクライアントが自動的にレベルを同期することができます。
             PhotonNetwork.AutomaticallySyncScene = true;
-
         }
 
         #endregion

@@ -91,8 +91,6 @@ namespace Photon.Pun.Demo.PunBasics
 
         void Start()
         {
-            m_Instance = this;
-
             EventSystem.Instance.Subscribe((EventSystem.CockroachIsDed)CockroachIsDed);
             EventSystem.Instance.Subscribe((EventSystem.FoodGenerate)FoodGenerate);
 
@@ -208,7 +206,7 @@ namespace Photon.Pun.Demo.PunBasics
         }
 
         /// <summary>
-        /// ローカルプレーヤーが部屋を出たときに呼び出される。ランチャーシーンをロードする必要があります。
+        /// ローカルプレーヤーが部屋を出たときに呼び出される。
         /// </summary>
 		public override void OnLeftRoom()
         {
