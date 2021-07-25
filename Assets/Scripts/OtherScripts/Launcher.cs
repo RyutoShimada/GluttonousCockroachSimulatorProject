@@ -8,8 +8,6 @@ namespace Photon.Pun.Demo.PunBasics
 {
     public class Launcher : MonoBehaviourPunCallbacks
     {
-        static public Launcher m_Instance;
-
         #region Private Serializable Fields
 
         [Tooltip("プレイヤーがキャラクターを選択するための UI Panel")]
@@ -21,11 +19,11 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("1部屋あたりの最大プレイヤー数")]
         [SerializeField] byte m_maxPlayersPerRoom = 2;
 
-        // todo:
-        //[Tooltip("ロード中に表示させるアニメ")]
-        //[SerializeField] LoaderAnime m_loaderAnime;
+        [Tooltip("ロード中に表示させるアニメ")]
+        [SerializeField] GameObject m_loaderImage;
 
         #endregion
+
 
         #region Private Fields
 
@@ -43,15 +41,22 @@ namespace Photon.Pun.Demo.PunBasics
 
         #endregion
 
+
+        #region Public Fields
+
+        static public Launcher m_Instance;
+
+        #endregion
+
+
         #region MonoBehaviour CallBacks
 
         void Awake()
         {
-            // todo:
-            //if (loaderAnime == null)
-            //{
-            //    Debug.LogError("<Color=Red><b>Missing</b></Color> loaderAnime Reference.", this);
-            //}
+            if (m_loaderImage == null)
+            {
+                Debug.LogError("m_loaderAnime がアサインされていません", this);
+            }
 
             m_Instance = this;
         }
@@ -61,9 +66,11 @@ namespace Photon.Pun.Demo.PunBasics
             // これにより、マスタークライアントでPhotonNetwork.LoadLevel()を使用すると、
             // 同じ部屋にいるすべてのクライアントが自動的にレベルを同期することができます。
             PhotonNetwork.AutomaticallySyncScene = true;
+            m_loaderImage.SetActive(false);
         }
 
         #endregion
+
 
         #region Public Methods
 
@@ -78,11 +85,10 @@ namespace Photon.Pun.Demo.PunBasics
             m_isConnecting = true;
             m_controlPanel.SetActive(false);
 
-            // 視覚効果のためにローダーのアニメーションを開始します。// todo:
-            //if (m_loaderAnime != null)
-            //{
-            //	m_loaderAnime.StartLoaderAnimation();
-            //}
+            if (m_loaderImage != null)
+            {
+                m_loaderImage.SetActive(true);
+            }
 
             // 接続されているかどうかをチェックし、接続されていれば参加し、そうでなければサーバーへの接続を開始します。
             if (PhotonNetwork.IsConnected)
@@ -115,6 +121,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         #endregion
 
+
         #region MonoBehaviourPunCallbacks CallBacks
 
         /// <summary>
@@ -124,7 +131,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
             if (m_isConnecting)
             {
-                LogFeedback("マスターサーバーへの接続に成功 -> ランダムな部屋への接続を開始");
+                LogFeedback("サーバーに接続中です...");
                 Debug.Log("マスターサーバーへの接続に成功 -> ランダムな部屋への接続を開始");
                 PhotonNetwork.JoinRandomRoom();
             }
@@ -135,7 +142,7 @@ namespace Photon.Pun.Demo.PunBasics
         /// </summary>
         public override void OnJoinRandomFailed(short returnCode, string message)
         {
-            LogFeedback("ランダムな部屋への接続に失敗 -> 部屋を作成");
+            LogFeedback("部屋を作成します...");
             Debug.Log("ランダムな部屋への接続に失敗 -> 部屋を作成");
             PhotonNetwork.CreateRoom(null, new RoomOptions { MaxPlayers = this.m_maxPlayersPerRoom });
         }
@@ -149,7 +156,7 @@ namespace Photon.Pun.Demo.PunBasics
             LogFeedback($"サーバーとの接続が切断されました : {cause}");
             Debug.LogError($"サーバーとの接続が切断されました : {cause}");
 
-            //m_loaderAnime.StopLoaderAnimation(); // todo:
+            m_loaderImage.SetActive(false);
 
             m_isConnecting = false;
 
@@ -171,7 +178,6 @@ namespace Photon.Pun.Demo.PunBasics
         /// </remarks>
         public override void OnJoinedRoom()
         {
-            LogFeedback($"部屋への接続に成功 : 現在の部屋の人数は { PhotonNetwork.CurrentRoom.PlayerCount} 人");
             Debug.Log($"部屋への接続に成功 : 現在の部屋の人数は { PhotonNetwork.CurrentRoom.PlayerCount} 人");
 
             // 最初のプレーヤーである場合のみロードし、そうでない場合はPhotonNetwork.AutomaticallySyncSceneに頼ってインスタンスシーンを同期させます。

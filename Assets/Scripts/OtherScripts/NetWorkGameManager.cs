@@ -83,10 +83,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         private void Awake()
         {
-            if (photonView.IsMine)
-            {
-                m_Instance = this;
-            }
+            m_Instance = this;
         }
 
         void Start()
