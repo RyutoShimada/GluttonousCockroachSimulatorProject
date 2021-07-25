@@ -77,7 +77,7 @@ namespace Photon.Pun.Demo.PunBasics
 
                 if (m_vcamPrefab)
                 {
-                    go = Instantiate(m_vcamPrefab, m_camera.transform.position, m_camera.transform.rotation);
+                    go = Instantiate(m_vcamPrefab, m_camera.transform.localPosition, m_camera.transform.localRotation);
                 }
                 else
                 {

@@ -51,6 +51,8 @@ namespace Photon.Pun.Demo.PunBasics
         /// <summary>死んでいるかどうか</summary>
         bool m_isDed = false;
 
+        [SerializeField] bool m_debugMode = false;
+
         /// <summary>死んでいるかどうか</summary>
         public bool IsDed
         {
@@ -73,8 +75,11 @@ namespace Photon.Pun.Demo.PunBasics
         void FixedUpdate()
         {
             if (!photonView.IsMine) return;
-            if (!NetWorkGameManager.m_Instance.IsGame) return;
-            if (m_isDed) return;
+            if (!m_debugMode)
+            {
+                if (!NetWorkGameManager.m_Instance.IsGame) return;
+                if (m_isDed) return;
+            }
             Gravity();
             Move();
             FallForce();
@@ -84,8 +89,11 @@ namespace Photon.Pun.Demo.PunBasics
         void Update()
         {
             if (!photonView.IsMine) return;
-            if (!NetWorkGameManager.m_Instance.IsGame) return;
-            if (m_isDed) return;
+            if (!m_debugMode)
+            {
+                if (!NetWorkGameManager.m_Instance.IsGame) return;
+                if (m_isDed) return;
+            }
             m_v = Input.GetAxisRaw("Vertical");
             Ray();
             Jump(m_jumpPower);

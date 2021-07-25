@@ -11,6 +11,7 @@ TagManager:
   - Collider
   - Cockroach
   - Food
+  - Human
   layers:
   - Default
   - TransparentFX

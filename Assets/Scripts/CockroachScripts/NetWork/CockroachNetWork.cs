@@ -38,6 +38,8 @@ namespace Photon.Pun.Demo.PunBasics
         CockroachMoveControllerNetWork m_cockroachMoveControllerNetWork = null;
         public CockroachUINetWork m_cockroachUINetWork = null;
 
+        AudioSource m_audio;
+
         /// <summary>1秒間を測るためのタイマー</summary>
         float m_oneSecondTimer = 0f;
         /// <summary>死んだかどうか</summary>
@@ -58,6 +60,7 @@ namespace Photon.Pun.Demo.PunBasics
 
             if (photonView.IsMine)
             {
+                m_audio = GetComponent<AudioSource>();
                 m_camera.SetActive(true);
 
                 m_isDed = false;
@@ -206,6 +209,7 @@ namespace Photon.Pun.Demo.PunBasics
 
             if (other.tag == "Food")
             {
+                m_audio.Play();
                 photonView.RPC(nameof(Eat), RpcTarget.All, other.gameObject.GetComponent<Food>().m_heelValue);
             }
         }
