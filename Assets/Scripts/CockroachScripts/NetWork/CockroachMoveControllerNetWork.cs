@@ -51,6 +51,8 @@ namespace Photon.Pun.Demo.PunBasics
         /// <summary>死んでいるかどうか</summary>
         bool m_isDed = false;
 
+        bool m_canMove = true;
+
         [SerializeField] bool m_debugMode = false;
 
         /// <summary>死んでいるかどうか</summary>
@@ -70,6 +72,7 @@ namespace Photon.Pun.Demo.PunBasics
             this.gameObject.GetComponent<Rigidbody>().useGravity = false;
             m_rb = GetComponent<Rigidbody>();
             m_anim = GetComponent<Animator>();
+            EventSystem.Instance.Subscribe((EventSystem.CanMove)CanMove);
         }
 
         void FixedUpdate()
@@ -77,7 +80,7 @@ namespace Photon.Pun.Demo.PunBasics
             if (!photonView.IsMine) return;
             if (!m_debugMode)
             {
-                if (!NetWorkGameManager.m_Instance.IsGame) return;
+                if (!m_canMove) return;
                 if (m_isDed) return;
             }
             Gravity();
@@ -91,13 +94,18 @@ namespace Photon.Pun.Demo.PunBasics
             if (!photonView.IsMine) return;
             if (!m_debugMode)
             {
-                if (!NetWorkGameManager.m_Instance.IsGame) return;
+                if (!m_canMove) return;
                 if (m_isDed) return;
             }
             m_v = Input.GetAxisRaw("Vertical");
             Ray();
             Jump(m_jumpPower);
             MouseMove();
+        }
+
+        private void OnDestroy()
+        {
+            EventSystem.Instance.Unsubscribe((EventSystem.CanMove)CanMove);
         }
 
         /// <summary>
@@ -222,6 +230,15 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 m_isGrounded = false;
             }
+        }
+
+        /// <summary>
+        /// 動けるかどうか（イベントから呼ばれる）
+        /// </summary>
+        /// <returns></returns>
+        void CanMove(bool isMove)
+        {
+            m_canMove = isMove;
         }
 
         void Ray()

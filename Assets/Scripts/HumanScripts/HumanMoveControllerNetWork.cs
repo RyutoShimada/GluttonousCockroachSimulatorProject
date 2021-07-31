@@ -49,10 +49,9 @@ namespace Photon.Pun.Demo.PunBasics
         Animator m_anim;
         RaycastHit m_hit;
 
-#if DEBUG
-        /// <summary>IKの動きを調整するときに使う</summary>
-        [SerializeField] bool isIKTest = false;
-#endif
+        GameObject m_vcam = null;
+        CinemachineVirtualCamera m_vcamBase = null;
+        bool m_canMove = true;
 
         private void Awake()
         {
@@ -73,20 +72,23 @@ namespace Photon.Pun.Demo.PunBasics
 
                 m_rb = GetComponent<Rigidbody>();
 
-                GameObject go = null;
+                EventSystem.Instance.Subscribe((EventSystem.CanMove)CanMove);
+                EventSystem.Instance.Subscribe((EventSystem.ResetTransform)ResetPosition);
 
                 if (m_vcamPrefab)
                 {
-                    go = Instantiate(m_vcamPrefab, m_camera.transform.localPosition, m_camera.transform.localRotation);
+                    m_vcam = Instantiate(m_vcamPrefab, m_camera.transform.position, m_camera.transform.rotation);
                 }
                 else
                 {
                     Debug.LogError("m_vcamPrefab がアサインされていません");
                 }
 
-                if (go.TryGetComponent(out CinemachineVirtualCamera vcam))
+                if (m_vcam.TryGetComponent(out CinemachineVirtualCamera vcam))
                 {
+                    m_vcamBase = vcam.GetComponent<CinemachineVirtualCamera>();
                     vcam.Follow = m_camera.transform;
+                    m_vcamBase.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = Vector3.zero;
                 }
                 else
                 {
@@ -110,7 +112,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
             if (photonView.IsMine)
             {
-                if (!NetWorkGameManager.m_Instance.IsGame) return;
+                if (!m_canMove) return;
                 Move();
             }
         }
@@ -120,7 +122,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
             if (photonView.IsMine)
             {
-                if (!NetWorkGameManager.m_Instance.IsGame) return;
+                if (!m_canMove) return;
 
                 m_input.x = Input.GetAxisRaw("Horizontal");
                 m_input.y = Input.GetAxisRaw("Vertical");
@@ -128,15 +130,32 @@ namespace Photon.Pun.Demo.PunBasics
                 DoRotate();
                 DoAnimation();
 
-                if (Input.GetButton("Fire1") || isIKTest)
+                if (Input.GetButton("Fire1"))
                 {
                     photonView.RPC(nameof(AttackSpray), RpcTarget.All);
                 }
-                else if (Input.GetButtonUp("Fire1") || !isIKTest)
+                else if (Input.GetButtonUp("Fire1"))
                 {
                     photonView.RPC(nameof(CancelAttackSpray), RpcTarget.All);
                 }
             }
+        }
+
+        private void OnDestroy()
+        {
+            EventSystem.Instance.Unsubscribe((EventSystem.ResetTransform)ResetPosition);
+            EventSystem.Instance.Unsubscribe((EventSystem.CanMove)CanMove);
+        }
+
+        void ResetPosition(Vector3 v, Quaternion q)
+        {
+            if (photonView.IsMine)
+            {
+                this.transform.position = v;
+                this.transform.rotation = q;
+            }
+            
+            m_vcamBase.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = Vector3.zero;
         }
 
         void Move()
@@ -157,6 +176,15 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 m_rb.velocity = Vector3.zero;
             }
+        }
+
+        /// <summary>
+        /// 動けるかどうか（イベントから呼ばれる）
+        /// </summary>
+        /// <returns></returns>
+        void CanMove(bool isMove)
+        {
+            m_canMove = isMove;
         }
 
         bool RayOfAttack()
@@ -216,7 +244,6 @@ namespace Photon.Pun.Demo.PunBasics
 
         void DoRotate()
         {
-            if (isIKTest) return;
             //Playerの向きをカメラの向いている方向にする
             this.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, this.transform.rotation, m_turnSpeed * Time.deltaTime);
             //Playerが倒れないようにする

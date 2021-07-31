@@ -8,10 +8,29 @@ public class CameraController : MonoBehaviour
     [SerializeField] float m_mouseYMaxRange = 300f;
     [SerializeField] float m_mouseYMinRange = 0f;
 
+    bool m_canMove = true;
+
+    private void Start()
+    {
+        EventSystem.Instance.Subscribe((EventSystem.CanMove)CanMove);
+    }
+
     // Update is called once per frame
     void Update()
     {
-        CameraControlle();
+        if (m_canMove)
+        {
+            CameraControlle();
+        }
+    }
+
+    /// <summary>
+    /// 動けるかどうか（イベントから呼ばれる）
+    /// </summary>
+    /// <returns></returns>
+    void CanMove(bool isMove)
+    {
+        m_canMove = isMove;
     }
 
     void CameraControlle()

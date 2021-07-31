@@ -127,7 +127,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82468
+  m_Name: pb_Mesh92626
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -315,7 +315,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 310096706}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -593,12 +593,13 @@ MonoBehaviour:
     type: 3}
   m_humanSpawnPos: {fileID: 316848580}
   m_timerText: {fileID: 2018271323}
-  m_minutes: 3
-  m_seconds: 0
+  m_minutes: 1
+  m_seconds: 30
   m_countDownText: {fileID: 117475758}
   m_waitForSeconds: 3
   m_resultUi: {fileID: 1261095794}
   m_resultText: {fileID: 1293305561}
+  m_feedBack: {fileID: 1987264560}
   m_foodGeneraterNetWork: {fileID: 56746356067704078}
 --- !u!114 &168559892
 MonoBehaviour:
@@ -973,6 +974,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1851623830}
+  - {fileID: 1987264558}
   - {fileID: 117475757}
   - {fileID: 2018271321}
   - {fileID: 1261095795}
@@ -1355,7 +1357,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82456
+  m_Name: pb_Mesh92540
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1518,7 +1520,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82578
+  m_Name: pb_Mesh92706
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1760,7 +1762,7 @@ PrefabInstance:
     - target: {fileID: 3865535217382451742, guid: 7efdbe34a923fc845a2e64a1f5c86a86,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.11
+      value: 3.999
       objectReference: {fileID: 0}
     - target: {fileID: 3865535217382451742, guid: 7efdbe34a923fc845a2e64a1f5c86a86,
         type: 3}
@@ -1775,7 +1777,7 @@ PrefabInstance:
     - target: {fileID: 3865535217841589719, guid: 7efdbe34a923fc845a2e64a1f5c86a86,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.13
+      value: 4.024
       objectReference: {fileID: 0}
     - target: {fileID: 3865535217841589719, guid: 7efdbe34a923fc845a2e64a1f5c86a86,
         type: 3}
@@ -1805,7 +1807,7 @@ PrefabInstance:
     - target: {fileID: 3865535218517278929, guid: 7efdbe34a923fc845a2e64a1f5c86a86,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 8.71
+      value: 8.648
       objectReference: {fileID: 0}
     - target: {fileID: 3865535218517278929, guid: 7efdbe34a923fc845a2e64a1f5c86a86,
         type: 3}
@@ -1855,7 +1857,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82566
+  m_Name: pb_Mesh92318
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2018,7 +2020,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82396
+  m_Name: pb_Mesh92764
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2181,7 +2183,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82590
+  m_Name: pb_Mesh92752
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2344,7 +2346,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh64710
+  m_Name: pb_Mesh92642
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2507,7 +2509,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82420
+  m_Name: pb_Mesh92470
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -2670,7 +2672,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82432
+  m_Name: pb_Mesh92484
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3057,7 +3059,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82518
+  m_Name: pb_Mesh92654
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3292,7 +3294,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1199962695}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 8.34, z: -7.95}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -3363,7 +3365,7 @@ RectTransform:
   m_Children:
   - {fileID: 2099994370}
   m_Father: {fileID: 310096706}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -3654,7 +3656,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82408
+  m_Name: pb_Mesh92422
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3817,7 +3819,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82542
+  m_Name: pb_Mesh92614
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3980,7 +3982,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82506
+  m_Name: pb_Mesh92374
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -4143,7 +4145,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82444
+  m_Name: pb_Mesh92496
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -4306,7 +4308,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82530
+  m_Name: pb_Mesh92290
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -4594,7 +4596,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82554
+  m_Name: pb_Mesh92406
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -4832,7 +4834,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-82480
+  m_Name: pb_Mesh92510
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -4989,6 +4991,100 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &1987264557
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1987264558}
+  - component: {fileID: 1987264561}
+  - component: {fileID: 1987264560}
+  - component: {fileID: 1987264559}
+  m_Layer: 5
+  m_Name: FeedBackText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1987264558
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987264557}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 310096706}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -113}
+  m_SizeDelta: {x: 160, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1987264559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987264557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 1}
+  m_EffectDistance: {x: 3, y: 3}
+  m_UseGraphicAlpha: 1
+--- !u!114 &1987264560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987264557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 40
+    m_FontStyle: 1
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 135
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
+    m_LineSpacing: 1
+  m_Text: 
+--- !u!222 &1987264561
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1987264557}
+  m_CullTransparentMesh: 0
 --- !u!1 &2018271320
 GameObject:
   m_ObjectHideFlags: 0
@@ -5020,7 +5116,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 310096706}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}

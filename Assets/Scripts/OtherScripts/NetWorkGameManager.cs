@@ -65,6 +65,9 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("Result の ResultText をアサインする")]
         [SerializeField] Text m_resultText = null;
 
+        [Tooltip("FeedBackText をアサイン")]
+        [SerializeField] Text m_feedBack = null;
+
         [SerializeField] FoodGeneraterNetWork m_foodGeneraterNetWork = null;
 
         CockroachUINetWork m_cockroachUINetWork = null;
@@ -111,13 +114,19 @@ namespace Photon.Pun.Demo.PunBasics
 
                 Debug.Log($"ActorNumber : {actorNumber} がルームに参加しました");
 
+                m_feedBack.text = "対戦相手を待っています...";
+
+                Cursor.visible = false;
+
+                EventSystem.Instance.IsMove(true);
+
                 if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
                 {
                     // 部屋の中で、ローカルプレーヤー用の Cockroach を生成。PhotonNetwork.Instantiate()で同期。
                     m_cockroachUINetWork = PhotonNetwork.Instantiate(this.m_cockroachPrefab.name, m_cockroachSpawnPos.position, Quaternion.identity, 0).GetComponent<CockroachUINetWork>();
                     m_characterOperatedByPlayer = OperatedCharactor.Cockroach;
                 }
-                else if (!HumanMoveControllerNetWork.m_Instance)
+                else
                 {
                     // 部屋の中で、ローカルプレーヤー用の Human を生成。PhotonNetwork.Instantiate()で同期。
                     PhotonNetwork.Instantiate(this.m_humanPrefab.name, m_humanSpawnPos.position, Quaternion.identity, 0);
@@ -183,6 +192,7 @@ namespace Photon.Pun.Demo.PunBasics
 
             if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers)
             {
+                PhotonNetwork.CurrentRoom.IsOpen = false; // 部屋を閉じる
                 photonView.RPC(nameof(GameStart), RpcTarget.All);
             }
         }
@@ -195,11 +205,8 @@ namespace Photon.Pun.Demo.PunBasics
         {
             Debug.Log($"ActorNumber : {player.ActorNumber} がルームから退出しました");
 
-            if (m_isGame)
-            {
-                SceneManager.sceneLoaded += LogFeedBack;
-                LeaveRoom();
-            }
+            SceneManager.sceneLoaded += LogFeedBack;
+            LeaveRoom();
         }
 
         /// <summary>
@@ -245,6 +252,19 @@ namespace Photon.Pun.Demo.PunBasics
         [PunRPC]
         void GameStart()
         {
+            m_feedBack.text = "";
+
+            EventSystem.Instance.IsMove(false);
+
+            if (m_characterOperatedByPlayer == OperatedCharactor.Cockroach)
+            {
+                EventSystem.Instance.Reset(m_cockroachSpawnPos.position, m_cockroachSpawnPos.rotation);
+            }
+            else
+            {
+                EventSystem.Instance.Reset(m_humanSpawnPos.position, m_humanSpawnPos.rotation);
+            }
+
             StartCoroutine(CoroutineGameStart(m_waitForSeconds));
         }
 
@@ -266,10 +286,11 @@ namespace Photon.Pun.Demo.PunBasics
             }
 
             this.m_isGame = true;
+            EventSystem.Instance.IsMove(m_isGame);
 
             if (PhotonNetwork.IsMasterClient)
             {
-                StartCoroutine(m_foodGeneraterNetWork.Generate(1));
+                StartCoroutine(m_foodGeneraterNetWork.Generate());
             }
         }
 
@@ -277,6 +298,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
             yield return new WaitForSeconds(1f);
             m_resultUi.SetActive(true);
+            Cursor.visible = true;
 
             if (m_victory == this.m_characterOperatedByPlayer)
             {
@@ -309,6 +331,7 @@ namespace Photon.Pun.Demo.PunBasics
                         m_minutes = 0;
                         m_seconds = 0;
                         m_isGame = false;
+                        EventSystem.Instance.IsMove(m_isGame);
                         Debug.Log("TimeUp!");
                     }
                 }
@@ -324,14 +347,15 @@ namespace Photon.Pun.Demo.PunBasics
         {
             m_victory = OperatedCharactor.Human;
             m_isGame = !isDed;
+            EventSystem.Instance.IsMove(m_isGame);
             EventSystem.Instance.Unsubscribe((EventSystem.CockroachIsDed)CockroachIsDed);
         }
 
-        void FoodGenerate(int count)
+        void FoodGenerate()
         {
             if (m_foodGeneraterNetWork)
             {
-                StartCoroutine(m_foodGeneraterNetWork.Generate(count));
+                StartCoroutine(m_foodGeneraterNetWork.Generate());
             }
             else
             {

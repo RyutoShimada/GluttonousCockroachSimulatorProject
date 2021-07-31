@@ -156,7 +156,15 @@ namespace Photon.Pun.Demo.PunBasics
             LogFeedback($"サーバーとの接続が切断されました : {cause}");
             Debug.LogError($"サーバーとの接続が切断されました : {cause}");
 
-            m_loaderImage.SetActive(false);
+            if (!Cursor.visible)
+            {
+                Cursor.visible = true;
+            }
+
+            if (m_loaderImage && m_loaderImage.activeSelf)
+            {
+                m_loaderImage.SetActive(false);
+            }
 
             m_isConnecting = false;
 

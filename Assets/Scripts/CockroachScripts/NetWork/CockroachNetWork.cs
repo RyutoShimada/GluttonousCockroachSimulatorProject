@@ -35,8 +35,10 @@ namespace Photon.Pun.Demo.PunBasics
 
         [SerializeField] GameObject m_camera = null;
 
+        [SerializeField] CameraController m_cameraController = null;
+
         CockroachMoveControllerNetWork m_cockroachMoveControllerNetWork = null;
-        public CockroachUINetWork m_cockroachUINetWork = null;
+        CockroachUINetWork m_cockroachUINetWork = null;
 
         AudioSource m_audio;
 
@@ -57,6 +59,7 @@ namespace Photon.Pun.Demo.PunBasics
         {
             m_cockroachMoveControllerNetWork = GetComponent<CockroachMoveControllerNetWork>();
             m_cockroachUINetWork = GetComponent<CockroachUINetWork>();
+            EventSystem.Instance.Subscribe((EventSystem.ResetTransform)ResetPosition);
 
             if (photonView.IsMine)
             {
@@ -77,10 +80,23 @@ namespace Photon.Pun.Demo.PunBasics
         {
             if (photonView.IsMine)
             {
-                if (m_isDed) return;
                 if (!NetWorkGameManager.m_Instance.IsGame) return;
-
+                if (m_isDed) return;
                 DecreaseHitPoint(m_decreaseValueIn1second);
+            }
+        }
+
+        private void OnDestroy()
+        {
+            EventSystem.Instance.Unsubscribe((EventSystem.ResetTransform)ResetPosition);
+        }
+
+        public void ResetPosition(Vector3 v, Quaternion q)
+        {
+            if (photonView.IsMine)
+            {
+                this.transform.position = v;
+                this.transform.rotation = q;
             }
         }
 
@@ -164,7 +180,7 @@ namespace Photon.Pun.Demo.PunBasics
 
             if (PhotonNetwork.IsMasterClient)
             {
-                EventSystem.Instance.Generate(1);
+                EventSystem.Instance.Generate();
             }
 
             Debug.Log("Heel");

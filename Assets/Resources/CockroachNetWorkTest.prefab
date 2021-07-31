@@ -269,7 +269,7 @@ MonoBehaviour:
   m_addJumpValue: 3
   m_invincibleMode: 0
   m_camera: {fileID: 51643860216663672}
-  m_cockroachUINetWork: {fileID: 0}
+  m_cameraController: {fileID: 4063278139686451554}
   m_isDed: 0
 --- !u!114 &8000153934261983132
 MonoBehaviour:

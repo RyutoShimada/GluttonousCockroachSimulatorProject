@@ -9,6 +9,7 @@ namespace Photon.Pun.Demo.PunBasics
         [SerializeField] GameObject[] m_foods = null;
         [SerializeField] Transform[] m_generatePos = null;
         [SerializeField] float m_interval = 2;
+        [SerializeField] int m_generateCount = 2;
         GameObject[] m_go;
         Vector3 m_beforePos = Vector3.zero;
 
@@ -28,7 +29,7 @@ namespace Photon.Pun.Demo.PunBasics
             if (m_foods.Length <= 0) return;
         }
 
-        public IEnumerator Generate(int generateCount)
+        public IEnumerator Generate()
         {
             if (!PhotonNetwork.IsMasterClient) yield return null;
 
@@ -41,12 +42,12 @@ namespace Photon.Pun.Demo.PunBasics
             }
 
             int currentCount = 0;
-            int[] randomFood = new int[generateCount];
-            int[] randomPos = new int[generateCount];
+            int[] randomFood = new int[m_generateCount];
+            int[] randomPos = new int[m_generateCount];
 
             yield return new WaitForSeconds(m_interval);
 
-            while (currentCount < generateCount)
+            while (currentCount < m_generateCount)
             {
                 randomFood[currentCount] = Random.Range(0, m_go.Length);
                 randomPos[currentCount] = Random.Range(0, m_generatePos.Length);
