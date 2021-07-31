@@ -249,6 +249,7 @@ namespace Photon.Pun.Demo.PunBasics
         /// </summary>
         public void LeaveRoom()
         {
+            Cursor.visible = true;
             PhotonNetwork.LeaveRoom();
         }
 
