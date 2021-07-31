@@ -5315,6 +5315,7 @@ MonoBehaviour:
   - {fileID: 738913532}
   - {fileID: 738913531}
   m_interval: 2
+  m_generateCount: 2
 --- !u!114 &56746356067704079
 MonoBehaviour:
   m_ObjectHideFlags: 0

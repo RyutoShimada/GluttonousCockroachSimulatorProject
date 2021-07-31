@@ -171,7 +171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1143,7 +1143,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &514086597
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1161,7 +1161,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 200, y: 0}
+  m_AnchoredPosition: {x: 200, y: -150}
   m_SizeDelta: {x: 250, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &514086598
@@ -1208,6 +1208,17 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1413478655}
+        m_MethodName: SetOperateNameIsHuman
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: HumanNetWorkTest
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1413478655}
         m_MethodName: Connect
         m_Mode: 1
         m_Arguments:
@@ -1231,7 +1242,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.30911222, g: 0.29957277, b: 0.33962262, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3121,10 +3132,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32375622e4b720a4a805a5f6797ca0a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_cockroachPrefab: {fileID: 1380053710197772766, guid: 611a1954a5117374084928d957476b7e,
+    type: 3}
+  m_humanPrefab: {fileID: 1460826044278861501, guid: 6d50b5190b0154246ad3914b4a103d8f,
+    type: 3}
   m_controlPanel: {fileID: 1969022949}
   m_feedbackText: {fileID: 451294534}
   m_maxPlayersPerRoom: 2
   m_loaderImage: {fileID: 848413601}
+  m_mapKey: map
+  m_gameModeKey: gm
 --- !u!43 &1462856928
 Mesh:
   m_ObjectHideFlags: 0
@@ -3990,7 +4007,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -4088,7 +4105,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: "\u30DC\u30BF\u30F3\u3092\u62BC\u3059\u3068\u30DE\u30C3\u30C1\u30F3\u30B0\u3092\u958B\u59CB\u3057\u307E\u3059"
+  m_Text: "\u64CD\u4F5C\u3059\u308B\u30AD\u30E3\u30E9\u30AF\u30BF\u30FC\u3092\u9078\u629E\u3057\u3066\u304F\u3060\u3055\u3044"
 --- !u!222 &1616628152
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -4635,7 +4652,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1711580585
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5091,7 +5108,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1887712791
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5109,7 +5126,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -200, y: 0}
+  m_AnchoredPosition: {x: -200, y: -150}
   m_SizeDelta: {x: 250, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1887712792
@@ -5156,6 +5173,17 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1413478655}
+        m_MethodName: SetOperateNameIsCockroach
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: CockroachNetWorkTest
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1413478655}
         m_MethodName: Connect
         m_Mode: 1
         m_Arguments:
@@ -5179,7 +5207,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.30911222, g: 0.29957277, b: 0.33962262, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:
