@@ -229,7 +229,7 @@ namespace Photon.Pun.Demo.PunBasics
             PhotonNetwork.Disconnect();
             SceneManager.LoadScene("LauncherScene");
         }
-        
+
         #endregion
 
         #region Private Methods
@@ -256,12 +256,9 @@ namespace Photon.Pun.Demo.PunBasics
         /// <summary>
         /// プレーヤーアプリケーションを終了します。
         /// </summary>
-        void QuitApplication()
+        public void QuitApplication()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                Application.Quit();
-            }
+            Application.Quit();
         }
 
         #endregion
@@ -297,7 +294,7 @@ namespace Photon.Pun.Demo.PunBasics
                 }
                 else
                 {
-                    m_countDownText.text = "スタート！";
+                    m_countDownText.text = "はじめ！";
                     yield return new WaitForSeconds(0.5f);
                 }
             }

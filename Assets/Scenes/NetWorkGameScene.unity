@@ -586,6 +586,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54d84d7097eaa4d42a5825685012b5de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_operateCharactor: 
   m_cockroachPrefab: {fileID: 1380053710197772766, guid: 611a1954a5117374084928d957476b7e,
     type: 3}
   m_cockroachSpawnPos: {fileID: 1901523994}
