@@ -264,7 +264,7 @@ MonoBehaviour:
   m_decreaseValueIn1second: 3
   m_maxHp: 100
   m_hp: 100
-  m_invincibleModeTime: 5
+  m_invincibleModeTime: 3
   m_addSpeedValue: 3
   m_addJumpValue: 3
   m_invincibleMode: 0
