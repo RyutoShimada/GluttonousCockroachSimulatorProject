@@ -752,6 +752,7 @@ MonoBehaviour:
   m_rightIKPositionWeightSpeed: 3
   m_sprayParticle: {fileID: 4292593705090021826}
   m_HSAR: {fileID: 1460826043751769862}
+  m_canMove: 1
 --- !u!114 &-259334206307075520
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -148,7 +148,7 @@ public class Cockroach : MonoBehaviour
     {
         if (other.tag == "Food")
         {
-            Eat(other.gameObject.GetComponent<Food>().m_heelValue);
+            //Eat(other.gameObject.GetComponent<Food>().m_heelValue);
         }
     }
 }

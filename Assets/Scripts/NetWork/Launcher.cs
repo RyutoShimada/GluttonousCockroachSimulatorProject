@@ -26,7 +26,7 @@ namespace Photon.Pun.Demo.PunBasics
         [SerializeField] byte m_maxPlayersPerRoom = 2;
 
         [Tooltip("ロード中に表示させるアニメ")]
-        [SerializeField] GameObject m_loaderImage;
+        [SerializeField] GameObject m_loaderImage = null;
 
         #endregion
 

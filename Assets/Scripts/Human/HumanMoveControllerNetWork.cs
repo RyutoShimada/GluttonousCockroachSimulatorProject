@@ -7,7 +7,7 @@ using Cinemachine;
 namespace Photon.Pun.Demo.PunBasics
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObservable
+    public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObservable, IIsCanMove
     {
         static public GameObject m_Instance;
 
@@ -51,7 +51,8 @@ namespace Photon.Pun.Demo.PunBasics
 
         GameObject m_vcam = null;
         CinemachineVirtualCamera m_vcamBase = null;
-        bool m_canMove = true;
+        [HideInInspector]
+        public bool m_canMove = true;
 
         private void Awake()
         {
@@ -72,7 +73,7 @@ namespace Photon.Pun.Demo.PunBasics
 
                 m_rb = GetComponent<Rigidbody>();
 
-                EventSystem.Instance.Subscribe((EventSystem.CanMove)CanMove);
+                //EventSystem.Instance.Subscribe((EventSystem.CanMove)CanMove);
                 EventSystem.Instance.Subscribe((EventSystem.ResetTransform)ResetPosition);
 
                 if (m_vcamPrefab)
@@ -110,41 +111,40 @@ namespace Photon.Pun.Demo.PunBasics
 
         void FixedUpdate()
         {
-            if (photonView.IsMine)
-            {
-                if (!m_canMove) return;
-                Move();
-            }
+            if (!photonView.IsMine) return;
+            if (!m_canMove) return;
+            Move();
         }
 
         // Update is called once per frame
         void Update()
         {
-            if (photonView.IsMine)
+            if (!photonView.IsMine) return;
+
+            //Debug.Log("Move : " + m_canMove);
+
+            if (!m_canMove) return;
+
+            m_input.x = Input.GetAxisRaw("Horizontal");
+            m_input.y = Input.GetAxisRaw("Vertical");
+
+            DoRotate();
+            DoAnimation();
+
+            if (Input.GetButton("Fire1"))
             {
-                if (!m_canMove) return;
-
-                m_input.x = Input.GetAxisRaw("Horizontal");
-                m_input.y = Input.GetAxisRaw("Vertical");
-
-                DoRotate();
-                DoAnimation();
-
-                if (Input.GetButton("Fire1"))
-                {
-                    photonView.RPC(nameof(AttackSpray), RpcTarget.All);
-                }
-                else if (Input.GetButtonUp("Fire1"))
-                {
-                    photonView.RPC(nameof(CancelAttackSpray), RpcTarget.All);
-                }
+                photonView.RPC(nameof(AttackSpray), RpcTarget.All);
+            }
+            else if (Input.GetButtonUp("Fire1"))
+            {
+                photonView.RPC(nameof(CancelAttackSpray), RpcTarget.All);
             }
         }
 
         private void OnDestroy()
         {
             EventSystem.Instance.Unsubscribe((EventSystem.ResetTransform)ResetPosition);
-            EventSystem.Instance.Unsubscribe((EventSystem.CanMove)CanMove);
+            //EventSystem.Instance.Unsubscribe((EventSystem.CanMove)CanMove);
         }
 
         void ResetPosition(Vector3 v, Quaternion q)
@@ -153,9 +153,8 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 this.transform.position = v;
                 this.transform.rotation = q;
+                m_vcamBase.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = Vector3.zero;
             }
-            
-            m_vcamBase.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = Vector3.zero;
         }
 
         void Move()
@@ -182,10 +181,10 @@ namespace Photon.Pun.Demo.PunBasics
         /// 動けるかどうか（イベントから呼ばれる）
         /// </summary>
         /// <returns></returns>
-        void CanMove(bool isMove)
-        {
-            m_canMove = isMove;
-        }
+        //void CanMove(bool isMove)
+        //{
+        //    m_canMove = isMove;
+        //}
 
         bool RayOfAttack()
         {
@@ -321,6 +320,11 @@ namespace Photon.Pun.Demo.PunBasics
                 m_rightHandIKTarget.position = (Vector3)stream.ReceiveNext();
                 m_rightHandIKTarget.rotation = (Quaternion)stream.ReceiveNext();
             }
+        }
+
+        public void IsMove(bool isMove)
+        {
+            m_canMove = isMove;
         }
     }
 }

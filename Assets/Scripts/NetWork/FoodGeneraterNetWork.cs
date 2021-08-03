@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Photon.Pun.Demo.PunBasics
 {
-    public class FoodGeneraterNetWork : MonoBehaviourPunCallbacks, IPunObservable
+    public class FoodGeneraterNetWork : MonoBehaviourPunCallbacks, IPunObservable, IFoodGenerate
     {
         [SerializeField] GameObject[] m_foods = null;
         [SerializeField] Transform[] m_generatePos = null;
@@ -20,6 +20,7 @@ namespace Photon.Pun.Demo.PunBasics
             for (int i = 0; i < m_foods.Length; i++)
             {
                 m_go[i] = Instantiate(m_foods[i], m_generatePos[i].position, m_generatePos[i].rotation, transform);
+                m_go[i].GetComponent<Food>().m_foodGeneraterNetWork = this;
                 m_go[i].SetActive(false);
             }
         }
@@ -29,7 +30,13 @@ namespace Photon.Pun.Demo.PunBasics
             if (m_foods.Length <= 0) return;
         }
 
-        public IEnumerator Generate()
+        public void Generate()
+        {
+            Debug.Log("Generate!");
+            StartCoroutine(nameof(StartGenerate));
+        }
+
+        public IEnumerator StartGenerate()
         {
             if (!PhotonNetwork.IsMasterClient) yield return null;
 
@@ -70,6 +77,8 @@ namespace Photon.Pun.Demo.PunBasics
                     }
                 }
             }
+
+            Debug.Log("Generated!");
         }
 
         void ChangeFood(int[] randomFood, int[] randomPos, ref int currentCount)
@@ -78,7 +87,6 @@ namespace Photon.Pun.Demo.PunBasics
             m_go[randomFood[currentCount]].transform.position = m_generatePos[randomPos[currentCount]].position;
             m_beforePos = m_go[randomFood[currentCount]].transform.position;
             currentCount++;
-            Debug.Log("Generated!");
         }
 
         public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

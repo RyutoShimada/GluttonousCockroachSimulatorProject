@@ -9,7 +9,7 @@ namespace Photon.Pun.Demo.PunBasics
     /// <summary>
     /// ゴキブリの動きに関するスクリプト
     /// </summary>
-    public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks
+    public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanMove
     {
         /// <summary>移動速度</summary>
         [SerializeField] float m_moveSpeed = 7f;
@@ -51,7 +51,8 @@ namespace Photon.Pun.Demo.PunBasics
         /// <summary>死んでいるかどうか</summary>
         bool m_isDed = false;
 
-        bool m_canMove = true;
+        [HideInInspector]
+        public bool m_canMove = true;
 
         [SerializeField] bool m_debugMode = false;
 
@@ -72,7 +73,7 @@ namespace Photon.Pun.Demo.PunBasics
             this.gameObject.GetComponent<Rigidbody>().useGravity = false;
             m_rb = GetComponent<Rigidbody>();
             m_anim = GetComponent<Animator>();
-            EventSystem.Instance.Subscribe((EventSystem.CanMove)CanMove);
+            //EventSystem.Instance.Subscribe((EventSystem.CanMove)CanMove);
         }
 
         void FixedUpdate()
@@ -105,7 +106,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         private void OnDestroy()
         {
-            EventSystem.Instance.Unsubscribe((EventSystem.CanMove)CanMove);
+            //EventSystem.Instance.Unsubscribe((EventSystem.CanMove)CanMove);
         }
 
         /// <summary>
@@ -236,10 +237,10 @@ namespace Photon.Pun.Demo.PunBasics
         /// 動けるかどうか（イベントから呼ばれる）
         /// </summary>
         /// <returns></returns>
-        void CanMove(bool isMove)
-        {
-            m_canMove = isMove;
-        }
+        //void CanMove(bool isMove)
+        //{
+        //    m_canMove = isMove;
+        //}
 
         void Ray()
         {
@@ -331,6 +332,11 @@ namespace Photon.Pun.Demo.PunBasics
                     StartCoroutine(ChangeRotate(m_rotateHit.normal, 0.5f));
                 }
             }
+        }
+
+        public void IsMove(bool isMove)
+        {
+            m_canMove = isMove;
         }
     }
 }

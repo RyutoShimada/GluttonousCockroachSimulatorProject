@@ -246,6 +246,7 @@ MonoBehaviour:
   m_rayOriginPos: {fileID: 1380053711590895058}
   m_rotateRayPos: {fileID: 1380053710338534204}
   m_mouseSensitivity: 5
+  m_canMove: 1
   m_debugMode: 0
 --- !u!114 &-3155712619565757723
 MonoBehaviour:
@@ -269,7 +270,6 @@ MonoBehaviour:
   m_addJumpValue: 3
   m_invincibleMode: 0
   m_camera: {fileID: 51643860216663672}
-  m_cameraController: {fileID: 4063278139686451554}
   m_isDed: 0
 --- !u!114 &8000153934261983132
 MonoBehaviour:

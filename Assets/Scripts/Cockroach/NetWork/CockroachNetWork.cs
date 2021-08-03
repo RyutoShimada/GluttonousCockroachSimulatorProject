@@ -35,10 +35,10 @@ namespace Photon.Pun.Demo.PunBasics
 
         [SerializeField] GameObject m_camera = null;
 
-        [SerializeField] CameraController m_cameraController = null;
-
         CockroachMoveControllerNetWork m_cockroachMoveControllerNetWork = null;
         CockroachUINetWork m_cockroachUINetWork = null;
+
+        Food m_food = null;
 
         AudioSource m_audio;
 
@@ -178,10 +178,10 @@ namespace Photon.Pun.Demo.PunBasics
 
             m_cockroachUINetWork.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
 
-            if (PhotonNetwork.IsMasterClient)
-            {
-                EventSystem.Instance.Generate();
-            }
+            //if (PhotonNetwork.IsMasterClient)
+            //{
+            //    EventSystem.Instance.Generate();
+            //}
 
             Debug.Log("Heel");
         }
@@ -226,7 +226,16 @@ namespace Photon.Pun.Demo.PunBasics
             if (other.tag == "Food")
             {
                 m_audio.Play();
-                photonView.RPC(nameof(Eat), RpcTarget.All, other.gameObject.GetComponent<Food>().m_heelValue);
+
+                if (!m_food)
+                {
+                    m_food = other.gameObject.GetComponent<Food>();
+                }
+                else
+                {
+                    photonView.RPC(nameof(Eat), RpcTarget.All, m_food.m_heelValue);
+                    m_food.UnActive();
+                }
             }
         }
 
@@ -243,12 +252,11 @@ namespace Photon.Pun.Demo.PunBasics
             if (stream.IsWriting)
             {
                 stream.SendNext(m_isDed);
-                Debug.Log($"isDed SendNext : {m_isDed}");
+
             }
             else
             {
                 m_isDed = (bool)stream.ReceiveNext();
-                Debug.Log($"m_isDed ReceiveNext : {m_isDed}");
             }
         }
     }
