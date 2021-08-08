@@ -16,24 +16,11 @@ namespace Photon.Pun.Demo.PunBasics
     public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         #region Public Fields
-
         static public NetWorkGameManager m_Instance = null;
-
-        bool m_isGame;
-
         public string m_operateCharactor = null;
-
         #endregion
 
-
         #region Private Fields
-
-        GameObject m_instance;
-
-        OperatedCharactor m_characterOperatedByPlayer;
-
-        OperatedCharactor m_victory;
-
         [Tooltip("CockroachNetWork の Prefab")]
         [SerializeField] GameObject m_cockroachPrefab = null;
 
@@ -74,22 +61,28 @@ namespace Photon.Pun.Demo.PunBasics
 
         CockroachUINetWork m_cockroachUINetWork = null;
 
+        /// <summary>操作しているキャラクター</summary>
+        OperatedCharactor m_operatedByPlayer;
+
+        /// <summary>勝利したキャラクター</summary>
+        OperatedCharactor m_victoryPlayer;
+
+        /// <summary>動けるかどうか</summary>
         IIsCanMove m_canMove = null;
 
+        /// <summary>リザルトを表示しているかどうか</summary>
         bool m_isResualt = false;
 
-        #endregion
+        bool m_isGame;
 
+        GameObject m_instance;
+        #endregion
 
         #region Property
-
         public bool IsGame { get => m_isGame; }
-
         #endregion
 
-
         #region MonoBehaviour CallBacks
-
         private void Awake()
         {
             m_Instance = this;
@@ -102,6 +95,7 @@ namespace Photon.Pun.Demo.PunBasics
 
             if (!PhotonNetwork.IsConnected)
             {
+                // マスターサーバーへ接続できなかったらLuncherSceneをロードする
                 SceneManager.LoadScene("LauncherScene");
                 return;
             }
@@ -116,32 +110,27 @@ namespace Photon.Pun.Demo.PunBasics
             }
             else
             {
-                int actorNumber = PhotonNetwork.LocalPlayer.ActorNumber;
-
-                Debug.Log($"ActorNumber : {actorNumber} がルームに参加しました");
-
-                m_feedBack.text = "対戦相手を待っています...";
-
                 Cursor.visible = false;
-
-                GameObject operate;
+                m_feedBack.text = "対戦相手を待っています...";
+                GameObject operate = null;
 
                 if (m_operateCharactor == this.m_cockroachPrefab.name)
                 {
                     // 部屋の中で、ローカルプレーヤー用の Cockroach を生成。PhotonNetwork.Instantiate()で同期。
                     operate = PhotonNetwork.Instantiate(this.m_cockroachPrefab.name, m_cockroachSpawnPos.position, Quaternion.identity, 0);
-                    m_cockroachUINetWork = operate.GetComponent<CockroachUINetWork>();
-                    m_characterOperatedByPlayer = OperatedCharactor.Cockroach;
+                    m_cockroachUINetWork = operate.GetComponent<CockroachUINetWork>(); // ゴキブリ用のUIを入れる
+                    m_operatedByPlayer = OperatedCharactor.Cockroach;
                 }
                 else
                 {
                     // 部屋の中で、ローカルプレーヤー用の Human を生成。PhotonNetwork.Instantiate()で同期。
-                    operate =  PhotonNetwork.Instantiate(this.m_humanPrefab.name, m_humanSpawnPos.position, Quaternion.identity, 0);
-                    m_characterOperatedByPlayer = OperatedCharactor.Human;
+                    operate = PhotonNetwork.Instantiate(this.m_humanPrefab.name, m_humanSpawnPos.position, Quaternion.identity, 0);
+                    m_operatedByPlayer = OperatedCharactor.Human;
                 }
 
                 m_canMove = operate.GetComponent<IIsCanMove>();
                 m_canMove.IsMove(true);
+
                 //EventSystem.Instance.IsMove(true);
 
                 if (PhotonNetwork.LocalPlayer.IsMasterClient)
@@ -162,11 +151,6 @@ namespace Photon.Pun.Demo.PunBasics
             if (m_isGame)
             {
                 TimeCountDown();
-
-                if (m_countDownText.gameObject.activeSelf)
-                {
-                    m_countDownText.gameObject.SetActive(false);
-                }
             }
             else
             {
@@ -176,7 +160,7 @@ namespace Photon.Pun.Demo.PunBasics
                     m_countDownText.text = "そこまで！";
                     //EventSystem.Instance.Unsubscribe((EventSystem.FoodGenerate)FoodGenerate);
 
-                    if (m_characterOperatedByPlayer == OperatedCharactor.Cockroach && m_cockroachUINetWork)
+                    if (m_operatedByPlayer == OperatedCharactor.Cockroach && m_cockroachUINetWork)
                     {
                         m_cockroachUINetWork.UiSetActiveFalse();
                     }
@@ -277,7 +261,7 @@ namespace Photon.Pun.Demo.PunBasics
             m_canMove.IsMove(false);
             //EventSystem.Instance.IsMove(false);
 
-            if (m_characterOperatedByPlayer == OperatedCharactor.Cockroach)
+            if (m_operatedByPlayer == OperatedCharactor.Cockroach)
             {
                 EventSystem.Instance.Reset(m_cockroachSpawnPos.position, m_cockroachSpawnPos.rotation);
             }
@@ -307,12 +291,13 @@ namespace Photon.Pun.Demo.PunBasics
             }
 
             this.m_isGame = true;
-
+            m_countDownText.gameObject.SetActive(false);
             m_canMove.IsMove(m_isGame);
             //EventSystem.Instance.IsMove(m_isGame);
 
             if (PhotonNetwork.IsMasterClient)
             {
+                // Foodの生成はマスタークライアントだけ行う
                 m_foodGeneraterNetWork.GetComponent<IFoodGenerate>().Generate();
             }
         }
@@ -324,7 +309,7 @@ namespace Photon.Pun.Demo.PunBasics
             m_resultUi.SetActive(true);
             Cursor.visible = true;
 
-            if (m_victory == this.m_characterOperatedByPlayer)
+            if (m_victoryPlayer == this.m_operatedByPlayer)
             {
                 m_resultText.text = "あなたの勝ちです";
             }
@@ -351,11 +336,11 @@ namespace Photon.Pun.Demo.PunBasics
                     }
                     else
                     {
-                        m_victory = OperatedCharactor.Cockroach;
+                        m_victoryPlayer = OperatedCharactor.Cockroach;
                         m_minutes = 0;
                         m_seconds = 0;
                         m_isGame = false;
-                        m_canMove.IsMove(m_isGame);
+                        m_canMove.IsMove(false);
                         //EventSystem.Instance.IsMove(m_isGame);
                         Debug.Log("TimeUp!");
                     }
@@ -370,12 +355,13 @@ namespace Photon.Pun.Demo.PunBasics
 
         void CockroachIsDed(bool isDed)
         {
-            m_victory = OperatedCharactor.Human;
+            m_victoryPlayer = OperatedCharactor.Human;
             m_isGame = !isDed;
-            EventSystem.Instance.IsMove(m_isGame);
+            EventSystem.Instance.IsMove(false);
             EventSystem.Instance.Unsubscribe((EventSystem.CockroachIsDed)CockroachIsDed);
         }
 
+        // Event をやっていた
         //void FoodGenerate()
         //{
         //    if (!PhotonNetwork.IsMasterClient) return;
@@ -396,14 +382,14 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 stream.SendNext(m_minutes);
                 stream.SendNext(m_seconds);
-                stream.SendNext(m_victory);
+                stream.SendNext(m_victoryPlayer);
                 stream.SendNext(m_isGame);
             }
             else if (!stream.IsWriting && !PhotonNetwork.IsMasterClient)
             {
                 m_minutes = (int)stream.ReceiveNext();
                 m_seconds = (float)stream.ReceiveNext();
-                m_victory = (OperatedCharactor)stream.ReceiveNext();
+                m_victoryPlayer = (OperatedCharactor)stream.ReceiveNext();
                 m_isGame = (bool)stream.ReceiveNext();
             }
         }
