@@ -283,7 +283,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61c91ec9b65452342803a064c3a1693f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cockroachUiPrefab: {fileID: 6421866726974313622, guid: 7f7d07ba93a501345920ff005eb16c45,
+  m_cockroachUiPrefab: {fileID: 3750884057072520579, guid: f0502bfdd5fead948ad4dd59e5744839,
     type: 3}
   m_afterSeconds: 0.2
 --- !u!114 &-2510330566171969012
