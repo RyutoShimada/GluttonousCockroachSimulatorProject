@@ -105,12 +105,13 @@ public class HumanMoveController : MonoBehaviour
 
     bool RayOfAttack()
     {
+        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * m_maxRayDistance, Color.green);
+
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out m_hit, m_maxRayDistance))
         {
-            Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * m_maxRayDistance, Color.green);
-            //Debug.Log($"HitDistance : {Vector3.Distance(Camera.main.transform.position, m_hit.point)}");
+            m_attackRangeObj.transform.position = new Vector3(m_hit.point.x, m_hit.point.y, m_hit.point.z);
 
-            if (m_hit.collider.gameObject.tag == "Cockroach" && m_HSAR.m_sprayHit)
+            if (m_HSAR.m_sprayHit)
             {
                 return true;
             }
@@ -121,6 +122,7 @@ public class HumanMoveController : MonoBehaviour
         }
         else
         {
+            m_attackRangeObj.transform.position = Camera.main.transform.position + (Camera.main.transform.forward * m_maxRayDistance);
             return false;
         }
     }
@@ -132,11 +134,13 @@ public class HumanMoveController : MonoBehaviour
         if (Input.GetButton("Fire1") || isIKTest)
         {
             isSprayAttacking = true;
-            m_attackRangeObj.SetActive(true);
             m_sprayParticle.SetActive(true);
+            m_attackRangeObj.SetActive(true);
+
             if (RayOfAttack())
             {
-                m_hit.collider.gameObject.GetComponent<Cockroach>().BeAttacked(m_attackValue);
+                Debug.Log("Hit!");
+                m_hit.collider.gameObject.GetComponent<Cockroach>()?.BeAttacked(m_attackValue);
             }
         }
         else if (Input.GetButtonUp("Fire1") || !isIKTest)
