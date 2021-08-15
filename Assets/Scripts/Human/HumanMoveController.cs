@@ -139,12 +139,12 @@ public class HumanMoveController : MonoBehaviour
 
             if (RayOfAttack())
             {
-                Debug.Log("Hit!");
                 m_hit.collider.gameObject.GetComponent<Cockroach>()?.BeAttacked(m_attackValue);
             }
         }
         else if (Input.GetButtonUp("Fire1") || !isIKTest)
         {
+            m_HSAR.m_crossHair.color = Color.white;
             isSprayAttacking = false;
             m_attackRangeObj.SetActive(false);
             m_sprayParticle.SetActive(false);
