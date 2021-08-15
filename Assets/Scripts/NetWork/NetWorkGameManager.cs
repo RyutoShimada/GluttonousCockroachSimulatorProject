@@ -7,7 +7,7 @@ using Photon.Realtime;
 
 namespace Photon.Pun.Demo.PunBasics
 {
-    public enum OperatedCharactor
+    public enum Charactor
     {
         Cockroach,
         Human
@@ -61,11 +61,13 @@ namespace Photon.Pun.Demo.PunBasics
 
         CockroachUINetWork m_cockroachUINetWork = null;
 
+        HumanSprayAttackRange m_humanSprayAttackRange = null;
+
         /// <summary>操作しているキャラクター</summary>
-        OperatedCharactor m_operatedByPlayer;
+        Charactor m_operatedByPlayer;
 
         /// <summary>勝利したキャラクター</summary>
-        OperatedCharactor m_victoryPlayer;
+        Charactor m_victoryPlayer;
 
         /// <summary>動けるかどうか</summary>
         IIsCanMove m_canMove = null;
@@ -119,13 +121,14 @@ namespace Photon.Pun.Demo.PunBasics
                     // 部屋の中で、ローカルプレーヤー用の Cockroach を生成。PhotonNetwork.Instantiate()で同期。
                     operate = PhotonNetwork.Instantiate(this.m_cockroachPrefab.name, m_cockroachSpawnPos.position, Quaternion.identity, 0);
                     m_cockroachUINetWork = operate.GetComponent<CockroachUINetWork>(); // ゴキブリ用のUIを入れる
-                    m_operatedByPlayer = OperatedCharactor.Cockroach;
+                    m_operatedByPlayer = Charactor.Cockroach;
                 }
                 else
                 {
                     // 部屋の中で、ローカルプレーヤー用の Human を生成。PhotonNetwork.Instantiate()で同期。
                     operate = PhotonNetwork.Instantiate(this.m_humanPrefab.name, m_humanSpawnPos.position, Quaternion.identity, 0);
-                    m_operatedByPlayer = OperatedCharactor.Human;
+                    m_humanSprayAttackRange = operate.transform.GetComponentInChildren<HumanSprayAttackRange>();
+                    m_operatedByPlayer = Charactor.Human;
                 }
 
                 m_canMove = operate.GetComponent<IIsCanMove>();
@@ -160,9 +163,14 @@ namespace Photon.Pun.Demo.PunBasics
                     m_countDownText.text = "そこまで！";
                     //EventSystem.Instance.Unsubscribe((EventSystem.FoodGenerate)FoodGenerate);
 
-                    if (m_operatedByPlayer == OperatedCharactor.Cockroach && m_cockroachUINetWork)
+                    if (m_operatedByPlayer == Charactor.Cockroach && m_cockroachUINetWork)
                     {
                         m_cockroachUINetWork.UiSetActiveFalse();
+                    }
+
+                    if (m_operatedByPlayer == Charactor.Human && m_humanSprayAttackRange)
+                    {
+                        m_humanSprayAttackRange.UiSetActiveFalse();
                     }
 
                     if (m_resultUi && m_resultText)
@@ -261,7 +269,7 @@ namespace Photon.Pun.Demo.PunBasics
             m_canMove.IsMove(false);
             //EventSystem.Instance.IsMove(false);
 
-            if (m_operatedByPlayer == OperatedCharactor.Cockroach)
+            if (m_operatedByPlayer == Charactor.Cockroach)
             {
                 EventSystem.Instance.Reset(m_cockroachSpawnPos.position, m_cockroachSpawnPos.rotation);
             }
@@ -336,7 +344,7 @@ namespace Photon.Pun.Demo.PunBasics
                     }
                     else
                     {
-                        m_victoryPlayer = OperatedCharactor.Cockroach;
+                        m_victoryPlayer = Charactor.Cockroach;
                         m_minutes = 0;
                         m_seconds = 0;
                         m_isGame = false;
@@ -355,7 +363,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         void CockroachIsDed(bool isDed)
         {
-            m_victoryPlayer = OperatedCharactor.Human;
+            m_victoryPlayer = Charactor.Human;
             m_isGame = !isDed;
             EventSystem.Instance.IsMove(false);
             EventSystem.Instance.Unsubscribe((EventSystem.CockroachIsDed)CockroachIsDed);
@@ -389,7 +397,7 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 m_minutes = (int)stream.ReceiveNext();
                 m_seconds = (float)stream.ReceiveNext();
-                m_victoryPlayer = (OperatedCharactor)stream.ReceiveNext();
+                m_victoryPlayer = (Charactor)stream.ReceiveNext();
                 m_isGame = (bool)stream.ReceiveNext();
             }
         }

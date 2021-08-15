@@ -28,6 +28,10 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("ロード中に表示させるアニメ")]
         [SerializeField] GameObject m_loaderImage = null;
 
+        [SerializeField] GameObject m_title = null;
+
+        [SerializeField] GameObject m_description = null;
+
         #endregion
 
 
@@ -46,9 +50,6 @@ namespace Photon.Pun.Demo.PunBasics
         string m_gameVersion = "1";
 
         string m_operateName = null;
-
-        public string m_mapKey = "Kitchin";
-        public string m_gameModeKey = "PvP";
 
         #endregion
 
@@ -95,11 +96,9 @@ namespace Photon.Pun.Demo.PunBasics
             m_feedbackText.text = "";
             m_isConnecting = true;
             m_controlPanel.SetActive(false);
-
-            if (m_loaderImage != null)
-            {
-                m_loaderImage.SetActive(true);
-            }
+            m_title.SetActive(false);
+            m_description.SetActive(false);
+            m_loaderImage.SetActive(true);
 
             // 接続されているかどうかをチェックし、接続されていれば参加し、そうでなければサーバーへの接続を開始します。
             if (PhotonNetwork.IsConnected)

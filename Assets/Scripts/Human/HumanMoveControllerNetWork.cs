@@ -36,7 +36,7 @@ namespace Photon.Pun.Demo.PunBasics
         float m_localIkWeight = 0f;
 
         /// <summary>スクリプト</summary>
-        [SerializeField] HumanSprayAttackRange m_HSAR = null;
+        [SerializeField] HumanSprayAttackControllerNetWork m_HSACN = null;
         /// <summary>垂直方向と水平方向の入力を受け付ける</summary>
         Vector2 m_input;
         /// <summary>方向</summary>
@@ -133,11 +133,14 @@ namespace Photon.Pun.Demo.PunBasics
 
             if (Input.GetButton("Fire1"))
             {
-                photonView.RPC(nameof(AttackSpray), RpcTarget.All);
+                //photonView.RPC(nameof(AttackSpray), RpcTarget.All);
+                AttackSpray();
             }
             else if (Input.GetButtonUp("Fire1"))
             {
-                photonView.RPC(nameof(CancelAttackSpray), RpcTarget.All);
+                m_HSACN.m_crossHair.color = Color.white;
+                //photonView.RPC(nameof(CancelAttackSpray), RpcTarget.All);
+                CancelAttackSpray();
             }
         }
 
@@ -188,11 +191,13 @@ namespace Photon.Pun.Demo.PunBasics
 
         bool RayOfAttack()
         {
+            Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * m_maxRayDistance, Color.green);
+
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out m_hit, m_maxRayDistance))
             {
-                Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * m_maxRayDistance, Color.green);
+                m_attackRangeObj.transform.position = new Vector3(m_hit.point.x, m_hit.point.y, m_hit.point.z);
 
-                if (m_hit.collider.gameObject.tag == "Cockroach" && m_HSAR.m_sprayHit)
+                if (m_HSACN.m_sprayHit)
                 {
                     return true;
                 }
@@ -203,11 +208,12 @@ namespace Photon.Pun.Demo.PunBasics
             }
             else
             {
+                m_attackRangeObj.transform.position = Camera.main.transform.position + (Camera.main.transform.forward * m_maxRayDistance);
                 return false;
             }
         }
 
-        [PunRPC]
+        //[PunRPC]
         void AttackSpray()
         {
             isSprayAttacking = true;
@@ -217,7 +223,7 @@ namespace Photon.Pun.Demo.PunBasics
                 m_attackRangeObj.SetActive(true);
             }
 
-            m_sprayParticle.SetActive(true);
+            photonView.RPC(nameof(ActiveSpray), RpcTarget.All);
 
             if (RayOfAttack())
             {
@@ -228,7 +234,7 @@ namespace Photon.Pun.Demo.PunBasics
             }
         }
 
-        [PunRPC]
+        //[PunRPC]
         void CancelAttackSpray()
         {
             isSprayAttacking = false;
@@ -238,6 +244,18 @@ namespace Photon.Pun.Demo.PunBasics
                 m_attackRangeObj.SetActive(false);
             }
 
+            photonView.RPC(nameof(UnActiveSpray), RpcTarget.All);
+        }
+
+        [PunRPC]
+        void ActiveSpray()
+        {
+            m_sprayParticle.SetActive(true);
+        }
+
+        [PunRPC]
+        void UnActiveSpray()
+        {
             m_sprayParticle.SetActive(false);
         }
 
@@ -310,13 +328,15 @@ namespace Photon.Pun.Demo.PunBasics
         {
             if (stream.IsWriting)
             {
+                stream.SendNext(isSprayAttacking);
                 stream.SendNext(this.m_localIkWeight);
                 stream.SendNext(this.m_rightHandIKTarget.position);
                 stream.SendNext(this.m_rightHandIKTarget.rotation);
             }
             else
             {
-                this.m_localIkWeight = (float)stream.ReceiveNext();
+                isSprayAttacking = (bool)stream.ReceiveNext();
+                m_localIkWeight = (float)stream.ReceiveNext();
                 m_rightHandIKTarget.position = (Vector3)stream.ReceiveNext();
                 m_rightHandIKTarget.rotation = (Quaternion)stream.ReceiveNext();
             }
