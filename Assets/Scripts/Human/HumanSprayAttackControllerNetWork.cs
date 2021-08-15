@@ -12,7 +12,7 @@ namespace Photon.Pun.Demo.PunBasics
         GameObject m_ui = null;
 
         /// <summary>ゴキブリに当たっているかどうか</summary>
-        public bool m_sprayHit { get; private set; }
+        [HideInInspector] public bool m_sprayHit;
 
         private void Awake()
         {

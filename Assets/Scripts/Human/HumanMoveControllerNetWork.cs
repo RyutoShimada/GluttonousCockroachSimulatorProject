@@ -133,14 +133,13 @@ namespace Photon.Pun.Demo.PunBasics
 
             if (Input.GetButton("Fire1"))
             {
-                //photonView.RPC(nameof(AttackSpray), RpcTarget.All);
                 AttackSpray();
             }
             else if (Input.GetButtonUp("Fire1"))
             {
-                m_HSACN.m_crossHair.color = Color.white;
-                //photonView.RPC(nameof(CancelAttackSpray), RpcTarget.All);
                 CancelAttackSpray();
+                m_HSACN.m_sprayHit = false;
+                m_HSACN.m_crossHair.color = Color.white;
             }
         }
 
@@ -213,7 +212,6 @@ namespace Photon.Pun.Demo.PunBasics
             }
         }
 
-        //[PunRPC]
         void AttackSpray()
         {
             isSprayAttacking = true;
@@ -234,7 +232,6 @@ namespace Photon.Pun.Demo.PunBasics
             }
         }
 
-        //[PunRPC]
         void CancelAttackSpray()
         {
             isSprayAttacking = false;
