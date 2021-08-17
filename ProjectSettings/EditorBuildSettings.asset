@@ -9,8 +9,11 @@ EditorBuildSettings:
     path: Assets/Scenes/TestScene/GameManagerTestScene.unity
     guid: 597ed651327d38143b2e78feba2cfa97
   - enabled: 0
-    path: Assets/Scenes/TestScene/PhotonTestScene.unity
+    path: 
     guid: e8b25c3fba6f4684192b03676b9233fd
+  - enabled: 1
+    path: Assets/Scenes/MasterScene/TitleScene.unity
+    guid: 538cbb6d29e161c428024e9f8efcfd66
   - enabled: 1
     path: Assets/Scenes/MasterScene/LauncherScene.unity
     guid: 9a8951d59ced4f14ab67a47f4f7d0462
