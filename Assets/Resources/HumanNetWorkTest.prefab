@@ -109,6 +109,7 @@ MonoBehaviour:
   m_humanUi: {fileID: 7104627278270774005, guid: bc53be91c393133469400d3f856e1ec4,
     type: 3}
   m_crossHair: {fileID: 0}
+  m_sprayHit: 0
 --- !u!1 &1460826044077140148
 GameObject:
   m_ObjectHideFlags: 0

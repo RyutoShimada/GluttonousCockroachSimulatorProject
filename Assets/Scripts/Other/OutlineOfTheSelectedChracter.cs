@@ -7,11 +7,20 @@ public class OutlineOfTheSelectedChracter : MonoBehaviour
     [SerializeField] CockroachOutline m_cockroachOutline = null;
     [SerializeField] HumanOutline m_humanOutline = null;
 
+    [SerializeField] AudioClip m_cursolSE = null;
+    [SerializeField] AudioClip m_clickSE = null;
+
     Vector3 m_cursorPosition;
     Vector3 m_cursorPosition3d;
     RaycastHit m_hit;
 
-    // Update is called once per frame
+    AudioSource m_audio;
+
+    private void Start()
+    {
+        m_audio = GetComponent<AudioSource>();
+    }
+
     void Update()
     {
         OnRay();
@@ -33,6 +42,7 @@ public class OutlineOfTheSelectedChracter : MonoBehaviour
                 if (!m_cockroachOutline.enabled)
                 {
                     m_cockroachOutline.enabled = true;
+                    m_audio.PlayOneShot(m_cursolSE);
                 }
             }
             else if (m_hit.collider.gameObject.tag == "Human")
@@ -40,6 +50,7 @@ public class OutlineOfTheSelectedChracter : MonoBehaviour
                 if (!m_humanOutline.enabled)
                 {
                     m_humanOutline.enabled = true;
+                    m_audio.PlayOneShot(m_cursolSE);
                 }
             }
             else
@@ -64,5 +75,10 @@ public class OutlineOfTheSelectedChracter : MonoBehaviour
         {
             m_humanOutline.enabled = false;
         }
+    }
+
+    public void Click()
+    {
+        m_audio.PlayOneShot(m_clickSE);
     }
 }
