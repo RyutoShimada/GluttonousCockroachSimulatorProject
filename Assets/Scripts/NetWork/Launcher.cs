@@ -28,8 +28,6 @@ namespace Photon.Pun.Demo.PunBasics
         [Tooltip("ロード中に表示させるアニメ")]
         [SerializeField] GameObject m_loaderImage = null;
 
-        [SerializeField] GameObject m_title = null;
-
         [SerializeField] GameObject m_description = null;
 
         #endregion
@@ -96,7 +94,6 @@ namespace Photon.Pun.Demo.PunBasics
             m_feedbackText.text = "";
             m_isConnecting = true;
             m_controlPanel.SetActive(false);
-            m_title.SetActive(false);
             m_description.SetActive(false);
             m_loaderImage.SetActive(true);
 
