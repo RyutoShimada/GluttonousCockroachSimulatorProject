@@ -342,6 +342,11 @@ namespace Photon.Pun.Demo.PunBasics
         public void IsMove(bool isMove)
         {
             m_canMove = isMove;
+
+            if (m_vcamBase)
+            {
+                m_vcamBase.enabled = isMove;
+            }
         }
     }
 }
