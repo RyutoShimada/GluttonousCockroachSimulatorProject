@@ -17,7 +17,7 @@ namespace Photon.Pun.Demo.PunBasics
     {
         #region Public Fields
         static public NetWorkGameManager m_Instance = null;
-        public string m_operateCharactor = null;
+        [HideInInspector] public string m_operateCharactor = null;
         #endregion
 
         #region Private Fields
@@ -265,7 +265,15 @@ namespace Photon.Pun.Demo.PunBasics
         [PunRPC]
         void GameStart()
         {
-            m_feedBack.text = "";
+            if (m_operatedByPlayer == Charactor.Cockroach)
+            {
+                m_feedBack.text = "エサを食べながら制限時間生き残れ！";
+            }
+            else
+            {
+                m_feedBack.text = "制限時間内にゴキブリを倒せ！";
+            }
+            
             m_canMove.IsMove(false);
             //EventSystem.Instance.IsMove(false);
 
@@ -295,6 +303,7 @@ namespace Photon.Pun.Demo.PunBasics
                 {
                     m_countDownText.text = "はじめ！";
                     yield return new WaitForSeconds(0.5f);
+                    m_feedBack.text = "";
                 }
             }
 
