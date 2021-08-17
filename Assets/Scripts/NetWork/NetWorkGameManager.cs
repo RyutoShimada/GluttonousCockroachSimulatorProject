@@ -273,9 +273,6 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 m_feedBack.text = "制限時間内にゴキブリを倒せ！";
             }
-            
-            m_canMove.IsMove(false);
-            //EventSystem.Instance.IsMove(false);
 
             if (m_operatedByPlayer == Charactor.Cockroach)
             {
@@ -285,6 +282,9 @@ namespace Photon.Pun.Demo.PunBasics
             {
                 EventSystem.Instance.Reset(m_humanSpawnPos.position, m_humanSpawnPos.rotation);
             }
+
+            m_canMove.IsMove(false);
+            //EventSystem.Instance.IsMove(false);
 
             StartCoroutine(CoroutineGameStart(m_waitForSeconds));
         }
@@ -309,7 +309,7 @@ namespace Photon.Pun.Demo.PunBasics
 
             this.m_isGame = true;
             m_countDownText.gameObject.SetActive(false);
-            m_canMove.IsMove(m_isGame);
+            m_canMove.IsMove(true);
             //EventSystem.Instance.IsMove(m_isGame);
 
             if (PhotonNetwork.IsMasterClient)

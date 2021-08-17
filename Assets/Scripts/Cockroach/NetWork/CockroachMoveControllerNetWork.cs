@@ -13,8 +13,12 @@ namespace Photon.Pun.Demo.PunBasics
     {
         /// <summary>移動速度</summary>
         [SerializeField] float m_moveSpeed = 7f;
+        /// <summary>現在の移動速度</summary>
+        [SerializeField] float m_currentMoveSpeed = 0;
         /// <summary>ジャンプ力</summary>
         [SerializeField] float m_jumpPower = 4f;
+        /// <summary>現在のジャンプ力</summary>
+        [SerializeField] float m_currentJumpPower = 0;
         /// <summary>重力</summary>
         [SerializeField] float m_gravityPower = 10f;
         /// <summary>Rayを飛ばす距離</summary>
@@ -73,6 +77,8 @@ namespace Photon.Pun.Demo.PunBasics
             this.gameObject.GetComponent<Rigidbody>().useGravity = false;
             m_rb = GetComponent<Rigidbody>();
             m_anim = GetComponent<Animator>();
+            m_currentMoveSpeed = m_moveSpeed;
+            m_currentJumpPower = m_jumpPower;
             //EventSystem.Instance.Subscribe((EventSystem.CanMove)CanMove);
         }
 
@@ -93,14 +99,12 @@ namespace Photon.Pun.Demo.PunBasics
         void Update()
         {
             if (!photonView.IsMine) return;
-            if (!m_debugMode)
-            {
-                if (!m_canMove) return;
-                if (m_isDed) return;
-            }
+            if (!m_canMove) return;
+            if (m_isDed) return;
+
             m_v = Input.GetAxisRaw("Vertical");
             Ray();
-            Jump(m_jumpPower);
+            Jump(m_currentJumpPower);
             MouseMove();
         }
 
@@ -120,7 +124,7 @@ namespace Photon.Pun.Demo.PunBasics
 
             if (m_v > 0) // 進む処理
             {
-                m_velo = m_dir.normalized * m_moveSpeed;
+                m_velo = m_dir.normalized * m_currentMoveSpeed;
 
                 if (m_gravityDir == Vector3.up || m_gravityDir == Vector3.down)
                 {
@@ -264,8 +268,8 @@ namespace Photon.Pun.Demo.PunBasics
                 Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation; // https://teratail.com/questions/290578
                 transform.DORotateQuaternion(toRotate, 0.25f).OnComplete(() =>
                 {
-                // 回転した時にできた隙間を強制的に埋める
-                m_rb.AddForce(m_gravityDir * m_gravityPower, ForceMode.Impulse);
+                    // 回転した時にできた隙間を強制的に埋める
+                    m_rb.AddForce(m_gravityDir * m_gravityPower, ForceMode.Impulse);
                 });
             }
             else
@@ -289,13 +293,13 @@ namespace Photon.Pun.Demo.PunBasics
         {
             if (isMode)
             {
-                m_moveSpeed += addSpeed;
-                m_jumpPower += addJump;
+                m_currentMoveSpeed += addSpeed;
+                m_currentJumpPower += addJump;
             }
             else
             {
-                m_moveSpeed -= addSpeed;
-                m_jumpPower -= addJump;
+                m_currentMoveSpeed = m_moveSpeed;
+                m_currentJumpPower = m_jumpPower;
             }
         }
 

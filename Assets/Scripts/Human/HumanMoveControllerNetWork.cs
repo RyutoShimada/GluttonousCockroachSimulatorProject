@@ -90,6 +90,10 @@ namespace Photon.Pun.Demo.PunBasics
                     m_vcamBase = vcam.GetComponent<CinemachineVirtualCamera>();
                     vcam.Follow = m_camera.transform;
                     m_vcamBase.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = Vector3.zero;
+                    if (!m_canMove)
+                    {
+                        m_vcamBase.enabled = false;
+                    }
                 }
                 else
                 {
@@ -156,6 +160,8 @@ namespace Photon.Pun.Demo.PunBasics
                 this.transform.position = v;
                 this.transform.rotation = q;
                 m_vcamBase.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = Vector3.zero;
+                m_vcamBase.GetCinemachineComponent<CinemachinePOV>().m_HorizontalAxis.Value = 0;
+                m_vcamBase.GetCinemachineComponent<CinemachinePOV>().m_VerticalAxis.Value = 0;
             }
         }
 

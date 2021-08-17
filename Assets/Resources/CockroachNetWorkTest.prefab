@@ -240,7 +240,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_moveSpeed: 7
+  m_currentMoveSpeed: 7
   m_jumpPower: 3
+  m_currentJumpPower: 4
   m_gravityPower: 10
   m_maxRayDistance: 1
   m_rayOriginPos: {fileID: 1380053711590895058}
@@ -270,6 +272,7 @@ MonoBehaviour:
   m_addJumpValue: 3
   m_invincibleMode: 0
   m_camera: {fileID: 51643860216663672}
+  m_eatSE: {fileID: 8300000, guid: 2816ff8d6528c554285c9bc28a983641, type: 3}
   m_isDed: 0
 --- !u!114 &8000153934261983132
 MonoBehaviour:
@@ -345,6 +348,9 @@ MonoBehaviour:
   - Type: 1
     SynchronizeType: 1
     Name: Velocity
+  - Type: 9
+    SynchronizeType: 0
+    Name: Damage
   m_SynchronizeLayers:
   - SynchronizeType: 0
     LayerIndex: 0

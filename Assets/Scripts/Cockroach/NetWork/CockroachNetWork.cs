@@ -35,12 +35,14 @@ namespace Photon.Pun.Demo.PunBasics
 
         [SerializeField] GameObject m_camera = null;
 
+        [SerializeField] AudioClip m_eatSE = null;
+
         CockroachMoveControllerNetWork m_cockroachMoveControllerNetWork = null;
         CockroachUINetWork m_cockroachUINetWork = null;
 
         Food m_food = null;
-
         AudioSource m_audio;
+        Animator m_anim;
 
         /// <summary>1秒間を測るためのタイマー</summary>
         float m_oneSecondTimer = 0f;
@@ -57,6 +59,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         private void Start()
         {
+            m_anim = GetComponent<Animator>();
             m_cockroachMoveControllerNetWork = GetComponent<CockroachMoveControllerNetWork>();
             m_cockroachUINetWork = GetComponent<CockroachUINetWork>();
             EventSystem.Instance.Subscribe((EventSystem.ResetTransform)ResetPosition);
@@ -118,8 +121,8 @@ namespace Photon.Pun.Demo.PunBasics
         {
             Debug.Log("無敵モード開始");
             // 無敵モード開始
-            m_invincibleMode = true;
             m_cockroachMoveControllerNetWork.InvincibleMode(m_invincibleMode, m_addSpeedValue, m_addJumpValue);
+            m_anim.SetBool("Damage", true);
 
             yield return new WaitForSeconds(m_invincibleModeTime);
 
@@ -127,6 +130,7 @@ namespace Photon.Pun.Demo.PunBasics
             // 無敵モード停止
             m_invincibleMode = false;
             m_cockroachMoveControllerNetWork.InvincibleMode(m_invincibleMode, m_addSpeedValue, m_addJumpValue);
+            m_anim.SetBool("Damage", false);
         }
 
         /// <summary>
@@ -161,13 +165,14 @@ namespace Photon.Pun.Demo.PunBasics
             m_oneSecondTimer = 0;
         }
 
-        [PunRPC]
         /// <summary>
         /// 食べ物を食べて、満腹ゲージを回復する。
         /// </summary>
         /// <param name="heelValue">体力に加算する値</param>
         void Eat(int heelValue)
         {
+            m_audio.PlayOneShot(m_eatSE);
+
             m_satietyGauge += heelValue;
 
             // 現在のHPがHPの最大値を超えないようにする
@@ -194,6 +199,8 @@ namespace Photon.Pun.Demo.PunBasics
         {
             if (m_isDed) return;
             if (m_invincibleMode) return;
+
+            m_invincibleMode = true;
 
             // 生存確認
             photonView.RPC(nameof(CheckAlive), RpcTarget.All);
@@ -233,7 +240,8 @@ namespace Photon.Pun.Demo.PunBasics
                 }
                 else
                 {
-                    photonView.RPC(nameof(Eat), RpcTarget.All, m_food.m_heelValue);
+                    //photonView.RPC(nameof(Eat), RpcTarget.All, m_food.m_heelValue);
+                    Eat(m_food.m_heelValue);
                     m_food.UnActive();
                 }
             }
