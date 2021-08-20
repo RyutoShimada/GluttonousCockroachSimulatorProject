@@ -746,7 +746,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_moveSpeed: 5
-  m_turnSpeed: 3
+  m_turnSpeed: 10
   m_maxRayDistance: 7
   m_camera: {fileID: 6164331768626041440}
   m_vcamPrefab: {fileID: 1390876007758952053, guid: 06ac31ca1ca062642a0cf0a6c676086b,

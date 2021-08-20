@@ -169,9 +169,10 @@ namespace Photon.Pun.Demo.PunBasics
         /// 食べ物を食べて、満腹ゲージを回復する。
         /// </summary>
         /// <param name="heelValue">体力に加算する値</param>
+        [PunRPC]
         void Eat(int heelValue)
         {
-            m_audio.PlayOneShot(m_eatSE);
+            //m_audio.PlayOneShot(m_eatSE);
 
             m_satietyGauge += heelValue;
 
@@ -240,8 +241,8 @@ namespace Photon.Pun.Demo.PunBasics
                 }
                 else
                 {
-                    //photonView.RPC(nameof(Eat), RpcTarget.All, m_food.m_heelValue);
-                    Eat(m_food.m_heelValue);
+                    photonView.RPC(nameof(Eat), RpcTarget.All, m_food.m_heelValue);
+                    //Eat(m_food.m_heelValue);
                     m_food.UnActive();
                 }
             }

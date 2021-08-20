@@ -15,6 +15,13 @@ namespace Photon.Pun.Demo.PunBasics
 
         private void Awake()
         {
+            
+        }
+
+        private void Start()
+        {
+            if (m_foods.Length <= 0) return;
+
             m_go = new GameObject[m_foods.Length];
 
             for (int i = 0; i < m_foods.Length; i++)
@@ -23,11 +30,6 @@ namespace Photon.Pun.Demo.PunBasics
                 m_go[i].GetComponent<Food>().m_foodGeneraterNetWork = this;
                 m_go[i].SetActive(false);
             }
-        }
-
-        private void Start()
-        {
-            if (m_foods.Length <= 0) return;
         }
 
         public void Generate()
