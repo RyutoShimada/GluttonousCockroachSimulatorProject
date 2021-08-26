@@ -12,7 +12,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!photonView.IsMine) return;
+            //if (!photonView.IsMine || !photonView) return;
 
             if (other.tag != "Cockroach")
             {
@@ -22,7 +22,7 @@ namespace Photon.Pun.Demo.PunBasics
 
         private void OnTriggerStay(Collider other)
         {
-            if (!photonView.IsMine) return;
+            //if (!photonView.IsMine || !photonView) return;
 
             if (other.tag != "Cockroach")
             {
