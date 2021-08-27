@@ -41,7 +41,7 @@ public class HumanMoveController : MonoBehaviour
     Animator m_anim;
     RaycastHit m_hit;
 
-#if DEBUG
+
     /// <summary>IKの動きを調整するときに使う</summary>
     [SerializeField] bool isIKTest = false;
     /// <summary>動けるかどうか</summary>
@@ -56,7 +56,7 @@ public class HumanMoveController : MonoBehaviour
             m_isCanMove = value;
         }
     }
-#endif
+
 
     // Start is called before the first frame update
     void Start()

@@ -60,7 +60,7 @@ public class CockroachMoveController : MonoBehaviour
         }
     }
 
-#if DEBUG
+
     /// <summary>動けるかどうか</summary>
     bool m_isCanMove = true;
     /// <summary>動けるかどうか</summary>
@@ -73,7 +73,7 @@ public class CockroachMoveController : MonoBehaviour
             m_isCanMove = value;
         }
     }
-#endif
+
 
     void Start()
     {

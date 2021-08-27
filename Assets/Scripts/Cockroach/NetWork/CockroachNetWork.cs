@@ -34,7 +34,7 @@ public class CockroachNetWork : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] GameObject m_camera = null;
 
-    [SerializeField] AudioClip m_eatSE = null;
+    //[SerializeField] AudioClip m_eatSE = null;
 
     CockroachMoveControllerNetWork m_cockroachMoveControllerNetWork = null;
     CockroachUINetWork m_cockroachUINetWork = null;
@@ -228,11 +228,11 @@ public class CockroachNetWork : MonoBehaviourPunCallbacks, IPunObservable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!photonView.IsMine) return;
+        //if (!photonView.IsMine) return;
 
         if (other.tag == "Food")
         {
-            m_audio.Play();
+            m_audio?.Play();
 
             if (!m_food)
             {

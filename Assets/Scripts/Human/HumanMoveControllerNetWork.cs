@@ -19,7 +19,7 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
     /// <summary>Rayを飛ばす最大距離</summary>
     [SerializeField] float m_maxRayDistance = 1f;
 
-    [SerializeField] GameObject m_camera = null;
+    [SerializeField] Transform m_cameraPos = null;
     [SerializeField] GameObject m_vcamPrefab = null;
 
     /// <summary>攻撃値</summary>
@@ -68,8 +68,6 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
 
         if (photonView.IsMine)
         {
-            m_camera.SetActive(true);
-
             m_rb = GetComponent<Rigidbody>();
 
             //EventSystem.Instance.Subscribe((EventSystem.CanMove)CanMove);
@@ -77,7 +75,7 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
 
             if (m_vcamPrefab)
             {
-                m_vcam = Instantiate(m_vcamPrefab, m_camera.transform.position, m_camera.transform.rotation);
+                m_vcam = Instantiate(m_vcamPrefab, m_cameraPos.position, m_cameraPos.rotation);
             }
             else
             {
@@ -87,7 +85,7 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
             if (m_vcam.TryGetComponent(out CinemachineVirtualCamera vcam))
             {
                 m_vcamBase = vcam.GetComponent<CinemachineVirtualCamera>();
-                vcam.Follow = m_camera.transform;
+                vcam.Follow = m_cameraPos;
                 m_vcamBase.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = Vector3.zero;
                 if (!m_canMove)
                 {
@@ -99,16 +97,12 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
                 Debug.LogError("CinemachineVirtualCamera を GetComponent 出来ませんでした");
             }
 
-            m_attackRangeObj = transform.Find("Camera").transform.Find("AttackRange").gameObject;
+            m_attackRangeObj = transform.Find("CameraPos").transform.Find("AttackRange").gameObject;
 
             if (m_attackRangeObj)
             {
                 m_attackRangeObj.SetActive(false);
             }
-        }
-        else
-        {
-            m_camera.SetActive(false);
         }
     }
 
@@ -117,6 +111,7 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
         if (!photonView.IsMine) return;
         if (!m_canMove) return;
         Move();
+        m_cameraPos.rotation = Camera.main.transform.rotation;
     }
 
     // Update is called once per frame
