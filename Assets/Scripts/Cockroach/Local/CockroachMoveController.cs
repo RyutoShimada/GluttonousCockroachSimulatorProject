@@ -35,6 +35,7 @@ public class CockroachMoveController : MonoBehaviour
     Vector3 m_jumpDir;
     /// <summary>回転する時に必要な法線ベクトルを取得するためのRay</summary>
     RaycastHit m_rotateHit;
+    RaycastHit m_forwardRay;
     /// <summary>Vertical</summary>
     float m_v;
     /// <summary>マウスのX軸の動いた量</summary>
@@ -217,9 +218,23 @@ public class CockroachMoveController : MonoBehaviour
 
     void Ray()
     {
+        // 斜め下後方
         Physics.Raycast(m_rayOriginPos.position, m_rotateRayPos.position - m_rayOriginPos.position, out m_rotateHit, m_maxRayDistance);
         Debug.DrawRay(m_rayOriginPos.position, (m_rotateRayPos.position - m_rayOriginPos.position).normalized * m_maxRayDistance, Color.green);
-        Debug.DrawRay(m_rayOriginPos.position, m_gravityDir.normalized * 1f, Color.red);
+        // 前方
+        Physics.Raycast(transform.localPosition, transform.forward, out m_forwardRay, 0.1f);
+        Debug.DrawRay(m_rayOriginPos.position, transform.forward.normalized * 0.1f, Color.red);
+
+        if (m_rotateHit.normal == null)
+        {
+            Debug.Log("NULL");
+            ChangeGravity(Vector3.down);
+            StartCoroutine(ChangeRotate(Vector3.up, 0.5f));
+        }
+        else
+        {
+            Debug.Log("NOT NULL");
+        }
     }
 
     void ChangeGravity(Vector3 nomal)
@@ -238,14 +253,14 @@ public class CockroachMoveController : MonoBehaviour
             Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation; // https://teratail.com/questions/290578
             transform.DORotateQuaternion(toRotate, 0.1f).OnComplete(() =>
             {
-                // 回転した時にできた隙間を強制的に埋める
-                //m_rb.AddForce(m_gravityDir * m_gravityPower * 100, ForceMode.Impulse);
-                RaycastHit hit;
-                if (Physics.Raycast(m_rayOriginPos.position, m_gravityDir, out hit, 1f))
-                {
-                    Vector3 pos = new Vector3(hit.point.x, hit.point.y, hit.point.z);
-                    transform.position = pos;
-                }
+                //回転した時にできた隙間を強制的に埋める
+                m_rb.AddForce(m_gravityDir * m_gravityPower * 100, ForceMode.Impulse);
+                //RaycastHit hit;
+                //if (Physics.Raycast(m_rayOriginPos.position, m_gravityDir, out hit, 1f))
+                //{
+                //    Vector3 pos = new Vector3(hit.point.x, hit.point.y, hit.point.z);
+                //    transform.position = pos;
+                //}
             });
         }
         else
@@ -293,8 +308,11 @@ public class CockroachMoveController : MonoBehaviour
             }
             else
             {
-                ChangeGravity(-point.normal);
-                StartCoroutine(ChangeRotate(point.normal, 0.5f));
+                if (point.normal == m_forwardRay.normal)
+                {
+                    ChangeGravity(-point.normal);
+                    StartCoroutine(ChangeRotate(point.normal, 0.5f));
+                }
             }
         }
     }

@@ -265,8 +265,8 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
             Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation; // https://teratail.com/questions/290578
             transform.DORotateQuaternion(toRotate, 0.25f).OnComplete(() =>
             {
-                    // 回転した時にできた隙間を強制的に埋める
-                    m_rb.AddForce(m_gravityDir * m_gravityPower, ForceMode.Impulse);
+                // 回転した時にできた隙間を強制的に埋める
+                m_rb.AddForce(m_gravityDir * m_gravityPower, ForceMode.Impulse);
             });
         }
         else
