@@ -34,7 +34,7 @@ public class CockroachNetWork : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] GameObject m_camera = null;
 
-    //[SerializeField] AudioClip m_eatSE = null;
+    [SerializeField] bool m_godMode = false;
 
     CockroachMoveControllerNetWork m_cockroachMoveControllerNetWork = null;
     CockroachUINetWork m_cockroachUINetWork = null;
@@ -47,14 +47,6 @@ public class CockroachNetWork : MonoBehaviourPunCallbacks, IPunObservable
     float m_oneSecondTimer = 0f;
     /// <summary>死んだかどうか</summary>
     public bool m_isDed = false;
-
-    private void Awake()
-    {
-        if (photonView.IsMine)
-        {
-            m_Instance = gameObject;
-        }
-    }
 
     private void Start()
     {

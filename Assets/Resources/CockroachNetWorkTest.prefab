@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 51643860216663672}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.235, z: -0.563}
+  m_LocalPosition: {x: 0, y: 0.203, z: -0.255}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1380053710197772753}
@@ -58,7 +58,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 50
+  field of view: 45
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -249,7 +249,6 @@ MonoBehaviour:
   m_rotateRayPos: {fileID: 1380053710338534204}
   m_mouseSensitivity: 2
   m_canMove: 1
-  m_debugMode: 0
 --- !u!114 &-3155712619565757723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -272,6 +271,7 @@ MonoBehaviour:
   m_addJumpValue: 3
   m_invincibleMode: 0
   m_camera: {fileID: 51643860216663672}
+  m_godMode: 0
   m_isDed: 0
 --- !u!114 &8000153934261983132
 MonoBehaviour:
@@ -3448,6 +3448,7 @@ GameObject:
   - component: {fileID: 1380053711114644277}
   - component: {fileID: 1380053711114644274}
   - component: {fileID: 1380053711114644275}
+  - component: {fileID: 142412673043855448}
   m_Layer: 10
   m_Name: G-Body
   m_TagString: Cockroach
@@ -12033,6 +12034,25 @@ MonoBehaviour:
   m_SelectedFaces: 
   m_SelectedEdges: []
   m_SelectedVertices: 
+--- !u!95 &142412673043855448
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1380053711114644273}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1380053711317729994
 GameObject:
   m_ObjectHideFlags: 0

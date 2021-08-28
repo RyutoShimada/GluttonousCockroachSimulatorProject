@@ -8,6 +8,7 @@ using Photon.Pun;
 /// </summary>
 public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanMove
 {
+    #region Private Serializable Fields
     /// <summary>移動速度</summary>
     [SerializeField] float m_moveSpeed = 7f;
     /// <summary>現在の移動速度</summary>
@@ -26,6 +27,9 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
     [SerializeField] Transform m_rotateRayPos = null;
     /// <summary>マウスの感度</summary>
     [SerializeField] float m_mouseSensitivity = 5f;
+    #endregion
+
+
     /// <summary>Rigidbody</summary>
     Rigidbody m_rb;
     /// <summary>Velocity</summary>
@@ -55,7 +59,7 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
     [HideInInspector]
     public bool m_canMove = true;
 
-    [SerializeField] bool m_debugMode = false;
+    
 
     /// <summary>死んでいるかどうか</summary>
     public bool IsDed
@@ -71,22 +75,28 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
     void Start()
     {
         if (!photonView.IsMine) return;
-        this.gameObject.GetComponent<Rigidbody>().useGravity = false;
-        m_rb = GetComponent<Rigidbody>();
-        m_anim = GetComponent<Animator>();
         m_currentMoveSpeed = m_moveSpeed;
         m_currentJumpPower = m_jumpPower;
-        //EventSystem.Instance.Subscribe((EventSystem.CanMove)CanMove);
+
+        try
+        {
+            m_rb = GetComponent<Rigidbody>();
+            m_anim = GetComponent<Animator>();
+        }
+        catch (System.NullReferenceException)
+        {
+            Debug.LogError("オブジェクトがアサインされていません。", this);
+            throw;
+        }
+
+        m_rb.useGravity = false;
     }
 
     void FixedUpdate()
     {
         if (!photonView.IsMine) return;
-        if (!m_debugMode)
-        {
-            if (!m_canMove) return;
-            if (m_isDed) return;
-        }
+        if (!m_canMove) return;
+        if (m_isDed) return;
         Gravity();
         Move();
         FallForce();
@@ -105,18 +115,9 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
         MouseMove();
     }
 
-    private void OnDestroy()
-    {
-        //EventSystem.Instance.Unsubscribe((EventSystem.CanMove)CanMove);
-    }
-
-    /// <summary>
-    /// 移動
-    /// </summary>
     void Move()
     {
         m_dir = transform.forward;
-
         if (m_isJumping) return;
 
         if (m_v > 0) // 進む処理
@@ -193,37 +194,28 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
         if (Input.GetButtonDown("Jump") && m_isGrounded)
         {
             m_isJumping = true;
-
             m_isGrounded = false;
-
             m_rb.AddForce(-m_gravityDir.normalized * jumpPower, ForceMode.Impulse);
 
-            if (m_gravityDir != Vector3.down)
-            {
-                m_jumpDir = -m_gravityDir;
-                ChangeGravity(Vector3.down);
-                StartCoroutine(ChangeRotate(Vector3.up, 0.1f));
-            }
+            if (m_gravityDir == Vector3.down) return;
+            m_jumpDir = -m_gravityDir;
+            ChangeGravity(Vector3.down);
+            StartCoroutine(ChangeRotate(Vector3.up, 0.1f));
         }
     }
 
     void FallForce()
     {
-        if (m_isJumping && m_gravityDir != Vector3.down)
-        {
-            m_rb.AddForce(m_jumpDir);
-        }
+        if (m_isJumping && m_gravityDir != Vector3.down) { m_rb.AddForce(m_jumpDir); }
     }
 
     /// <summary>
     /// 子オブジェクトのTriggerから呼ぶ
     /// </summary>
     /// <param name="isGround"></param>
-    /// <returns></returns>
+    /// <returns>接地判定</returns>
     public void IsGround(bool isGround)
     {
-        //if (_isJump) return;
-
         if (isGround)
         {
             m_isGrounded = true;
@@ -233,15 +225,6 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
             m_isGrounded = false;
         }
     }
-
-    /// <summary>
-    /// 動けるかどうか（イベントから呼ばれる）
-    /// </summary>
-    /// <returns></returns>
-    //void CanMove(bool isMove)
-    //{
-    //    m_canMove = isMove;
-    //}
 
     void Ray()
     {
@@ -262,7 +245,8 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
 
         if (!m_isJumping) // 壁に上ったりする時だけ使う
         {
-            Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation; // https://teratail.com/questions/290578
+            // https://teratail.com/questions/290578
+            Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation;
             transform.DORotateQuaternion(toRotate, 0.25f).OnComplete(() =>
             {
                 // 回転した時にできた隙間を強制的に埋める
@@ -271,7 +255,7 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
         }
         else
         {
-            Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation; // https://teratail.com/questions/290578
+            Quaternion toRotate = Quaternion.FromToRotation(transform.up, nomal) * transform.rotation;
             transform.DORotateQuaternion(toRotate, 0.25f);
         }
 
@@ -280,7 +264,8 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
         m_isRotate = false;
     }
 
-    [PunRPC]
+    public void IsMove(bool isMove) => m_canMove = isMove;
+
     /// <summary>
     /// cockroachから呼ばれる
     /// </summary>
@@ -303,40 +288,24 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
     private void OnCollisionEnter(Collision collision)
     {
         m_isJumping = false;
-
-        m_jumpDir = Vector3.zero; // 着地したらジャンプする方向をリセット
+        m_jumpDir = Vector3.zero;
 
         foreach (ContactPoint point in collision.contacts)
         {
-            //Debug.Log(point.normal);
-            if (m_gravityDir == Vector3.down && point.normal == Vector3.up)
-            {
-                return;
-            }
-            else
-            {
-                ChangeGravity(-point.normal);
-                StartCoroutine(ChangeRotate(point.normal, 0.5f));
-            }
+            if (m_gravityDir == Vector3.down && point.normal == Vector3.up) return;
+            ChangeGravity(-point.normal);
+            StartCoroutine(ChangeRotate(point.normal, 0.5f));
         }
     }
 
     private void OnCollisionExit(Collision collision)
     {
         if (m_isJumping || m_isRotate) return;
-
-        if (m_rotateHit.collider)
+        if (!m_rotateHit.collider) return;
+        if (m_rotateHit.normal != -m_gravityDir)
         {
-            if (m_rotateHit.normal != -m_gravityDir)
-            {
-                ChangeGravity(-m_rotateHit.normal);
-                StartCoroutine(ChangeRotate(m_rotateHit.normal, 0.5f));
-            }
+            ChangeGravity(-m_rotateHit.normal);
+            StartCoroutine(ChangeRotate(m_rotateHit.normal, 0.5f));
         }
-    }
-
-    public void IsMove(bool isMove)
-    {
-        m_canMove = isMove;
     }
 }

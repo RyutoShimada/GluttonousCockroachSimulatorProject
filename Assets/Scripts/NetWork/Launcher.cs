@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using Photon.Realtime;
 using UnityEngine.SceneManagement;
@@ -11,56 +9,37 @@ using Photon.Pun;
 public class Launcher : MonoBehaviourPunCallbacks
 {
     #region Private Serializable Fields
-
     [SerializeField] GameObject m_cockroachPrefab = null;
-
     [SerializeField] GameObject m_humanPrefab = null;
-
     [Tooltip("プレイヤーがキャラクターを選択するための UI Panel")]
     [SerializeField] GameObject m_controlPanel = null;
-
     [Tooltip("接続の進捗状況をユーザーに知らせるUIテキスト")]
     [SerializeField] Text m_feedbackText = null;
-
     [Tooltip("1部屋あたりの最大プレイヤー数")]
     [SerializeField] byte m_maxPlayersPerRoom = 2;
-
     [Tooltip("ロード中に表示させるアニメ")]
     [SerializeField] GameObject m_loaderImage = null;
-
+    [Tooltip("サーバー接続からの反応説明")]
     [SerializeField] GameObject m_description = null;
-
     #endregion
 
 
     #region Private Fields
-
-    /// <summary>
-    /// 現在のプロセスを追跡。接続は非同期で、Photonからのいくつかのコールバックに基づく。
-    /// Photonからのコールバックを受けたときの動作を適切に調整するために、記録しておく必要がある。
-    /// 一般的には、OnConnectedToMaster()コールバックに使用される。
-    /// </summary>
+    /// <summary>接続中かどうか</summary>
     bool m_isConnecting;
-
-    /// <summary>
-    /// このクライアントのバージョン番号。ユーザーはgameVersionで区切られている。（これにより、破壊的な変更を行うことができる）
-    /// </summary>
+    /// <summary>このクライアントのバージョン番号</summary>
     string m_gameVersion = "1";
-
+    /// <summary>このクライアントが操作しているオブジェクトの名前</summary>
     string m_operateName = null;
-
     #endregion
 
 
     #region Public Fields
-
     static public Launcher m_Instance;
-
     #endregion
 
 
     #region MonoBehaviour CallBacks
-
     void Awake()
     {
         if (m_loaderImage == null)
@@ -71,19 +50,29 @@ public class Launcher : MonoBehaviourPunCallbacks
         m_Instance = this;
     }
 
-    private void Start()
+    void Start()
     {
-        // これにより、マスタークライアントでPhotonNetwork.LoadLevel()を使用すると、
-        // 同じ部屋にいるすべてのクライアントが自動的にレベルを同期することができます。
         PhotonNetwork.AutomaticallySyncScene = true;
         m_loaderImage.SetActive(false);
     }
+    #endregion
 
+
+    #region Private Fields
+    /// <summary>
+    /// タイトルからキャラクターを選択した時に呼ばれる
+    /// </summary>
+    /// <param name="next">選択したオブジェクトの名前</param>
+    /// <param name="mode"></param>
+    void SetOperate(Scene next, LoadSceneMode mode)
+    {
+        FindObjectOfType<NetWorkGameManager>().m_operateCharactor = m_operateName;
+        SceneManager.sceneLoaded -= SetOperate;
+    }
     #endregion
 
 
     #region Public Methods
-
     /// <summary>
     /// 接続処理を開始します。
     /// すでに接続されている場合は、ランダムな部屋への参加を試みます。
@@ -143,14 +132,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         m_operateName = m_humanPrefab.name;
     }
-
     #endregion
-
-    void SetOperate(Scene next, LoadSceneMode mode)
-    {
-        FindObjectOfType<NetWorkGameManager>().m_operateCharactor = m_operateName;
-        SceneManager.sceneLoaded -= SetOperate;
-    }
 
 
     #region MonoBehaviourPunCallbacks CallBacks
