@@ -53,15 +53,6 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
     [HideInInspector]
     public bool m_canMove = true;
 
-    private void Awake()
-    {
-        if (photonView.IsMine)
-        {
-            m_Instance = gameObject;
-        }
-    }
-
-    // Start is called before the first frame update
     void Start()
     {
         m_anim = GetComponent<Animator>();
@@ -118,9 +109,6 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
     void Update()
     {
         if (!photonView.IsMine) return;
-
-        //Debug.Log("Move : " + m_canMove);
-
         if (!m_canMove) return;
 
         m_input.x = Input.GetAxisRaw("Horizontal");
@@ -144,7 +132,6 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
     private void OnDestroy()
     {
         EventSystem.Instance.Unsubscribe((EventSystem.ResetTransform)ResetPosition);
-        //EventSystem.Instance.Unsubscribe((EventSystem.CanMove)CanMove);
     }
 
     void ResetPosition(Vector3 v, Quaternion q)
@@ -179,21 +166,14 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
         }
     }
 
-    /// <summary>
-    /// 動けるかどうか（イベントから呼ばれる）
-    /// </summary>
-    /// <returns></returns>
-    //void CanMove(bool isMove)
-    //{
-    //    m_canMove = isMove;
-    //}
-
     bool RayOfAttack()
     {
         Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * m_maxRayDistance, Color.green);
 
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out m_hit, m_maxRayDistance))
         {
+            if (m_hit.collider.tag == "Cockroach") return true;
+
             m_attackRangeObj.transform.position = new Vector3(m_hit.point.x, m_hit.point.y, m_hit.point.z);
 
             if (m_HSACN.m_sprayHit)
