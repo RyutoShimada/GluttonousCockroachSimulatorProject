@@ -31,6 +31,15 @@ public class HumanSprayAttackControllerNetWork : MonoBehaviourPunCallbacks
         }
     }
 
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Cockroach")
+        {
+            m_sprayHit = true;
+            m_crossHair.color = Color.red;
+        }
+    }
+
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.tag == "Cockroach")
