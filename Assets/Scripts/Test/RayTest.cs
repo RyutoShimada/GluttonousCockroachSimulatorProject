@@ -1,43 +1,36 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using DG.Tweening;
 
 public class RayTest : MonoBehaviour
 {
-    [SerializeField] Transform m_rayDir = null;
-    [SerializeField] Transform m_rayOriginPos = null;
-    float m_distance;
-    float m_saveDistance;
+    [SerializeField] Transform m_rayStartPos = null;
+    [SerializeField] Transform m_rayEndPos = null;
+    [SerializeField] Transform m_rayDirPos = null;
+    [SerializeField] float m_speed = 1f;
+    [SerializeField] float m_stopingDistance = 0;
+    float m_distance = 0;
     RaycastHit m_hit;
-
-    [SerializeField] int speed = 5;
-    float x;
-    float y;
-
     Vector3 m_nomal = Vector3.zero;
-
     bool m_isRotate = false;
+    /// <summary>rayStartPosからrayEndPosへの方向</summary>
+    Vector3 m_dir;
 
     void Start()
     {
-        m_distance = Vector3.Distance(transform.position, m_rayDir.position);
-        m_saveDistance = m_distance;
+        m_distance = Vector3.Distance(transform.position, m_rayStartPos.position);
+        m_rayDirPos.position = m_rayStartPos.position;
+        m_dir = m_rayStartPos.position - m_rayEndPos.position;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (m_distance > m_saveDistance)
+        if (Physics.Raycast(transform.position, m_rayDirPos.position - transform.position, out m_hit, m_distance))
         {
-            m_distance = m_saveDistance;
-        }
+            m_rayDirPos.position = m_rayStartPos.position;
 
-        if (Physics.Raycast(transform.position, m_rayDir.position - transform.position, out m_hit, m_distance))
-        {
             if (m_hit.normal == m_nomal)
             {
-                m_rayDir.position = m_rayOriginPos.position;
                 return;
             }
             else
@@ -46,35 +39,24 @@ public class RayTest : MonoBehaviour
                 m_nomal = m_hit.normal;
                 m_isRotate = true;
                 Quaternion toRotate = Quaternion.FromToRotation(transform.up, m_nomal) * transform.rotation;
-                transform.DORotateQuaternion(toRotate, 3f).OnComplete(() => { m_isRotate = false; });
+                transform.DORotateQuaternion(toRotate, 3f).OnComplete(() =>
+                {
+                    m_isRotate = false;
+                    m_dir = m_rayStartPos.position - m_rayEndPos.position;
+                });
             }
         }
         else
         {
             if (m_isRotate) return;
-
-            x = m_distance * Mathf.Sin(Time.time * speed);
-            y = m_distance * Mathf.Cos(Time.time * speed);
-
-            if (y + transform.localPosition.y > transform.localPosition.y)
+            m_rayDirPos.position -= m_dir * (Time.deltaTime * m_speed);
+            float dis = Vector3.Distance(m_rayDirPos.position, m_rayEndPos.position);
+            if (dis < m_stopingDistance || dis > m_distance)
             {
-                y = 0;
-                x = m_saveDistance;
+                m_rayDirPos.position = m_rayStartPos.position;
             }
-
-            m_rayDir.position = new Vector3(x + transform.localPosition.x, y + transform.localPosition.y, transform.localPosition.z);
         }
 
-        Debug.DrawRay(transform.position, m_rayDir.position - transform.position, Color.red);
-    }
-
-    private void OnCollisionEnter(Collision collision)
-    {
-
-    }
-
-    private void OnCollisionExit(Collision collision)
-    {
-
+        Debug.DrawRay(transform.position, (m_rayDirPos.position - transform.position).normalized * m_distance, Color.red);
     }
 }
