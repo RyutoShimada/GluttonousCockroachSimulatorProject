@@ -25,38 +25,44 @@ public class RayTest : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Search();
+    }
+
+    void Search()
+    {
         if (Physics.Raycast(transform.position, m_rayDirPos.position - transform.position, out m_hit, m_distance))
         {
             m_rayDirPos.position = m_rayStartPos.position;
 
-            if (m_hit.normal == m_nomal)
-            {
-                return;
-            }
-            else
-            {
-                Debug.Log(m_hit.collider.gameObject.name);
-                m_nomal = m_hit.normal;
-                m_isRotate = true;
-                Quaternion toRotate = Quaternion.FromToRotation(transform.up, m_nomal) * transform.rotation;
-                transform.DORotateQuaternion(toRotate, 3f).OnComplete(() =>
-                {
-                    m_isRotate = false;
-                    m_dir = m_rayStartPos.position - m_rayEndPos.position;
-                });
-            }
+            if (m_hit.normal == m_nomal) return;
+
+            m_nomal = m_hit.normal;
+            m_isRotate = true;
+            Rotate();
         }
         else
         {
             if (m_isRotate) return;
+
+            m_dir = m_rayStartPos.position - m_rayEndPos.position;
             m_rayDirPos.position -= m_dir * (Time.deltaTime * m_speed);
             float dis = Vector3.Distance(m_rayDirPos.position, m_rayEndPos.position);
-            if (dis < m_stopingDistance || dis > m_distance)
+            if (dis < m_stopingDistance)
             {
                 m_rayDirPos.position = m_rayStartPos.position;
             }
         }
 
         Debug.DrawRay(transform.position, (m_rayDirPos.position - transform.position).normalized * m_distance, Color.red);
+    }
+
+    void Rotate()
+    {
+        Quaternion toRotate = Quaternion.FromToRotation(transform.up, m_nomal) * transform.rotation;
+        transform.DORotateQuaternion(toRotate, 3f).OnComplete(() =>
+        {
+            m_isRotate = false;
+            m_dir = m_rayStartPos.position - m_rayEndPos.position;
+        });
     }
 }

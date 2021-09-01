@@ -1013,5 +1013,5 @@ MonoBehaviour:
   m_rayStartPos: {fileID: 1812512294}
   m_rayEndPos: {fileID: 1600501708}
   m_rayDirPos: {fileID: 1217302735}
-  m_speed: 2
-  m_stopingDistance: 0.1
+  m_speed: 1.5
+  m_stopingDistance: 0.2

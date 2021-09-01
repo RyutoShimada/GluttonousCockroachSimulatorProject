@@ -2,40 +2,38 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-namespace Photon.Pun.Demo.PunBasics
+public class IsGround : MonoBehaviourPunCallbacks
 {
-    public class IsGround : MonoBehaviourPunCallbacks
+    [Tooltip("CockroachMoveController がアタッチされているオブジェクトをアサインする")]
+    [SerializeField] CockroachMoveControllerNetWork m_parent = null;
+
+    private void OnTriggerEnter(Collider other)
     {
-        [Tooltip("CockroachMoveController がアタッチされているオブジェクトをアサインする")]
-        [SerializeField] CockroachMoveControllerNetWork m_parent = null;
+        if (!photonView.IsMine || !photonView) return;
 
-        private void OnTriggerEnter(Collider other)
+        if (other.tag != "Cockroach")
         {
-            //if (!photonView.IsMine || !photonView) return;
-
-            if (other.tag != "Cockroach")
-            {
-                m_parent.IsGround(true);
-            }
+            m_parent.IsGround(true);
         }
+    }
 
-        private void OnTriggerStay(Collider other)
+    private void OnTriggerStay(Collider other)
+    {
+        if (!photonView.IsMine || !photonView) return;
+
+        if (other.tag != "Cockroach")
         {
-            //if (!photonView.IsMine || !photonView) return;
-
-            if (other.tag != "Cockroach")
-            {
-                m_parent.IsGround(true);
-            }
+            m_parent.IsGround(true);
         }
+    }
 
-        private void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag != "Cockroach")
         {
-            if (other.tag != "Cockroach")
-            {
-                m_parent.IsGround(false);
-            }
+            m_parent.IsGround(false);
         }
     }
 }

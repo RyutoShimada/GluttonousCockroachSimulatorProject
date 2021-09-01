@@ -240,14 +240,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_moveSpeed: 7
-  m_currentMoveSpeed: 7
   m_jumpPower: 3
-  m_currentJumpPower: 4
   m_gravityPower: 10
   m_maxRayDistance: 1
   m_rayOriginPos: {fileID: 1380053711590895058}
   m_rotateRayPos: {fileID: 1380053710338534204}
-  m_mouseSensitivity: 2
+  m_mouseSensitivity: 200
   m_canMove: 1
 --- !u!114 &-3155712619565757723
 MonoBehaviour:

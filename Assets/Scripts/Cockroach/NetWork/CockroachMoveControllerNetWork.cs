@@ -12,11 +12,11 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
     /// <summary>移動速度</summary>
     [SerializeField] float m_moveSpeed = 7f;
     /// <summary>現在の移動速度</summary>
-    [SerializeField] float m_currentMoveSpeed = 0;
+    float m_currentMoveSpeed = 0;
     /// <summary>ジャンプ力</summary>
     [SerializeField] float m_jumpPower = 4f;
     /// <summary>現在のジャンプ力</summary>
-    [SerializeField] float m_currentJumpPower = 0;
+    float m_currentJumpPower = 0;
     /// <summary>重力</summary>
     [SerializeField] float m_gravityPower = 10f;
     /// <summary>Rayを飛ばす距離</summary>
@@ -25,8 +25,8 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
     [SerializeField] Transform m_rayOriginPos = null;
     /// <summary>回転する時に判定するためのRayをとばす位置</summary>
     [SerializeField] Transform m_rotateRayPos = null;
-    /// <summary>マウスの感度</summary>
-    [SerializeField] float m_mouseSensitivity = 5f;
+    // <summary>マウスの感度</summary>
+    [SerializeField, Range(50f, 300f)] float m_mouseSensitivity = 50f;
     #endregion
 
 
@@ -178,7 +178,7 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
 
     private void MouseMove()
     {
-        m_mouseMoveX = Input.GetAxis("Mouse X") * m_mouseSensitivity;
+        m_mouseMoveX = (Input.GetAxis("Mouse X") * m_mouseSensitivity) * Time.deltaTime;
         transform.Rotate(new Vector3(0f, m_mouseMoveX, 0f));
     }
 
@@ -229,13 +229,15 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
     void Ray()
     {
         Physics.Raycast(m_rayOriginPos.position, m_rotateRayPos.position - m_rayOriginPos.position, out m_rotateHit, m_maxRayDistance);
-        Debug.DrawRay(m_rayOriginPos.position, (m_rotateRayPos.position - m_rayOriginPos.position).normalized * m_maxRayDistance, Color.green);
+        Debug.DrawRay(m_rayOriginPos.position, (m_rotateRayPos.position - m_rayOriginPos.position).normalized * m_maxRayDistance, Color.red);
+
+        if (!m_rotateHit.collider)
+        {
+            m_rotateHit.normal = -Vector3.down;
+        }
     }
 
-    void ChangeGravity(Vector3 nomal)
-    {
-        m_gravityDir = nomal;
-    }
+    void ChangeGravity(Vector3 nomal) => m_gravityDir = nomal;
 
     IEnumerator ChangeRotate(Vector3 nomal, float waitTime)
     {
@@ -301,7 +303,9 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
     private void OnCollisionExit(Collision collision)
     {
         if (m_isJumping || m_isRotate) return;
-        if (!m_rotateHit.collider) return;
+
+        if (!m_rotateHit.collider) { m_rotateHit.normal = -Vector3.down; }
+
         if (m_rotateHit.normal != -m_gravityDir)
         {
             ChangeGravity(-m_rotateHit.normal);

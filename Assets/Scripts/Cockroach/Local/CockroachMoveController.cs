@@ -22,7 +22,7 @@ public class CockroachMoveController : MonoBehaviour
     /// <summary>回転する時に判定するためのRayをとばす位置</summary>
     [SerializeField] Transform m_rotateRayPos = null;
     /// <summary>マウスの感度</summary>
-    [SerializeField] float m_mouseSensitivity = 5f;
+    [SerializeField, Range(50f, 300f)] float m_mouseSensitivity = 50f;
     /// <summary>Rigidbody</summary>
     Rigidbody m_rb;
     /// <summary>Velocity</summary>
@@ -35,7 +35,6 @@ public class CockroachMoveController : MonoBehaviour
     Vector3 m_jumpDir;
     /// <summary>回転する時に必要な法線ベクトルを取得するためのRay</summary>
     RaycastHit m_rotateHit;
-    RaycastHit m_forwardRay;
     /// <summary>Vertical</summary>
     float m_v;
     /// <summary>マウスのX軸の動いた量</summary>
@@ -87,7 +86,7 @@ public class CockroachMoveController : MonoBehaviour
         if (m_isDed) return;
         Gravity();
         Move();
-        FallForce();
+        JumpFallForce();
     }
 
     // Update is called once per frame
@@ -159,7 +158,7 @@ public class CockroachMoveController : MonoBehaviour
 
     private void MouseMove()
     {
-        m_mouseMoveX = Input.GetAxis("Mouse X") * m_mouseSensitivity;
+        m_mouseMoveX = (Input.GetAxis("Mouse X") * m_mouseSensitivity) * Time.deltaTime;
         transform.Rotate(new Vector3(0f, m_mouseMoveX, 0f));
     }
 
@@ -189,7 +188,10 @@ public class CockroachMoveController : MonoBehaviour
         }
     }
 
-    void FallForce()
+    /// <summary>
+    /// 壁からジャンプした時に斜めに飛ぶようにしている
+    /// </summary>
+    void JumpFallForce()
     {
         if (m_isJumping && m_gravityDir != Vector3.down)
         {
@@ -220,20 +222,11 @@ public class CockroachMoveController : MonoBehaviour
     {
         // 斜め下後方
         Physics.Raycast(m_rayOriginPos.position, m_rotateRayPos.position - m_rayOriginPos.position, out m_rotateHit, m_maxRayDistance);
-        Debug.DrawRay(m_rayOriginPos.position, (m_rotateRayPos.position - m_rayOriginPos.position).normalized * m_maxRayDistance, Color.green);
-        // 前方
-        Physics.Raycast(transform.localPosition, transform.forward, out m_forwardRay, 0.1f);
-        Debug.DrawRay(m_rayOriginPos.position, transform.forward.normalized * 0.1f, Color.red);
+        Debug.DrawRay(m_rayOriginPos.position, (m_rotateRayPos.position - m_rayOriginPos.position).normalized * m_maxRayDistance, Color.red);
 
-        if (m_rotateHit.normal == null)
+        if (!m_rotateHit.collider)
         {
-            Debug.Log("NULL");
-            ChangeGravity(Vector3.down);
-            StartCoroutine(ChangeRotate(Vector3.up, 0.5f));
-        }
-        else
-        {
-            Debug.Log("NOT NULL");
+            m_rotateHit.normal = -Vector3.down;
         }
     }
 
@@ -255,12 +248,6 @@ public class CockroachMoveController : MonoBehaviour
             {
                 //回転した時にできた隙間を強制的に埋める
                 m_rb.AddForce(m_gravityDir * m_gravityPower * 100, ForceMode.Impulse);
-                //RaycastHit hit;
-                //if (Physics.Raycast(m_rayOriginPos.position, m_gravityDir, out hit, 1f))
-                //{
-                //    Vector3 pos = new Vector3(hit.point.x, hit.point.y, hit.point.z);
-                //    transform.position = pos;
-                //}
             });
         }
         else
@@ -301,19 +288,9 @@ public class CockroachMoveController : MonoBehaviour
 
         foreach (ContactPoint point in collision.contacts)
         {
-            //Debug.Log(point.normal);
-            if (m_gravityDir == Vector3.down && point.normal == Vector3.up)
-            {
-                return;
-            }
-            else
-            {
-                if (point.normal == m_forwardRay.normal)
-                {
-                    ChangeGravity(-point.normal);
-                    StartCoroutine(ChangeRotate(point.normal, 0.5f));
-                }
-            }
+            if (m_gravityDir == Vector3.down && point.normal == Vector3.up) return;
+            ChangeGravity(-point.normal);
+            StartCoroutine(ChangeRotate(point.normal, 0.5f));
         }
     }
 
@@ -321,13 +298,12 @@ public class CockroachMoveController : MonoBehaviour
     {
         if (m_isJumping || m_isRotate) return;
 
-        if (m_rotateHit.collider)
+        if (!m_rotateHit.collider) { m_rotateHit.normal = -Vector3.down; }
+
+        if (m_rotateHit.normal != -m_gravityDir)
         {
-            if (m_rotateHit.normal != -m_gravityDir)
-            {
-                ChangeGravity(-m_rotateHit.normal);
-                StartCoroutine(ChangeRotate(m_rotateHit.normal, 0.5f));
-            }
+            ChangeGravity(-m_rotateHit.normal);
+            StartCoroutine(ChangeRotate(m_rotateHit.normal, 0.5f));
         }
     }
 }
