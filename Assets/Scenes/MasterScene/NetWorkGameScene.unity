@@ -589,10 +589,13 @@ MonoBehaviour:
   m_operateCharactor: 
   m_cockroachPrefab: {fileID: 1380053710197772766, guid: 611a1954a5117374084928d957476b7e,
     type: 3}
-  m_cockroachSpawnPos: {fileID: 1901523994}
+  m_cockroachSpawnPos:
+  - {fileID: 2269562827722969905}
+  - {fileID: 9082283165337859008}
+  - {fileID: 579468967}
   m_humanPrefab: {fileID: 1460826044278861501, guid: 6d50b5190b0154246ad3914b4a103d8f,
     type: 3}
-  m_humanSpawnPos: {fileID: 316848580}
+  m_humanSpawnPos: {fileID: 3240534270266485800}
   m_timerText: {fileID: 2018271323}
   m_minutes: 1
   m_seconds: 30
@@ -980,88 +983,13 @@ RectTransform:
   - {fileID: 2018271321}
   - {fileID: 1261095795}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1001 &316848579
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3240534270562014698, guid: 97ab8130664a7584cb11c9cb8426bb29,
-        type: 3}
-      propertyPath: m_Name
-      value: HumanSpawnPos
-      objectReference: {fileID: 0}
-    - target: {fileID: 3240534270562014699, guid: 97ab8130664a7584cb11c9cb8426bb29,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 3.58
-      objectReference: {fileID: 0}
-    - target: {fileID: 3240534270562014699, guid: 97ab8130664a7584cb11c9cb8426bb29,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3240534270562014699, guid: 97ab8130664a7584cb11c9cb8426bb29,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -1.76
-      objectReference: {fileID: 0}
-    - target: {fileID: 3240534270562014699, guid: 97ab8130664a7584cb11c9cb8426bb29,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3240534270562014699, guid: 97ab8130664a7584cb11c9cb8426bb29,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3240534270562014699, guid: 97ab8130664a7584cb11c9cb8426bb29,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3240534270562014699, guid: 97ab8130664a7584cb11c9cb8426bb29,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3240534270562014699, guid: 97ab8130664a7584cb11c9cb8426bb29,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3240534270562014699, guid: 97ab8130664a7584cb11c9cb8426bb29,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3240534270562014699, guid: 97ab8130664a7584cb11c9cb8426bb29,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3240534270562014699, guid: 97ab8130664a7584cb11c9cb8426bb29,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 97ab8130664a7584cb11c9cb8426bb29, type: 3}
---- !u!4 &316848580 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3240534270562014699, guid: 97ab8130664a7584cb11c9cb8426bb29,
-    type: 3}
-  m_PrefabInstance: {fileID: 316848579}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &342773891
 GameObject:
   m_ObjectHideFlags: 0
@@ -1220,7 +1148,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &470641068
 GameObject:
@@ -1352,6 +1280,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 470641068}
   m_CullTransparentMesh: 0
+--- !u!1 &579468966
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 579468967}
+  m_Layer: 0
+  m_Name: CockroachSpawnPos (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &579468967
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 579468966}
+  m_LocalRotation: {x: 0, y: 0.8714707, z: 0, w: 0.4904476}
+  m_LocalPosition: {x: -6.836, y: 9.679, z: 5.706}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 121.26, z: 0}
 --- !u!43 &708575881
 Mesh:
   m_ObjectHideFlags: 0
@@ -1723,7 +1681,7 @@ PrefabInstance:
     - target: {fileID: 3865535217170268791, guid: 7efdbe34a923fc845a2e64a1f5c86a86,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3865535217170268791, guid: 7efdbe34a923fc845a2e64a1f5c86a86,
         type: 3}
@@ -4723,81 +4681,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!1001 &1901523993
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2269562825821988648, guid: d29809e2fd040c54792f93fd08666692,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 6.586
-      objectReference: {fileID: 0}
-    - target: {fileID: 2269562825821988648, guid: d29809e2fd040c54792f93fd08666692,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.659
-      objectReference: {fileID: 0}
-    - target: {fileID: 2269562825821988648, guid: d29809e2fd040c54792f93fd08666692,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -8.497
-      objectReference: {fileID: 0}
-    - target: {fileID: 2269562825821988648, guid: d29809e2fd040c54792f93fd08666692,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2269562825821988648, guid: d29809e2fd040c54792f93fd08666692,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2269562825821988648, guid: d29809e2fd040c54792f93fd08666692,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2269562825821988648, guid: d29809e2fd040c54792f93fd08666692,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2269562825821988648, guid: d29809e2fd040c54792f93fd08666692,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2269562825821988648, guid: d29809e2fd040c54792f93fd08666692,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2269562825821988648, guid: d29809e2fd040c54792f93fd08666692,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2269562825821988648, guid: d29809e2fd040c54792f93fd08666692,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2269562825821988649, guid: d29809e2fd040c54792f93fd08666692,
-        type: 3}
-      propertyPath: m_Name
-      value: CockroachSpawnPos
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: d29809e2fd040c54792f93fd08666692, type: 3}
---- !u!4 &1901523994 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2269562825821988648, guid: d29809e2fd040c54792f93fd08666692,
-    type: 3}
-  m_PrefabInstance: {fileID: 1901523993}
-  m_PrefabAsset: {fileID: 0}
 --- !u!43 &1985610627
 Mesh:
   m_ObjectHideFlags: 0
@@ -5240,7 +5123,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &56746356067704077
 GameObject:
@@ -5309,6 +5192,36 @@ MonoBehaviour:
   sceneViewId: 2
   InstantiationId: 0
   isRuntimeInstantiated: 0
+--- !u!1 &2269562827722969904
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2269562827722969905}
+  m_Layer: 0
+  m_Name: CockroachSpawnPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2269562827722969905
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2269562827722969904}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 6.586, y: 0.659, z: -8.497}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2968114970294032440
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5389,7 +5302,7 @@ PrefabInstance:
     - target: {fileID: 2698232119539066078, guid: c3312633b7827bd44aaa44f94e72c4dd,
         type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2698232119539066078, guid: c3312633b7827bd44aaa44f94e72c4dd,
         type: 3}
@@ -5518,3 +5431,63 @@ PrefabInstance:
       objectReference: {fileID: 755655905}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c3312633b7827bd44aaa44f94e72c4dd, type: 3}
+--- !u!4 &3240534270266485800
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3240534270266485801}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.58, y: 1, z: -1.76}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3240534270266485801
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3240534270266485800}
+  m_Layer: 0
+  m_Name: HumanSpawnPos
+  m_TagString: Untagged
+  m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9082283165337859008
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9082283165337859009}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.292, y: 9.42, z: -8.21}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &9082283165337859009
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9082283165337859008}
+  m_Layer: 0
+  m_Name: CockroachSpawnPos (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1

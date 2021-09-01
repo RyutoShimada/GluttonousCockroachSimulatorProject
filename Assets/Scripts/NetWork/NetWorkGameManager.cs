@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 
-
 public enum Charactor
 {
     Cockroach,
@@ -24,7 +23,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     [SerializeField] GameObject m_cockroachPrefab = null;
 
     [Tooltip("Cockroach の 生成場所")]
-    [SerializeField] Transform m_cockroachSpawnPos = null;
+    [SerializeField] Transform[] m_cockroachSpawnPos = null;
 
     [Tooltip("HumanNetWork の Prefab")]
     [SerializeField] GameObject m_humanPrefab = null;
@@ -92,7 +91,6 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     void Start()
     {
         EventSystem.Instance.Subscribe((EventSystem.CockroachIsDed)CockroachIsDed);
-        //EventSystem.Instance.Subscribe((EventSystem.FoodGenerate)FoodGenerate);
 
         if (!PhotonNetwork.IsConnected)
         {
@@ -118,7 +116,8 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
             if (m_operateCharactor == this.m_cockroachPrefab.name)
             {
                 // 部屋の中で、ローカルプレーヤー用の Cockroach を生成。PhotonNetwork.Instantiate()で同期。
-                operate = PhotonNetwork.Instantiate(this.m_cockroachPrefab.name, m_cockroachSpawnPos.position, Quaternion.identity, 0);
+                int random = Random.Range(0, m_cockroachSpawnPos.Length);
+                operate = PhotonNetwork.Instantiate(this.m_cockroachPrefab.name, m_cockroachSpawnPos[random].position, m_cockroachSpawnPos[random].rotation, 0);
                 m_cockroachUINetWork = operate.GetComponent<CockroachUINetWork>(); // ゴキブリ用のUIを入れる
                 m_operatedByPlayer = Charactor.Cockroach;
             }
@@ -275,7 +274,8 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
         if (m_operatedByPlayer == Charactor.Cockroach)
         {
-            EventSystem.Instance.Reset(m_cockroachSpawnPos.position, m_cockroachSpawnPos.rotation);
+            int random = Random.Range(0, m_cockroachSpawnPos.Length);
+            EventSystem.Instance.Reset(m_cockroachSpawnPos[random].position, m_cockroachSpawnPos[random].rotation);
         }
         else
         {
