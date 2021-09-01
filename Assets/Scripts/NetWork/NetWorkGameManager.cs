@@ -124,7 +124,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
             else
             {
                 // 部屋の中で、ローカルプレーヤー用の Human を生成。PhotonNetwork.Instantiate()で同期。
-                operate = PhotonNetwork.Instantiate(this.m_humanPrefab.name, m_humanSpawnPos.position, Quaternion.identity, 0);
+                operate = PhotonNetwork.Instantiate(this.m_humanPrefab.name, m_humanSpawnPos.position, m_humanSpawnPos.rotation, 0);
                 m_humanSprayAttackRange = operate.transform.GetComponentInChildren<HumanSprayAttackRange>();
                 m_operatedByPlayer = Charactor.Human;
             }
