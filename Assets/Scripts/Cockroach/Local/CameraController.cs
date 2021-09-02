@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
@@ -16,7 +17,9 @@ public class CameraController : MonoBehaviour
 
     void CameraControlle()
     {
-        float mouse_move_y = Input.GetAxis("Mouse Y") * m_sensitivity;
+        //float mouse_move_y = Input.GetAxis("Mouse Y") * m_sensitivity;
+        float mouse_move_y = Mouse.current.position.ReadValue().y * m_sensitivity;
+        
 
         transform.Rotate(new Vector3(-mouse_move_y, 0f, 0f));
 

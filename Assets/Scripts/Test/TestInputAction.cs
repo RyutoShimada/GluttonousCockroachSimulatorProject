@@ -826,6 +826,71 @@ public class @TestInputAction : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Camera"",
+            ""id"": ""1dce44de-fff4-4364-b03c-305f39a5de3c"",
+            ""actions"": [
+                {
+                    ""name"": ""MousePosition"",
+                    ""type"": ""Value"",
+                    ""id"": ""06f7b4b2-cd34-4a35-a307-5c12103e400b"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""a31bed46-f6ec-4e64-b0c6-131d89f17e9f"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""MousePosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""GameManager"",
+            ""id"": ""aa2917bc-7fa5-468e-9289-64b7ca9334a6"",
+            ""actions"": [
+                {
+                    ""name"": ""Menu"",
+                    ""type"": ""Button"",
+                    ""id"": ""f7e95269-081c-447f-91de-3e2f6d1ac350"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""9d5cd02c-3818-4927-9add-b555d65192f7"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Menu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bb342761-7454-4be3-91b4-4c7da34f9e47"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Menu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -908,6 +973,12 @@ public class @TestInputAction : IInputActionCollection, IDisposable
         m_UI_RightClick = m_UI.FindAction("RightClick", throwIfNotFound: true);
         m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
         m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+        // Camera
+        m_Camera = asset.FindActionMap("Camera", throwIfNotFound: true);
+        m_Camera_MousePosition = m_Camera.FindAction("MousePosition", throwIfNotFound: true);
+        // GameManager
+        m_GameManager = asset.FindActionMap("GameManager", throwIfNotFound: true);
+        m_GameManager_Menu = m_GameManager.FindAction("Menu", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -1107,6 +1178,72 @@ public class @TestInputAction : IInputActionCollection, IDisposable
         }
     }
     public UIActions @UI => new UIActions(this);
+
+    // Camera
+    private readonly InputActionMap m_Camera;
+    private ICameraActions m_CameraActionsCallbackInterface;
+    private readonly InputAction m_Camera_MousePosition;
+    public struct CameraActions
+    {
+        private @TestInputAction m_Wrapper;
+        public CameraActions(@TestInputAction wrapper) { m_Wrapper = wrapper; }
+        public InputAction @MousePosition => m_Wrapper.m_Camera_MousePosition;
+        public InputActionMap Get() { return m_Wrapper.m_Camera; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(CameraActions set) { return set.Get(); }
+        public void SetCallbacks(ICameraActions instance)
+        {
+            if (m_Wrapper.m_CameraActionsCallbackInterface != null)
+            {
+                @MousePosition.started -= m_Wrapper.m_CameraActionsCallbackInterface.OnMousePosition;
+                @MousePosition.performed -= m_Wrapper.m_CameraActionsCallbackInterface.OnMousePosition;
+                @MousePosition.canceled -= m_Wrapper.m_CameraActionsCallbackInterface.OnMousePosition;
+            }
+            m_Wrapper.m_CameraActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @MousePosition.started += instance.OnMousePosition;
+                @MousePosition.performed += instance.OnMousePosition;
+                @MousePosition.canceled += instance.OnMousePosition;
+            }
+        }
+    }
+    public CameraActions @Camera => new CameraActions(this);
+
+    // GameManager
+    private readonly InputActionMap m_GameManager;
+    private IGameManagerActions m_GameManagerActionsCallbackInterface;
+    private readonly InputAction m_GameManager_Menu;
+    public struct GameManagerActions
+    {
+        private @TestInputAction m_Wrapper;
+        public GameManagerActions(@TestInputAction wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Menu => m_Wrapper.m_GameManager_Menu;
+        public InputActionMap Get() { return m_Wrapper.m_GameManager; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(GameManagerActions set) { return set.Get(); }
+        public void SetCallbacks(IGameManagerActions instance)
+        {
+            if (m_Wrapper.m_GameManagerActionsCallbackInterface != null)
+            {
+                @Menu.started -= m_Wrapper.m_GameManagerActionsCallbackInterface.OnMenu;
+                @Menu.performed -= m_Wrapper.m_GameManagerActionsCallbackInterface.OnMenu;
+                @Menu.canceled -= m_Wrapper.m_GameManagerActionsCallbackInterface.OnMenu;
+            }
+            m_Wrapper.m_GameManagerActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Menu.started += instance.OnMenu;
+                @Menu.performed += instance.OnMenu;
+                @Menu.canceled += instance.OnMenu;
+            }
+        }
+    }
+    public GameManagerActions @GameManager => new GameManagerActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     public InputControlScheme KeyboardMouseScheme
     {
@@ -1170,5 +1307,13 @@ public class @TestInputAction : IInputActionCollection, IDisposable
         void OnRightClick(InputAction.CallbackContext context);
         void OnTrackedDevicePosition(InputAction.CallbackContext context);
         void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+    }
+    public interface ICameraActions
+    {
+        void OnMousePosition(InputAction.CallbackContext context);
+    }
+    public interface IGameManagerActions
+    {
+        void OnMenu(InputAction.CallbackContext context);
     }
 }
