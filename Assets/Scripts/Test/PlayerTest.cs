@@ -6,6 +6,7 @@ using UnityEngine.InputSystem.Controls;
 
 public class PlayerTest : MonoBehaviour
 {
+    const float Speed = 1f;
     Vector3 move;
 
     public void OnMove(InputAction.CallbackContext context)
@@ -15,9 +16,11 @@ public class PlayerTest : MonoBehaviour
 
     public void OnFire(InputAction.CallbackContext context)
     {
+        if (Gamepad.current == null) return;
+
         if (context.phase == InputActionPhase.Started)
         {
-            Gamepad.current.SetMotorSpeeds(0.1f, 0.1f);
+            Gamepad.current.SetMotorSpeeds(0.2f, 0.3f);
             Debug.Log($"Fire!");
         }
         else if (context.phase == InputActionPhase.Canceled)
@@ -29,7 +32,6 @@ public class PlayerTest : MonoBehaviour
 
     void Update()
     {
-        const float Speed = 1f;
         transform.Translate(move * Speed * Time.deltaTime);
     }
 }

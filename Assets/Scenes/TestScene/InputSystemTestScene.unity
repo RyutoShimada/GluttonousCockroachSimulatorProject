@@ -314,6 +314,14 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: e1d3f5f8-d6d5-4fa3-9242-fcb22411ec3f
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 06f7b4b2-cd34-4a35-a307-5c12103e400b
+    m_ActionName: Camera/MousePosition[/Mouse/position]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f7e95269-081c-447f-91de-3e2f6d1ac350
+    m_ActionName: GameManager/Menu[/Keyboard/escape,/XInputControllerWindows/start]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
