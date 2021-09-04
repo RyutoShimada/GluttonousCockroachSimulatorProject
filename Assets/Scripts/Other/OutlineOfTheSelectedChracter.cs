@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class OutlineOfTheSelectedChracter : MonoBehaviour
 {
@@ -29,7 +28,7 @@ public class OutlineOfTheSelectedChracter : MonoBehaviour
 
     void OnRay()
     {
-        m_cursorPosition = Mouse.current.position.ReadValue();
+        m_cursorPosition = Input.mousePosition; // 画面上のカーソルの位置
         m_cursorPosition.z = 10.0f; // z座標に適当な値を入れる
         m_cursorPosition3d = Camera.main.ScreenToWorldPoint(m_cursorPosition); // 3Dの座標になおす
 
