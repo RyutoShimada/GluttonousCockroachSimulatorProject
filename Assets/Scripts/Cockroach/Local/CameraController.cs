@@ -16,7 +16,7 @@ public class CameraController : MonoBehaviour
 
     void CameraControlle()
     {
-        float mouse_move_y = Input.GetAxis("Mouse Y") * m_sensitivity;
+        float mouse_move_y = -Input.GetAxis("Look Y") * m_sensitivity;
 
         transform.Rotate(new Vector3(-mouse_move_y, 0f, 0f));
 

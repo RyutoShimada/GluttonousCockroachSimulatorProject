@@ -1,12 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum Panel
 {
     Title,
-    Solo,
-    Multi,
     Tutorial,
     Cockroach,
     Human
@@ -15,6 +14,10 @@ public enum Panel
 public class TitlePanelController : MonoBehaviour
 {
     [SerializeField] GameObject[] m_panels = null;
+    [SerializeField] Button m_titleStartSelect = null;
+    [SerializeField] Button m_tutorialStartSelect = null;
+    [SerializeField] Button m_cockroachStartSelect = null;
+    [SerializeField] Button m_humanStartSelect = null;
 
     /// <summary>
     /// 次に表示したいPanelを表示させて、それ以外は非表示にする
@@ -36,21 +39,19 @@ public class TitlePanelController : MonoBehaviour
         {
             case Panel.Title:
                 ChangeActive(nextPanel);
-                break;
-            case Panel.Solo:
-                ChangeActive(nextPanel);
-                break;
-            case Panel.Multi:
-                ChangeActive(nextPanel);
+                m_titleStartSelect.Select();
                 break;
             case Panel.Tutorial:
                 ChangeActive(nextPanel);
+                m_tutorialStartSelect.Select();
                 break;
             case Panel.Cockroach:
                 ChangeActive(nextPanel);
+                m_cockroachStartSelect.Select();
                 break;
             case Panel.Human:
                 ChangeActive(nextPanel);
+                m_humanStartSelect.Select();
                 break;
             default:
                 break;

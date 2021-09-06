@@ -187,9 +187,9 @@ MonoBehaviour:
     m_MaxSpeed: 200
     m_AccelTime: 0.1
     m_DecelTime: 0.1
-    m_InputAxisName: Mouse Y
+    m_InputAxisName: Look Y
     m_InputAxisValue: 0
-    m_InvertInput: 1
+    m_InvertInput: 0
     m_MinValue: -62
     m_MaxValue: 90
     m_Wrap: 0
@@ -211,7 +211,7 @@ MonoBehaviour:
     m_MaxSpeed: 250
     m_AccelTime: 0.1
     m_DecelTime: 0.1
-    m_InputAxisName: Mouse X
+    m_InputAxisName: Look X
     m_InputAxisValue: 0
     m_InvertInput: 0
     m_MinValue: -180

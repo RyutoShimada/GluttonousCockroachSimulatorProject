@@ -158,7 +158,7 @@ public class CockroachMoveController : MonoBehaviour
 
     private void MouseMove()
     {
-        m_mouseMoveX = (Input.GetAxis("Mouse X") * m_mouseSensitivity) * Time.deltaTime;
+        m_mouseMoveX = (Input.GetAxis("Look X") * m_mouseSensitivity) * Time.deltaTime;
         transform.Rotate(new Vector3(0f, m_mouseMoveX, 0f));
     }
 

@@ -144,7 +144,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetButtonDown("Start"))
         {
             LeaveRoom();
         }
@@ -227,6 +227,24 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         SceneManager.LoadScene("LauncherScene");
     }
 
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting && PhotonNetwork.IsMasterClient)
+        {
+            stream.SendNext(m_minutes);
+            stream.SendNext(m_seconds);
+            stream.SendNext(m_victoryPlayer);
+            stream.SendNext(m_isGame);
+        }
+        else if (!stream.IsWriting && !PhotonNetwork.IsMasterClient)
+        {
+            m_minutes = (int)stream.ReceiveNext();
+            m_seconds = (float)stream.ReceiveNext();
+            m_victoryPlayer = (Charactor)stream.ReceiveNext();
+            m_isGame = (bool)stream.ReceiveNext();
+        }
+    }
+
     #endregion
 
     #region Private Methods
@@ -236,29 +254,6 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         Launcher.m_Instance.LogFeedback("対戦相手が退出しました");
         SceneManager.sceneLoaded -= LogFeedBack;
     }
-
-    #endregion
-
-    #region Public Methods
-
-    /// <summary>
-    /// 現在の部屋を離れてマスターサーバーに戻り、部屋に参加したり部屋を作ったりすることができます。
-    /// </summary>
-    public void LeaveRoom()
-    {
-        Cursor.visible = true;
-        PhotonNetwork.LeaveRoom();
-    }
-
-    /// <summary>
-    /// プレーヤーアプリケーションを終了します。
-    /// </summary>
-    public void QuitApplication()
-    {
-        Application.Quit();
-    }
-
-    #endregion
 
     [PunRPC]
     void GameStart()
@@ -377,36 +372,26 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         EventSystem.Instance.Unsubscribe((EventSystem.CockroachIsDed)CockroachIsDed);
     }
 
-    // Event をやっていた
-    //void FoodGenerate()
-    //{
-    //    if (!PhotonNetwork.IsMasterClient) return;
+    #endregion
 
-    //    if (m_foodGeneraterNetWork)
-    //    {
-    //        StartCoroutine(m_foodGeneraterNetWork.StartGenerate());
-    //    }
-    //    else
-    //    {
-    //        Debug.LogError("m_foodGeneraterNetWork は破棄されています");
-    //    }
-    //}
+    #region Public Methods
 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    /// <summary>
+    /// 現在の部屋を離れてマスターサーバーに戻り、部屋に参加したり部屋を作ったりすることができます。
+    /// </summary>
+    public void LeaveRoom()
     {
-        if (stream.IsWriting && PhotonNetwork.IsMasterClient)
-        {
-            stream.SendNext(m_minutes);
-            stream.SendNext(m_seconds);
-            stream.SendNext(m_victoryPlayer);
-            stream.SendNext(m_isGame);
-        }
-        else if (!stream.IsWriting && !PhotonNetwork.IsMasterClient)
-        {
-            m_minutes = (int)stream.ReceiveNext();
-            m_seconds = (float)stream.ReceiveNext();
-            m_victoryPlayer = (Charactor)stream.ReceiveNext();
-            m_isGame = (bool)stream.ReceiveNext();
-        }
+        Cursor.visible = true;
+        PhotonNetwork.LeaveRoom();
     }
+
+    /// <summary>
+    /// プレーヤーアプリケーションを終了します。
+    /// </summary>
+    public void QuitApplication()
+    {
+        Application.Quit();
+    }
+
+    #endregion
 }

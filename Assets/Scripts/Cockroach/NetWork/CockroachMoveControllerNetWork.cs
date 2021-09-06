@@ -178,7 +178,19 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
 
     private void MouseMove()
     {
-        m_mouseMoveX = (Input.GetAxis("Mouse X") * m_mouseSensitivity) * Time.deltaTime;
+        if (Input.GetAxis("Horizontal") != 0)
+        {
+            m_mouseMoveX = (Input.GetAxis("Horizontal") * m_mouseSensitivity) * Time.deltaTime;
+        }
+        else if (Input.GetAxis("Look X") != 0)
+        {
+            m_mouseMoveX = (Input.GetAxis("Look X") * m_mouseSensitivity) * Time.deltaTime;
+        }
+        else
+        {
+            m_mouseMoveX = 0;
+        }
+        
         transform.Rotate(new Vector3(0f, m_mouseMoveX, 0f));
     }
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TutorialPageController : MonoBehaviour
 {
@@ -29,10 +30,12 @@ public class TutorialPageController : MonoBehaviour
         if (m_currentPage == 0)
         {
             m_buckButton.SetActive(false);
+            m_nextButton.GetComponent<Button>()?.Select();
         }
         else if (m_currentPage == m_panels.Length - 1)
         {
             m_nextButton.SetActive(false);
+            m_buckButton.GetComponent<Button>()?.Select();
         }
         else
         {
