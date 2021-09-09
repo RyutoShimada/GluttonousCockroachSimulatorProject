@@ -163,8 +163,6 @@ public class CockroachNetWork : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void Eat(int heelValue)
     {
-        //m_audio.PlayOneShot(m_eatSE);
-
         m_satietyGauge += heelValue;
 
         // 現在のHPがHPの最大値を超えないようにする
@@ -174,13 +172,6 @@ public class CockroachNetWork : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         m_cockroachUINetWork.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
-
-        //if (PhotonNetwork.IsMasterClient)
-        //{
-        //    EventSystem.Instance.Generate();
-        //}
-
-        Debug.Log("Heel");
     }
 
     /// <summary>

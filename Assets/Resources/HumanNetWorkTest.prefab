@@ -449,7 +449,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1460826044279222929}
   - component: {fileID: 1460826044267357115}
-  - component: {fileID: 5161860651901613376}
   m_Layer: 11
   m_Name: Head 1 Female Hair 1
   m_TagString: Untagged
@@ -551,14 +550,6 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.00057991594, y: 0.60105246, z: 0.028726026}
     m_Extent: {x: 0.12041379, y: 0.24685675, z: 0.14300324}
   m_DirtyAABB: 0
---- !u!81 &5161860651901613376
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1460826044278861489}
-  m_Enabled: 1
 --- !u!1 &1460826044278861493
 GameObject:
   m_ObjectHideFlags: 0

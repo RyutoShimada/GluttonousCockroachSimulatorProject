@@ -11,6 +11,13 @@ public enum Charactor
     Human
 }
 
+enum GameSatate
+{
+    Stay,
+    InGame,
+    GameOver
+}
+
 public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 {
     #region Public Fields
@@ -57,6 +64,8 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] FoodGeneraterNetWork m_foodGeneraterNetWork = null;
 
+    [SerializeField] GameObject m_menu = null;
+
     CockroachUINetWork m_cockroachUINetWork = null;
 
     HumanSprayAttackRange m_humanSprayAttackRange = null;
@@ -70,10 +79,14 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     /// <summary>動けるかどうか</summary>
     IIsCanMove m_canMove = null;
 
+    GameSatate m_gameState = default;
+
     /// <summary>リザルトを表示しているかどうか</summary>
     bool m_isResualt = false;
 
     bool m_isGame;
+
+    bool m_isThreeCouting = false;
 
     GameObject m_instance;
     #endregion
@@ -112,6 +125,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
             Cursor.visible = false;
             m_feedBack.text = "対戦相手を待っています...";
             GameObject operate = null;
+            m_gameState = GameSatate.Stay;
 
             if (m_operateCharactor == this.m_cockroachPrefab.name)
             {
@@ -132,8 +146,6 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
             m_canMove = operate.GetComponent<IIsCanMove>();
             m_canMove.IsMove(true);
 
-            //EventSystem.Instance.IsMove(true);
-
             if (PhotonNetwork.LocalPlayer.IsMasterClient)
             {
                 Debug.Log("あなたはマスタークライアントです");
@@ -144,43 +156,23 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     void Update()
     {
-        if (Input.GetButtonDown("Start"))
-        {
-            LeaveRoom();
-        }
-
         if (m_isGame)
         {
             TimeCountDown();
         }
         else
         {
-            if (!m_countDownText.gameObject.activeSelf)
+            if (m_gameState == GameSatate.InGame)
             {
-                m_countDownText.gameObject.SetActive(true);
-                m_countDownText.text = "そこまで！";
-                //EventSystem.Instance.Unsubscribe((EventSystem.FoodGenerate)FoodGenerate);
-
-                if (m_operatedByPlayer == Charactor.Cockroach && m_cockroachUINetWork)
-                {
-                    m_cockroachUINetWork.UiSetActiveFalse();
-                }
-
-                if (m_operatedByPlayer == Charactor.Human && m_humanSprayAttackRange)
-                {
-                    m_humanSprayAttackRange.UiSetActiveFalse();
-                }
-
-                if (m_resultUi && m_resultText)
-                {
-                    StartCoroutine(Result());
-                }
-                else
-                {
-                    Debug.LogError("m_result もしくは m_resultText が Null です", this);
-                }
+                photonView.RPC(nameof(GameOver), RpcTarget.AllViaServer);
             }
+        }
 
+        if (m_gameState == GameSatate.GameOver || m_isThreeCouting) return;
+
+        if (Input.GetButtonDown("Start"))
+        {
+            CheckMenu();
         }
     }
 
@@ -233,15 +225,11 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         {
             stream.SendNext(m_minutes);
             stream.SendNext(m_seconds);
-            stream.SendNext(m_victoryPlayer);
-            stream.SendNext(m_isGame);
         }
         else if (!stream.IsWriting && !PhotonNetwork.IsMasterClient)
         {
             m_minutes = (int)stream.ReceiveNext();
             m_seconds = (float)stream.ReceiveNext();
-            m_victoryPlayer = (Charactor)stream.ReceiveNext();
-            m_isGame = (bool)stream.ReceiveNext();
         }
     }
 
@@ -283,8 +271,48 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         StartCoroutine(CoroutineGameStart(m_waitForSeconds));
     }
 
+    [PunRPC]
+    void GameOver()
+    {
+        if (m_gameState == GameSatate.Stay) { LeaveRoom(); }
+
+        if (m_countDownText.gameObject.activeSelf) return;
+        
+        if (m_menu.activeSelf) { m_menu.SetActive(false); }
+
+        m_isGame = false;
+        m_gameState = GameSatate.GameOver;
+        m_canMove.IsMove(false);
+        m_countDownText.gameObject.SetActive(true);
+        m_countDownText.text = "そこまで！";
+
+        if (m_operatedByPlayer == Charactor.Cockroach && m_cockroachUINetWork)
+        {
+            m_cockroachUINetWork.UiSetActiveFalse();
+        }
+
+        if (m_operatedByPlayer == Charactor.Human && m_humanSprayAttackRange)
+        {
+            m_humanSprayAttackRange.UiSetActiveFalse();
+        }
+
+        if (m_resultUi && m_resultText)
+        {
+            StartCoroutine(Result());
+        }
+        else
+        {
+            Debug.LogError("m_result もしくは m_resultText が Null です", this);
+        }
+    }
+
+    [PunRPC]
+    void VictoryCharactor(Charactor victory) => m_victoryPlayer = victory;
+
     IEnumerator CoroutineGameStart(int waitSeconds)
     {
+        m_isThreeCouting = true;
+
         for (int i = waitSeconds; i >= 0; i--)
         {
             yield return new WaitForSeconds(1f);
@@ -301,10 +329,11 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
 
-        this.m_isGame = true;
+        m_isThreeCouting = false;
+        m_isGame = true;
+        m_gameState = GameSatate.InGame;
         m_countDownText.gameObject.SetActive(false);
         m_canMove.IsMove(true);
-        //EventSystem.Instance.IsMove(m_isGame);
 
         if (PhotonNetwork.IsMasterClient)
         {
@@ -347,12 +376,9 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
                 }
                 else
                 {
-                    m_victoryPlayer = Charactor.Cockroach;
+                    photonView.RPC(nameof(VictoryCharactor), RpcTarget.All, Charactor.Cockroach);
                     m_minutes = 0;
                     m_seconds = 0;
-                    m_isGame = false;
-                    m_canMove.IsMove(false);
-                    //EventSystem.Instance.IsMove(m_isGame);
                     Debug.Log("TimeUp!");
                 }
             }
@@ -366,7 +392,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     void CockroachIsDed(bool isDed)
     {
-        m_victoryPlayer = Charactor.Human;
+        photonView.RPC(nameof(VictoryCharactor), RpcTarget.All, Charactor.Human);
         m_isGame = !isDed;
         EventSystem.Instance.IsMove(false);
         EventSystem.Instance.Unsubscribe((EventSystem.CockroachIsDed)CockroachIsDed);
@@ -375,6 +401,39 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     #endregion
 
     #region Public Methods
+
+    /// <summary>
+    /// 降参する時ボタンから呼ぶ
+    /// </summary>
+   public void GameOverCallBack()
+    {
+        if (m_operatedByPlayer == Charactor.Cockroach)
+        {
+            photonView.RPC(nameof(VictoryCharactor), RpcTarget.All, Charactor.Human);
+        }
+        else
+        {
+            photonView.RPC(nameof(VictoryCharactor), RpcTarget.All, Charactor.Cockroach);
+        }
+
+        photonView.RPC(nameof(GameOver), RpcTarget.AllViaServer);
+    }
+
+    public void CheckMenu()
+    {
+        if (!m_menu.activeSelf)
+        {
+            m_menu.SetActive(true);
+            m_canMove.IsMove(false);
+            Cursor.visible = true;
+        }
+        else
+        {
+            m_menu.SetActive(false);
+            m_canMove.IsMove(true);
+            Cursor.visible = false;
+        }
+    }
 
     /// <summary>
     /// 現在の部屋を離れてマスターサーバーに戻り、部屋に参加したり部屋を作ったりすることができます。
