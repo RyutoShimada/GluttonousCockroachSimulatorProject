@@ -37,7 +37,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     [Tooltip("Human の 生成場所")]
     [SerializeField] Transform m_humanSpawnPos = null;
-
+    
     [Tooltip("タイマーのText")]
     [SerializeField] Text m_timerText = null;
 
@@ -166,13 +166,6 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
             {
                 photonView.RPC(nameof(GameOver), RpcTarget.AllViaServer);
             }
-        }
-
-        if (m_gameState == GameSatate.GameOver || m_isThreeCouting) return;
-
-        if (Input.GetButtonDown("Start"))
-        {
-            CheckMenu();
         }
     }
 
@@ -417,22 +410,6 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         photonView.RPC(nameof(GameOver), RpcTarget.AllViaServer);
-    }
-
-    public void CheckMenu()
-    {
-        if (!m_menu.activeSelf)
-        {
-            m_menu.SetActive(true);
-            m_canMove.IsMove(false);
-            Cursor.visible = true;
-        }
-        else
-        {
-            m_menu.SetActive(false);
-            m_canMove.IsMove(true);
-            Cursor.visible = false;
-        }
     }
 
     /// <summary>

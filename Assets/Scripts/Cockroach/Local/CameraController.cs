@@ -2,17 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+public class CameraController : MonoBehaviour, IIsCanMove
 {
     [SerializeField] float m_sensitivity = 1f; // いわゆるマウス感度
     [SerializeField] float m_mouseYMaxRange = 300f;
     [SerializeField] float m_mouseYMinRange = 0f;
+    bool m_canMove = true;
+
+    private void Start()
+    {
+        MenuController.IsMove += IsMove;
+    }
 
     // Update is called once per frame
     void Update()
     {
-        CameraControlle();
+        if (m_canMove)
+        {
+            CameraControlle();
+        }
     }
+
+    public void IsMove(bool isMove) => m_canMove = isMove;
 
     void CameraControlle()
     {

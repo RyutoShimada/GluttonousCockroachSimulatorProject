@@ -6,15 +6,20 @@ using UnityEngine.UI;
 [RequireComponent(typeof(InputField))]
 public class InputFieldController : MonoBehaviour
 {
+    Slider m_slider = null;
     InputField m_inputField = null;
-    
+
     void Start()
     {
-        m_inputField = GetComponent<InputField>();    
+        if (TryGetComponent(out m_inputField) && transform.parent.TryGetComponent(out m_slider))
+        {
+            UpdateValue(m_slider);
+        }
+        else
+        {
+            Debug.LogError("コンポーネントの取得ができませんでした", this);
+        }
     }
 
-    public void UpdateValue(Slider slider)
-    {
-        m_inputField.text = slider.value.ToString();
-    }
+    public void UpdateValue(Slider slider) => m_inputField.text = slider.value.ToString();
 }

@@ -59,8 +59,6 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
     [HideInInspector]
     public bool m_canMove = true;
 
-    
-
     /// <summary>死んでいるかどうか</summary>
     public bool IsDed
     {
@@ -89,6 +87,7 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
             throw;
         }
 
+        MenuController.IsMove += IsMove;
         m_rb.useGravity = false;
     }
 

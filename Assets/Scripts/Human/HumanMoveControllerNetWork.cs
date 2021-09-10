@@ -94,6 +94,8 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
             {
                 m_attackRangeObj.SetActive(false);
             }
+
+            MenuController.IsMove += IsMove;
         }
     }
 

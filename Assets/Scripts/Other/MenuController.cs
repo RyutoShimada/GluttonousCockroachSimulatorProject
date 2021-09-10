@@ -2,22 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class MenuController : MonoBehaviour
 {
+    [SerializeField] GameObject m_menu = null; 
     [SerializeField] GameObject[] m_menus = null;
     [SerializeField] Selectable[] m_startSelects = null;
     RectTransform m_rect;
+    public static Action<bool> IsMove;
 
-    private void Awake()
+    void Awake()
     {
-        m_rect = GetComponent<RectTransform>();
+        m_rect = transform.parent.GetComponent<RectTransform>();
     }
 
-    private void OnEnable()
+    private void Update()
     {
-        m_rect.SetAsLastSibling();//最前面に持ってくる
-        ChangeMenu(m_menus[0]);
+        if (Input.GetButtonDown("Start"))
+        {
+            if (!m_menu.activeSelf)
+            {
+                Open();
+                m_rect.SetAsLastSibling();//最前面に持ってくる
+                ChangeMenu(m_menus[0]);
+            }
+            else
+            {
+                Close();
+            }
+        }
     }
 
     /// <summary>
@@ -37,7 +51,7 @@ public class MenuController : MonoBehaviour
             {
                 UnActive(m_menus[i]);
             }
-        }   
+        }
     }
 
     void OnActive(GameObject go)
@@ -46,9 +60,23 @@ public class MenuController : MonoBehaviour
         go.SetActive(true);
     }
 
-    public void UnActive(GameObject go)
+    void UnActive(GameObject go)
     {
         if (!go.activeSelf) return;
         go.SetActive(false);
+    }
+
+    void Open()
+    {
+        m_menu.gameObject.SetActive(true);
+        IsMove?.Invoke(false);
+        Cursor.visible = true;
+    }
+
+    public void Close()
+    {
+        m_menu.gameObject.SetActive(false);
+        IsMove?.Invoke(true);
+        Cursor.visible = false;
     }
 }
