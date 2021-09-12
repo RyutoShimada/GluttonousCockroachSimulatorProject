@@ -7,6 +7,7 @@ public enum Panel
 {
     Title,
     Tutorial,
+    Menu,
     Cockroach,
     Human
 }
@@ -16,6 +17,7 @@ public class TitlePanelController : MonoBehaviour
     [SerializeField] GameObject[] m_panels = null;
     [SerializeField] Button m_titleStartSelect = null;
     [SerializeField] Button m_tutorialStartSelect = null;
+    [SerializeField] Button m_menuStartSelect = null;
     [SerializeField] Button m_cockroachStartSelect = null;
     [SerializeField] Button m_humanStartSelect = null;
 
@@ -44,6 +46,10 @@ public class TitlePanelController : MonoBehaviour
             case Panel.Tutorial:
                 ChangeActive(nextPanel);
                 m_tutorialStartSelect.Select();
+                break;
+            case Panel.Menu:
+                ChangeActive(nextPanel);
+                m_menuStartSelect.Select();
                 break;
             case Panel.Cockroach:
                 ChangeActive(nextPanel);

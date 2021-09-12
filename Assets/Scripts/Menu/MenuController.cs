@@ -6,7 +6,7 @@ using System;
 
 public class MenuController : MonoBehaviour
 {
-    [SerializeField] GameObject m_menu = null; 
+    [SerializeField] GameObject m_menu = null;
     [SerializeField] GameObject[] m_menus = null;
     [SerializeField] Selectable[] m_startSelects = null;
     RectTransform m_rect;
@@ -19,6 +19,7 @@ public class MenuController : MonoBehaviour
 
     private void Update()
     {
+        if (!NetWorkGameManager.m_Instance) return;
         if (Input.GetButtonDown("Start"))
         {
             if (!m_menu.activeSelf)
@@ -77,6 +78,7 @@ public class MenuController : MonoBehaviour
     {
         m_menu.gameObject.SetActive(false);
         IsMove?.Invoke(true);
+        if (!NetWorkGameManager.m_Instance) return;
         Cursor.visible = false;
     }
 }
