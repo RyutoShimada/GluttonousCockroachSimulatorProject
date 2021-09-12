@@ -5444,6 +5444,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Menu
       objectReference: {fileID: 0}
+    - target: {fileID: 311541355486432366, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 311541355513853091, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 797007042568989237, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
         type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
