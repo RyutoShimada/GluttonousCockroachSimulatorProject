@@ -89,14 +89,14 @@ public class Launcher : MonoBehaviourPunCallbacks
         // 接続されているかどうかをチェックし、接続されていれば参加し、そうでなければサーバーへの接続を開始します。
         if (PhotonNetwork.IsConnected)
         {
-            LogFeedback("部屋へ接続...");
+            //LogFeedback("部屋へ接続...");
 
             // 既にあるランダムなルームへ接続。失敗すると新しくルームを作成する。
             PhotonNetwork.JoinRandomRoom();
         }
         else
         {
-            LogFeedback("マスターサーバーへ接続...");
+            //LogFeedback("マスターサーバーへ接続...");
 
             PhotonNetwork.ConnectUsingSettings(); // マスターサーバーへ接続する
             PhotonNetwork.GameVersion = this.m_gameVersion;
@@ -144,7 +144,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     {
         if (m_isConnecting)
         {
-            LogFeedback("サーバーに接続中です...");
+            LogFeedback("サーバーへアクセス...");
             Debug.Log("マスターサーバーへの接続に成功 -> ランダムな部屋への接続を開始");
 
             Hashtable expectedCustomRoomProperties;
@@ -167,7 +167,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     /// </summary>
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
-        LogFeedback("部屋を作成します...");
+        //LogFeedback("部屋を作成します...");
         Debug.Log("ランダムな部屋への接続に失敗 -> 部屋を作成");
 
         RoomOptions roomOptions = new RoomOptions();
@@ -183,7 +183,7 @@ public class Launcher : MonoBehaviourPunCallbacks
     /// </summary>
     public override void OnDisconnected(DisconnectCause cause)
     {
-        LogFeedback($"サーバーとの接続が切断されました : {cause}");
+        LogFeedback($"サーバーとのアクセスがきれました : {cause}");
         Debug.LogError($"サーバーとの接続が切断されました : {cause}");
 
         if (!Cursor.visible)

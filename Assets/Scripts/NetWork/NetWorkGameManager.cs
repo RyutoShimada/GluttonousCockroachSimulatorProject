@@ -123,7 +123,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         else
         {
             Cursor.visible = false;
-            m_feedBack.text = "対戦相手を待っています...";
+            m_feedBack.text = "マッチングちゅう...";
             GameObject operate = null;
             m_gameState = GameSatate.Stay;
 
@@ -232,7 +232,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     void LogFeedBack(Scene next, LoadSceneMode mode)
     {
-        Launcher.m_Instance.LogFeedback("対戦相手が退出しました");
+        Launcher.m_Instance.LogFeedback("テキ が にげました");
         SceneManager.sceneLoaded -= LogFeedBack;
     }
 
@@ -241,11 +241,11 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         if (m_operatedByPlayer == Charactor.Cockroach)
         {
-            m_feedBack.text = "エサを食べながら制限時間生き残れ！";
+            m_feedBack.text = "エサ を たべて にげろ";
         }
         else
         {
-            m_feedBack.text = "制限時間内にゴキブリを倒せ！";
+            m_feedBack.text = "ヤツ を たおせ";
         }
 
         if (m_operatedByPlayer == Charactor.Cockroach)
@@ -277,7 +277,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         m_gameState = GameSatate.GameOver;
         m_canMove.IsMove(false);
         m_countDownText.gameObject.SetActive(true);
-        m_countDownText.text = "そこまで！";
+        m_countDownText.text = "そこまで";
 
         if (m_operatedByPlayer == Charactor.Cockroach && m_cockroachUINetWork)
         {
@@ -316,7 +316,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
             }
             else
             {
-                m_countDownText.text = "はじめ！";
+                m_countDownText.text = "はじめ";
                 yield return new WaitForSeconds(0.5f);
                 m_feedBack.text = "";
             }
@@ -344,11 +344,11 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
         if (m_victoryPlayer == this.m_operatedByPlayer)
         {
-            m_resultText.text = "あなたの勝ちです";
+            m_resultText.text = "きみの かち だよ";
         }
         else
         {
-            m_resultText.text = "あなたの負けです";
+            m_resultText.text = "きみの まけ だよ";
         }
     }
 
