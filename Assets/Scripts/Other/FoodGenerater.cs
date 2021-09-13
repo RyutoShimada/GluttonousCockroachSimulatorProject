@@ -7,6 +7,8 @@ public class FoodGenerater : MonoBehaviour
 {
     [SerializeField] GameObject[] m_foods = null;
     [SerializeField] Transform[] m_generatePos = null;
+    [SerializeField] float m_interval = 2;
+    [SerializeField] int m_generateCount = 2;
     GameObject[] m_go;
     Vector3 m_beforePos = Vector3.zero;
 
@@ -24,9 +26,10 @@ public class FoodGenerater : MonoBehaviour
     private void Start()
     {
         if (m_foods.Length <= 0) return;
+        StartCoroutine(nameof(Generate));
     }
 
-    public IEnumerator Generate(int generateCount, float interval)
+    public IEnumerator Generate()
     {
         foreach (var item in m_go)
         {
@@ -37,12 +40,12 @@ public class FoodGenerater : MonoBehaviour
         }
 
         int currentCount = 0;
-        int[] randomFood = new int[generateCount];
-        int[] randomPos = new int[generateCount];
+        int[] randomFood = new int[m_generateCount];
+        int[] randomPos = new int[m_generateCount];
 
-        yield return new WaitForSeconds(interval);
+        yield return new WaitForSeconds(m_interval);
 
-        while (currentCount < generateCount)
+        while (currentCount < m_generateCount)
         {
             randomFood[currentCount] = Random.Range(0, m_go.Length);
             randomPos[currentCount] = Random.Range(0, m_generatePos.Length);
@@ -65,6 +68,8 @@ public class FoodGenerater : MonoBehaviour
                 }
             }
         }
+
+        Debug.Log("Generated!");
     }
 
     void ChangeFood(int[] randomFood, int[] randomPos, ref int currentCount)

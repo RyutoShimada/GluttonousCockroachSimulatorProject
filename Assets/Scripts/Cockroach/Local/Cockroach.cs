@@ -123,8 +123,8 @@ public class Cockroach : MonoBehaviour
             m_satietyGauge = m_maxSatietyGauge;
         }
 
-        m_CU.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
-        m_GM.FoodGenerate();
+        m_CU?.ReflectGauge(m_satietyGauge, m_maxSatietyGauge);
+        m_GM?.FoodGenerate();
         Debug.Log("Heel");
     }
 
@@ -148,7 +148,7 @@ public class Cockroach : MonoBehaviour
     {
         if (other.tag == "Food")
         {
-            //Eat(other.gameObject.GetComponent<Food>().m_heelValue);
+            Eat(other.gameObject.GetComponent<Food>().m_heelValue);
         }
     }
 }

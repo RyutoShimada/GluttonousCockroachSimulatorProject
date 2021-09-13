@@ -134,7 +134,7 @@ public class GameManager : MonoBehaviour
 
     public void FoodGenerate()
     {
-        StartCoroutine(m_foodGenerater.Generate(m_generateFoodCount, m_generateInterval));
+        StartCoroutine(m_foodGenerater.Generate());
     }
 
     /// <summary>
