@@ -23,9 +23,21 @@ public class NPCInput : MonoBehaviour
 
     IEnumerator Routine()
     {
+        int random;
+
         while (!m_moveController.IsDed && m_moveController.IsCanMove)
         {
-            yield return Move();
+            random = Random.Range(0, 2);
+
+            if (random > 0)
+            {
+                yield return Move();
+            }
+            else
+            {
+                yield return MeandelingMove();
+            }
+
             yield return Rotate();
         }
     }
@@ -39,8 +51,31 @@ public class NPCInput : MonoBehaviour
             if (m_jumpTimer < 0)
             {
                 m_jumpTimer = Random.Range(m_minJumpTime, m_maxJumpTime);
+                yield return Rotate();
+                m_moveController.Move(1f);
                 Jump();
             }
+            m_moveController.Move(1f);
+            m_moveTimer -= Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
+    IEnumerator MeandelingMove()
+    {
+        m_moveTimer = Random.Range(m_moveTimeMin, m_moveTimeMax);
+        m_jumpTimer = 0.3f;
+
+        while (m_moveTimer > 0)
+        {
+            m_jumpTimer -= Time.deltaTime;
+
+            if (m_jumpTimer < 0)
+            {
+                m_jumpTimer = 0.3f;
+                Rotating();
+            }
+
             m_moveController.Move(1f);
             m_moveTimer -= Time.deltaTime;
             yield return new WaitForEndOfFrame();
@@ -53,6 +88,12 @@ public class NPCInput : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         waitTime = Random.Range(m_rotateTimeMin, m_rotateTimeMax);
         m_moveController.MouseMove(waitTime);
+    }
+
+    void Rotating()
+    {
+        float rotate = Random.Range(m_rotateTimeMin, m_rotateTimeMax);
+        m_moveController.MouseMove(rotate);
     }
 
     void Jump()

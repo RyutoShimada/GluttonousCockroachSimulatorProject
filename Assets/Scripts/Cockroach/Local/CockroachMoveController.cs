@@ -22,7 +22,7 @@ public class CockroachMoveController : MonoBehaviour
     /// <summary>回転する時に判定するためのRayをとばす位置</summary>
     [SerializeField] Transform m_rotateRayPos = null;
     /// <summary>マウスの感度</summary>
-    [SerializeField, Range(50f, 300f)] float m_mouseSensitivity = 50f;
+    [SerializeField, Range(10f, 100)] float m_mouseSensitivity = 50f;
     /// <summary>Rigidbody</summary>
     Rigidbody m_rb;
     /// <summary>Velocity</summary>
@@ -212,8 +212,6 @@ public class CockroachMoveController : MonoBehaviour
     /// <returns></returns>
     public void IsGround(bool isGround)
     {
-        //if (_isJump) return;
-
         if (isGround)
         {
             m_isGrounded = true;

@@ -36,7 +36,7 @@ public class Cockroach : MonoBehaviour
         m_hp = m_maxHp;
         m_CMC = GetComponent<CockroachMoveController>();
         m_CU = GetComponent<CockroachUI>();
-        m_CU.ReflectHPSlider(m_hp, m_maxHp);
+        m_CU?.ReflectHPSlider(m_hp, m_maxHp);
         m_GM = FindObjectOfType<GameManager>();
     }
 

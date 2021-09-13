@@ -17,10 +17,10 @@ public class PlayerInput : MonoBehaviour
     {
         while (!m_moveController.IsDed && m_moveController.IsCanMove)
         {
-            m_moveController.Move(Input.GetAxisRaw("Vertical"));
             m_moveController.Jump(Input.GetButtonDown("Jump"));
+            m_moveController.Move(Input.GetAxisRaw("Vertical"));
             m_moveController.MouseMove(Input.GetAxis("Look X"));
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
     }
 }
