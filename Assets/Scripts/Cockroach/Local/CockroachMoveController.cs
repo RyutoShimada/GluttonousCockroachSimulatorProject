@@ -48,6 +48,8 @@ public class CockroachMoveController : MonoBehaviour
     /// <summary>死んでいるかどうか</summary>
     bool m_isDed = false;
 
+    [SerializeField] bool m_AImode = false;
+
     /// <summary>死んでいるかどうか</summary>
     public bool IsDed
     {
@@ -74,10 +76,12 @@ public class CockroachMoveController : MonoBehaviour
     }
 
 
-    void Start()
+    public void StartSet()
     {
         this.gameObject.GetComponent<Rigidbody>().useGravity = false;
         m_rb = this.gameObject.GetComponent<Rigidbody>();
+        m_isCanMove = true;
+        m_isDed = false;
     }
 
     void FixedUpdate()
@@ -85,7 +89,7 @@ public class CockroachMoveController : MonoBehaviour
         if (!m_isCanMove) return;
         if (m_isDed) return;
         Gravity();
-        Move();
+        //Move(m_v);
         JumpFallForce();
     }
 
@@ -94,22 +98,24 @@ public class CockroachMoveController : MonoBehaviour
     {
         if (!m_isCanMove) return;
         if (m_isDed) return;
-        m_v = Input.GetAxisRaw("Vertical");
+
+        //m_v = Input.GetAxisRaw("Vertical");
+
         Ray();
-        Jump(m_jumpPower);
-        MouseMove();
+        //Jump(Input.GetButtonDown("Jump"));
+        //MouseMove(Input.GetAxis("Look X"));
     }
 
     /// <summary>
     /// 移動
     /// </summary>
-    void Move()
+    public void Move(float virtical)
     {
         m_dir = transform.forward;
 
         if (m_isJumping) return;
 
-        if (m_v > 0) // 進む処理
+        if (virtical > 0) // 進む処理
         {
             m_velo = m_dir.normalized * m_moveSpeed;
 
@@ -156,9 +162,9 @@ public class CockroachMoveController : MonoBehaviour
         m_rb.velocity = m_velo;
     }
 
-    private void MouseMove()
+    public void MouseMove(float x)
     {
-        m_mouseMoveX = (Input.GetAxis("Look X") * m_mouseSensitivity) * Time.deltaTime;
+        m_mouseMoveX = (x * m_mouseSensitivity) * Time.deltaTime;
         transform.Rotate(new Vector3(0f, m_mouseMoveX, 0f));
     }
 
@@ -169,15 +175,15 @@ public class CockroachMoveController : MonoBehaviour
 
     /// <summary>ジャンプする</summary>
     /// <param name="jumpPower">ジャンプする力</param>
-    void Jump(float jumpPower)
+    public void Jump(bool jump)
     {
-        if (Input.GetButtonDown("Jump") && m_isGrounded)
+        if (jump && m_isGrounded)
         {
             m_isJumping = true;
 
             m_isGrounded = false;
 
-            m_rb.AddForce(-m_gravityDir.normalized * jumpPower, ForceMode.Impulse);
+            m_rb.AddForce(-m_gravityDir.normalized * m_jumpPower, ForceMode.Impulse);
 
             if (m_gravityDir != Vector3.down)
             {
