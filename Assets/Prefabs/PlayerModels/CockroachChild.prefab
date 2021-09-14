@@ -10459,7 +10459,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2149442847838244210}
   - component: {fileID: 2149442847838244213}
-  - component: {fileID: 8186299337897799414}
+  - component: {fileID: 5170632406957871911}
   m_Layer: 10
   m_Name: GroundTriggaer
   m_TagString: Untagged
@@ -10494,7 +10494,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.1, y: 0.3, z: 0.46}
   m_Center: {x: 0, y: -0.12, z: 0}
---- !u!114 &8186299337897799414
+--- !u!114 &5170632406957871911
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10503,10 +10503,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2149442847838244211}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 285414b7dd8b93642869f96052c6aaec, type: 3}
+  m_Script: {fileID: 11500000, guid: 26ee707e94dc29f4c95a4c4763a3d764, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_parent: {fileID: 2149442848604006778}
+  m_parent: {fileID: 7155526751963773679}
 --- !u!1 &2149442847912580852
 GameObject:
   m_ObjectHideFlags: 0
@@ -13000,9 +13000,9 @@ GameObject:
   - component: {fileID: 2149442848604006777}
   - component: {fileID: 2149442848604006779}
   - component: {fileID: 2149442848604006776}
-  - component: {fileID: 2149442848604006778}
-  - component: {fileID: 2149442848604006781}
   - component: {fileID: -8143978585725167197}
+  - component: {fileID: 7155526751963773679}
+  - component: {fileID: 2931756358272658124}
   m_Layer: 10
   m_Name: CockroachChild
   m_TagString: Cockroach
@@ -13058,47 +13058,6 @@ CapsuleCollider:
   m_Height: 0.37
   m_Direction: 2
   m_Center: {x: 0, y: 0.03, z: 0.01}
---- !u!114 &2149442848604006778
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2149442848604006774}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd8357839ed4abd488587d57ab744df0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_moveSpeed: 8
-  m_jumpPower: 3
-  m_gravityPower: 10
-  m_maxRayDistance: 1
-  m_rayOriginPos: {fileID: 2149442847211935098}
-  m_rotateRayPos: {fileID: 2149442847948395412}
-  m_mouseSensitivity: 100
-  m_AImode: 0
---- !u!114 &2149442848604006781
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2149442848604006774}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3d58a6b43ef82d4eb4cbce7b7809e81, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_maxHp: 100
-  m_hp: 100
-  m_invincibleModeTime: 5
-  m_addSpeedValue: 3
-  m_addJumpValue: 3
-  m_invincibleMode: 0
-  m_generatePrefab: {fileID: 0}
-  m_generateCount: 10
-  m_isDed: 0
 --- !u!114 &-8143978585725167197
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13111,14 +13070,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2e91acb5f7721b4eb240e391910155e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_moveController: {fileID: 2149442848604006778}
-  m_moveTimeMin: 0.1
-  m_moveTimeMax: 5
-  m_waitTimeMax: 2
-  m_rotateTimeMin: -50
-  m_rotateTimeMax: 50
-  m_minJumpTime: 1
-  m_maxJumpTime: 5
+  m_data: {fileID: 11400000, guid: 52bcaee4e0af08049b89f497b8fad617, type: 2}
+  m_moveController: {fileID: 7155526751963773679}
+--- !u!114 &7155526751963773679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2149442848604006774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 501f8d3e75620644f91f65a0fafd3082, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_data: {fileID: 11400000, guid: 52bcaee4e0af08049b89f497b8fad617, type: 2}
+  m_gravityPower: 10
+  m_maxRayDistance: 1
+  m_rayOriginPos: {fileID: 2149442847211935098}
+  m_rotateRayPos: {fileID: 2149442847948395412}
+  m_mouseSensitivity: 100
+  m_canMove: 1
+--- !u!95 &2931756358272658124
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2149442848604006774}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 7f87df97a8e85084993b375780e6df0d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &2149442848723632274
 GameObject:
   m_ObjectHideFlags: 0

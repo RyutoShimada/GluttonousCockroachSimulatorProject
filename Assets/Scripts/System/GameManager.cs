@@ -20,8 +20,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject m_cockroachCanvas = null;
     [SerializeField] GameObject m_canvas = null;
     [SerializeField] FoodGenerater m_foodGenerater = null;
-    [SerializeField] int m_generateFoodCount = 1;
-    [SerializeField] float m_generateInterval = 3f;
     GameObject m_cockoroachCamera = null;
     GameObject m_humanCamera = null;
     [SerializeField] OperationSutate m_os = OperationSutate.CockRoach;

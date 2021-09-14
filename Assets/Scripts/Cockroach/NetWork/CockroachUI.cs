@@ -34,7 +34,7 @@ public class CockroachUI : MonoBehaviourPunCallbacks
         }
         else
         {
-            Transform t = GameObject.Find("Canvas").transform;
+            Transform t = GameObject.Find("Canvas")?.transform;
             m_ui = Instantiate(m_cockroachUiPrefab, t);
 
             if (m_ui)

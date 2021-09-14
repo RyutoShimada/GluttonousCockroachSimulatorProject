@@ -87,7 +87,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53f75ef0ffb86144caac7ef033ac4c87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensitivity: 1
+  m_sensitivity: 0.2
   m_mouseYMaxRange: 300
   m_mouseYMinRange: 0
 --- !u!1 &1380053710082340922
@@ -231,8 +231,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 501f8d3e75620644f91f65a0fafd3082, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_moveSpeed: 7
-  m_jumpPower: 3
+  m_data: {fileID: 11400000, guid: 52bcaee4e0af08049b89f497b8fad617, type: 2}
   m_gravityPower: 10
   m_maxRayDistance: 1
   m_rayOriginPos: {fileID: 1380053711590895058}
@@ -251,14 +250,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4227d4b0169ff844d8d03f0e6c0fffd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_maxHp: 100
+  m_data: {fileID: 11400000, guid: 52bcaee4e0af08049b89f497b8fad617, type: 2}
   m_hp: 100
   m_invincibleModeTime: 3
   m_addSpeedValue: 5
   m_addJumpValue: 5
   m_invincibleMode: 0
   m_camera: {fileID: 51643860216663672}
-  m_godMode: 0
   m_isDed: 0
 --- !u!114 &8000153934261983132
 MonoBehaviour:

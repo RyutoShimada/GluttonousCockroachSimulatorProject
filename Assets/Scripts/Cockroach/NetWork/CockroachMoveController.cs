@@ -10,12 +10,9 @@ using Photon.Pun;
 public class CockroachMoveController : MonoBehaviourPunCallbacks, IIsCanMove
 {
     #region Private Serializable Fields
-    /// <summary>移動速度</summary>
-    [SerializeField] float m_moveSpeed = 7f;
+    [SerializeField] CockroachScriptableObject m_data = null;
     /// <summary>現在の移動速度</summary>
     float m_currentMoveSpeed = 0;
-    /// <summary>ジャンプ力</summary>
-    [SerializeField] float m_jumpPower = 4f;
     /// <summary>現在のジャンプ力</summary>
     float m_currentJumpPower = 0;
     /// <summary>重力</summary>
@@ -43,9 +40,7 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks, IIsCanMove
     Vector3 m_jumpDir;
     /// <summary>回転する時に必要な法線ベクトルを取得するためのRay</summary>
     RaycastHit m_rotateHit;
-    Animator m_anim;
-    /// <summary>Vertical</summary>
-    float m_v;
+
     /// <summary>マウスのX軸の動いた量</summary>
     float m_mouseMoveX;
     /// <summary>回転中かどうか</summary>
@@ -56,6 +51,8 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks, IIsCanMove
     bool m_isJumping = false;
     /// <summary>死んでいるかどうか</summary>
     bool m_isDed = false;
+
+    Animator m_anim;
 
     [HideInInspector]
     public bool m_canMove = true;
@@ -75,8 +72,8 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks, IIsCanMove
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
 
-        m_currentMoveSpeed = m_moveSpeed;
-        m_currentJumpPower = m_jumpPower;
+        m_currentMoveSpeed = m_data.Speed;
+        m_currentJumpPower = m_data.JumpPower;
         m_rb = GetComponent<Rigidbody>();
         m_anim = GetComponent<Animator>();
         MenuController.IsMove += IsMove;
@@ -159,7 +156,7 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks, IIsCanMove
 
         if (m_isGrounded)
         {
-            m_anim.SetFloat("Velocity", m_v);
+            m_anim.SetFloat("Velocity", virtical);
         }
         else
         {
@@ -291,8 +288,8 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks, IIsCanMove
         }
         else
         {
-            m_currentMoveSpeed = m_moveSpeed;
-            m_currentJumpPower = m_jumpPower;
+            m_currentMoveSpeed = m_data.Speed;
+            m_currentJumpPower = m_data.JumpPower;
         }
     }
 

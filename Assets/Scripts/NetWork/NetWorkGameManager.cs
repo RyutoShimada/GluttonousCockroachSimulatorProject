@@ -86,8 +86,6 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     bool m_isGame;
 
-    bool m_isThreeCouting = false;
-
     GameObject m_instance;
     #endregion
 
@@ -304,8 +302,6 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     IEnumerator CoroutineGameStart(int waitSeconds)
     {
-        m_isThreeCouting = true;
-
         for (int i = waitSeconds; i >= 0; i--)
         {
             yield return new WaitForSeconds(1f);
@@ -322,7 +318,6 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
 
-        m_isThreeCouting = false;
         m_isGame = true;
         m_gameState = GameSatate.InGame;
         m_countDownText.gameObject.SetActive(false);

@@ -48,8 +48,6 @@ public class CockroachMoveControllerTest : MonoBehaviour
     /// <summary>死んでいるかどうか</summary>
     bool m_isDed = false;
 
-    [SerializeField] bool m_AImode = false;
-
     /// <summary>死んでいるかどうか</summary>
     public bool IsDed
     {

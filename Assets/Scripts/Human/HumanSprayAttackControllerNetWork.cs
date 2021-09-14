@@ -17,7 +17,7 @@ public class HumanSprayAttackControllerNetWork : MonoBehaviourPunCallbacks
     {
         if (!photonView.IsMine) return;
         m_sprayHit = false;
-        Transform t = GameObject.Find("Canvas").transform;
+        Transform t = GameObject.Find("Canvas")?.transform;
         m_ui = Instantiate(m_humanUi, t);
         m_crossHair = m_ui.GetComponent<Image>();
     }

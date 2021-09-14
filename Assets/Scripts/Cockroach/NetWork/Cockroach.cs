@@ -4,7 +4,6 @@ using Photon.Pun;
 
 
 [RequireComponent(typeof(CockroachMoveController))]
-[RequireComponent(typeof(CockroachUI))]
 
 /// <summary>
 /// ゴキブリのスクリプト
@@ -13,8 +12,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 {
     static public GameObject m_Instance;
 
-    /// <summary>最大の体力値</summary>
-    [SerializeField] int m_maxHp = 100;
+    [SerializeField] CockroachScriptableObject m_data = null;
     /// <summary>現在の体力値</summary>
     [SerializeField] int m_hp = 100;
     /// <summary>無敵モード時間</summary>
@@ -28,8 +26,6 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] GameObject m_camera = null;
 
-    [SerializeField] bool m_godMode = false;
-
     CockroachMoveController m_moveController = null;
     CockroachUI m_cockroachUINetWork = null;
 
@@ -37,8 +33,6 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     AudioSource m_audio;
     Animator m_anim;
 
-    /// <summary>1秒間を測るためのタイマー</summary>
-    float m_oneSecondTimer = 0f;
     /// <summary>死んだかどうか</summary>
     public bool m_isDed = false;
 
@@ -48,17 +42,17 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         m_moveController = GetComponent<CockroachMoveController>();
         EventSystem.Instance.Subscribe((EventSystem.ResetTransform)ResetPosition);
         m_isDed = false;
-        m_hp = m_maxHp;
+        m_hp = m_data.MaxHP;
 
         if (PhotonNetwork.IsConnected && !photonView.IsMine)
         {
-            m_camera.SetActive(false);
+            m_camera?.SetActive(false);
             return;
         }
 
         m_audio = GetComponent<AudioSource>();
         m_cockroachUINetWork = GetComponent<CockroachUI>();
-        m_camera.SetActive(true);
+        m_camera?.SetActive(true);
 
     }
 
@@ -76,7 +70,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 
     public void ResetPosition(Vector3 v, Quaternion q)
     {
-        if (photonView.IsMine)
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
         {
             this.transform.position = v;
             this.transform.rotation = q;
@@ -145,7 +139,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         StartCoroutine(m_cockroachUINetWork.DamageColor());
         // HPバーを減少させる
         //photonView.RPC(nameof(m_cockroachUINetWork.ReflectHPSlider), RpcTarget.Others, m_hp, m_maxHp);
-        m_cockroachUINetWork.ReflectHPSlider(m_hp, m_maxHp);
+        m_cockroachUINetWork.ReflectHPSlider(m_hp, m_data.MaxHP);
     }
 
     [PunRPC]

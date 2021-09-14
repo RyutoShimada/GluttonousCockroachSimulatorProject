@@ -29,8 +29,10 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
     [SerializeField] Transform m_rightHandIKTarget = null;
     /// <summary>IKを滑らかに実行する速度</summary>
     [SerializeField] float m_rightIKPositionWeightSpeed = 1f;
-    /// <summary>攻撃時のスプレーのパーティクル</summary>
-    [SerializeField] GameObject m_sprayParticle = null;
+    /// <summary>攻撃時のビームのパーティクル</summary>
+    [SerializeField] GameObject m_beamPrefab = null;
+    /// <summary>攻撃時のビームのパーティクル</summary>
+    [SerializeField] GameObject m_chargePrefab = null;
     /// <summary>実際に変化するのIKのアニメーション速度</summary>
     float m_localIkWeight = 0f;
 
@@ -57,51 +59,48 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
     {
         m_anim = GetComponent<Animator>();
 
-        if (photonView.IsMine)
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+
+        m_rb = GetComponent<Rigidbody>();
+        EventSystem.Instance.Subscribe((EventSystem.ResetTransform)ResetPosition);
+
+        if (m_vcamPrefab)
         {
-            m_rb = GetComponent<Rigidbody>();
-
-            //EventSystem.Instance.Subscribe((EventSystem.CanMove)CanMove);
-            EventSystem.Instance.Subscribe((EventSystem.ResetTransform)ResetPosition);
-
-            if (m_vcamPrefab)
-            {
-                m_vcam = Instantiate(m_vcamPrefab, m_cameraPos.position, m_cameraPos.rotation);
-            }
-            else
-            {
-                Debug.LogError("m_vcamPrefab がアサインされていません");
-            }
-
-            if (m_vcam.TryGetComponent(out CinemachineVirtualCamera vcam))
-            {
-                m_vcamBase = vcam.GetComponent<CinemachineVirtualCamera>();
-                vcam.Follow = m_cameraPos;
-                m_vcamBase.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = Vector3.zero;
-                if (!m_canMove)
-                {
-                    m_vcamBase.enabled = false;
-                }
-            }
-            else
-            {
-                Debug.LogError("CinemachineVirtualCamera を GetComponent 出来ませんでした");
-            }
-
-            m_attackRangeObj = transform.Find("CameraPos").transform.Find("AttackRange").gameObject;
-
-            if (m_attackRangeObj)
-            {
-                m_attackRangeObj.SetActive(false);
-            }
-
-            MenuController.IsMove += IsMove;
+            m_vcam = Instantiate(m_vcamPrefab, m_cameraPos.position, m_cameraPos.rotation);
         }
+        else
+        {
+            Debug.LogError("m_vcamPrefab がアサインされていません");
+        }
+
+        if (m_vcam.TryGetComponent(out CinemachineVirtualCamera vcam))
+        {
+            m_vcamBase = vcam.GetComponent<CinemachineVirtualCamera>();
+            vcam.Follow = m_cameraPos;
+            m_vcamBase.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = Vector3.zero;
+            if (!m_canMove)
+            {
+                m_vcamBase.enabled = false;
+            }
+        }
+        else
+        {
+            Debug.LogError("CinemachineVirtualCamera を GetComponent 出来ませんでした");
+        }
+
+        m_attackRangeObj = transform.Find("CameraPos").transform.Find("AttackRange").gameObject;
+
+        if (m_attackRangeObj)
+        {
+            m_attackRangeObj.SetActive(false);
+        }
+
+        MenuController.IsMove += IsMove;
     }
 
     void FixedUpdate()
     {
-        if (!photonView.IsMine) return;
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
         if (!m_canMove) return;
         Move();
         m_cameraPos.rotation = Camera.main.transform.rotation;
@@ -110,7 +109,7 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
     // Update is called once per frame
     void Update()
     {
-        if (!photonView.IsMine) return;
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
         if (!m_canMove) return;
 
         m_input.x = Input.GetAxisRaw("Horizontal");
@@ -203,7 +202,14 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
             m_attackRangeObj.SetActive(true);
         }
 
-        photonView.RPC(nameof(ActiveSpray), RpcTarget.All);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC(nameof(ActiveSpray), RpcTarget.All);
+        }
+        else
+        {
+            ActiveSpray();
+        }
 
         if (RayOfAttack())
         {
@@ -216,26 +222,40 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
 
     void CancelAttackSpray()
     {
-        isSprayAttacking = false;
-
         if (m_attackRangeObj)
         {
             m_attackRangeObj.SetActive(false);
         }
 
-        photonView.RPC(nameof(UnActiveSpray), RpcTarget.All);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC(nameof(UnActiveSpray), RpcTarget.All);
+        }
+        else
+        {
+            UnActiveSpray();
+        }
     }
 
     [PunRPC]
     void ActiveSpray()
     {
-        m_sprayParticle.SetActive(true);
+        m_chargePrefab.SetActive(true);
     }
 
     [PunRPC]
     void UnActiveSpray()
     {
-        m_sprayParticle.SetActive(false);
+        StartCoroutine(StopBeam());
+    }
+
+    IEnumerator StopBeam()
+    {
+        m_chargePrefab.SetActive(false);
+        m_beamPrefab.SetActive(true);
+        yield return new WaitForSeconds(3f);
+        m_beamPrefab.SetActive(false);
+        isSprayAttacking = false;
     }
 
     void DoRotate()
@@ -293,7 +313,7 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
         if (m_anim)
         {
             m_anim.SetIKPositionWeight(AvatarIKGoal.RightHand, m_localIkWeight);
-            m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, 1f); // Rotation は滑らかにしない
+            m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, m_localIkWeight);
             m_anim.SetIKPosition(AvatarIKGoal.RightHand, m_rightHandIKTarget.position);
             m_anim.SetIKRotation(AvatarIKGoal.RightHand, m_rightHandIKTarget.rotation);
         }
