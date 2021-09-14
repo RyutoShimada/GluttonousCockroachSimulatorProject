@@ -139,7 +139,7 @@ public class HumanMoveController : MonoBehaviour
 
             if (RayOfAttack())
             {
-                m_hit.collider.gameObject.GetComponent<Cockroach>()?.BeAttacked(m_attackValue);
+                m_hit.collider.gameObject.GetComponent<CockroachTest>()?.BeAttacked(m_attackValue);
             }
         }
         else if (Input.GetButtonUp("Fire1") || !isIKTest)

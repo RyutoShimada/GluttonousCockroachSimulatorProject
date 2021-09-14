@@ -82,7 +82,7 @@ public class GameManager : MonoBehaviour
         switch (m_os)
         {
             case OperationSutate.CockRoach:
-                m_cockoroach.GetComponent<CockroachMoveController>().IsCanMove = true;
+                m_cockoroach.GetComponent<CockroachMoveControllerTest>().IsCanMove = true;
                 m_human.GetComponent<HumanMoveController>().IsCanMove = false;
                 m_humanCamera.SetActive(false);
                 m_cockoroachCamera.SetActive(true);
@@ -90,7 +90,7 @@ public class GameManager : MonoBehaviour
                 break;
             case OperationSutate.Human:
                 m_human.GetComponent<HumanMoveController>().IsCanMove = true;
-                m_cockoroach.GetComponent<CockroachMoveController>().IsCanMove = false;
+                m_cockoroach.GetComponent<CockroachMoveControllerTest>().IsCanMove = false;
                 m_cockoroachCamera.SetActive(false);
                 m_humanCamera.SetActive(true);
                 m_cockroachCanvas.SetActive(false);
@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log("TimeUp!");
                 m_canvas.transform.Find("GameOverText").gameObject.SetActive(true);
                 m_human.GetComponent<HumanMoveController>().IsCanMove = false;
-                m_cockoroach.GetComponent<CockroachMoveController>().IsCanMove = false;
+                m_cockoroach.GetComponent<CockroachMoveControllerTest>().IsCanMove = false;
             }
         }
 

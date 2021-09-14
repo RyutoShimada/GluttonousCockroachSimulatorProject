@@ -66,7 +66,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] GameObject m_menu = null;
 
-    CockroachUINetWork m_cockroachUINetWork = null;
+    CockroachUI m_cockroachUINetWork = null;
 
     HumanSprayAttackRange m_humanSprayAttackRange = null;
 
@@ -132,7 +132,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
                 // 部屋の中で、ローカルプレーヤー用の Cockroach を生成。PhotonNetwork.Instantiate()で同期。
                 int random = Random.Range(0, m_cockroachSpawnPos.Length);
                 operate = PhotonNetwork.Instantiate(this.m_cockroachPrefab.name, m_cockroachSpawnPos[random].position, m_cockroachSpawnPos[random].rotation, 0);
-                m_cockroachUINetWork = operate.GetComponent<CockroachUINetWork>(); // ゴキブリ用のUIを入れる
+                m_cockroachUINetWork = operate.GetComponent<CockroachUI>(); // ゴキブリ用のUIを入れる
                 m_operatedByPlayer = Charactor.Cockroach;
             }
             else

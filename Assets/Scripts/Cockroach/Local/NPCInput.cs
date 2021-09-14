@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NPCInput : MonoBehaviour
 {
-    [SerializeField] CockroachMoveController m_moveController = null;
+    [SerializeField] CockroachMoveControllerTest m_moveController = null;
     [SerializeField] float m_moveTimeMin = 0.5f;
     [SerializeField] float m_moveTimeMax = 5f;
     [SerializeField] float m_waitTimeMax = 2f;

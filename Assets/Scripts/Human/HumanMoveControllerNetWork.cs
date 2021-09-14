@@ -207,7 +207,7 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
 
         if (RayOfAttack())
         {
-            if (m_hit.collider.gameObject.TryGetComponent(out CockroachNetWork cockroachNetWork))
+            if (m_hit.collider.gameObject.TryGetComponent(out Cockroach cockroachNetWork))
             {
                 cockroachNetWork.BeAttacked(m_attackValue);
             }
