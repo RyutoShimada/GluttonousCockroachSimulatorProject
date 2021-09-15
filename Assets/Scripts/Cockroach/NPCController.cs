@@ -100,6 +100,7 @@ public class NPCController : MonoBehaviour
     {
         if (other.tag == "Attack")
         {
+            EventSystem.Instance.AddEnergy();
             gameObject.SetActive(false);
         }
     }

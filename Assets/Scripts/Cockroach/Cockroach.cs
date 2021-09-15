@@ -40,7 +40,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     {
         m_anim = GetComponent<Animator>();
         m_moveController = GetComponent<CockroachMoveController>();
-        EventSystem.Instance.Subscribe((EventSystem.ResetTransform)ResetPosition);
+        EventSystem.Instance.Subscribe((EventSystem.Reset)ResetPosition);
         m_isDed = false;
         m_hp = m_data.MaxHP;
 
@@ -65,7 +65,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 
     private void OnDestroy()
     {
-        EventSystem.Instance.Unsubscribe((EventSystem.ResetTransform)ResetPosition);
+        EventSystem.Instance.Unsubscribe((EventSystem.Reset)ResetPosition);
     }
 
     public void ResetPosition(Vector3 v, Quaternion q)

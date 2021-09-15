@@ -24,17 +24,17 @@ public class EventSystem
     #region Definition Of Delegate
 
     // 通知受け取りデリゲート定義
-    public delegate void CanMove(bool canMove);
-    event CanMove m_canMove;
+    public delegate void Move(bool canMove);
+    event Move CanMove;
 
-    public delegate void CockroachIsDed(bool isDed);
-    event CockroachIsDed m_cockroachIsDed;
+    public delegate void Life(bool isDed);
+    event Life Ded;
 
-    public delegate void FoodGenerate();
-    event FoodGenerate m_foodGenerate;
+    public delegate void Reset(Vector3 position, Quaternion rotation);
+    event Reset Transform;
 
-    public delegate void ResetTransform(Vector3 position, Quaternion rotation);
-    event ResetTransform m_resetTransform;
+    public delegate void Add();
+    event Add Energy;
 
     #endregion
 
@@ -42,24 +42,24 @@ public class EventSystem
     #region Subscribe To Event
 
     // 通知受け取り登録
-    public void Subscribe(CanMove canMove)
+    public void Subscribe(Move canMove)
     {
-        m_canMove += canMove;
+        CanMove += canMove;
     }
 
-    public void Subscribe(CockroachIsDed cockroachIsDed)
+    public void Subscribe(Life cockroachIsDed)
     {
-        m_cockroachIsDed += cockroachIsDed;
+        Ded += cockroachIsDed;
     }
 
-    public void Subscribe(FoodGenerate foodGenerate)
+    public void Subscribe(Reset resetTransform)
     {
-        m_foodGenerate += foodGenerate;
+        Transform += resetTransform;
     }
 
-    public void Subscribe(ResetTransform resetTransform)
+    public void Subscribe(Add energy)
     {
-        m_resetTransform += resetTransform;
+        Energy += energy;
     }
 
     #endregion
@@ -68,24 +68,24 @@ public class EventSystem
     #region Unsubscribe To Event
 
     // 通知受け取り登録解除
-    public void Unsubscribe(CanMove canMove)
+    public void Unsubscribe(Move canMove)
     {
-        m_canMove -= canMove;
+        CanMove -= canMove;
     }
 
-    public void Unsubscribe(CockroachIsDed cockroachIsDed)
+    public void Unsubscribe(Life cockroachIsDed)
     {
-        m_cockroachIsDed -= cockroachIsDed;
+        Ded -= cockroachIsDed;
     }
 
-    public void Unsubscribe(FoodGenerate foodGenerate)
+    public void Unsubscribe(Reset resetTransform)
     {
-        m_foodGenerate -= foodGenerate;
+        Transform -= resetTransform;
     }
 
-    public void Unsubscribe(ResetTransform resetTransform)
+    public void Unsubscribe(Add energy)
     {
-        m_resetTransform -= resetTransform;
+        Energy += energy;
     }
 
     #endregion
@@ -96,33 +96,33 @@ public class EventSystem
     // 通知実行
     public void IsMove(bool canMove)
     {
-        if (m_canMove != null)
+        if (CanMove != null)
         {
-            m_canMove(canMove);
+            CanMove(canMove);
         }
     }
 
     public void IsDed(bool isDed)
     {
-        if (m_cockroachIsDed != null)
+        if (Ded != null)
         {
-            m_cockroachIsDed(isDed);
+            Ded(isDed);
         }
     }
 
-    public void Generate()
+    public void ResetTransform(Vector3 position, Quaternion rotation)
     {
-        if (m_foodGenerate != null)
+        if (Transform != null)
         {
-            m_foodGenerate();
+            Transform(position, rotation);
         }
     }
 
-    public void Reset(Vector3 position, Quaternion rotation)
+    public void AddEnergy()
     {
-        if (m_resetTransform != null)
+        if (Energy != null)
         {
-            m_resetTransform(position, rotation);
+            Energy();
         }
     }
 

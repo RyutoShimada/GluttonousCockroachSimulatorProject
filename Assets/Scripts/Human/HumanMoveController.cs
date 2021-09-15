@@ -5,12 +5,17 @@ using Photon.Pun;
 [RequireComponent(typeof(Rigidbody))]
 public class HumanMoveController : MonoBehaviourPunCallbacks, IPunObservable, IIsCanMove
 {
-    static public GameObject m_Instance;
-
     /// <summary>移動速度</summary>
     [SerializeField] float m_moveSpeed = 1f;
     /// <summary>体を回転する速度</summary>
     [SerializeField] float m_turnSpeed = 1f;
+    /// <summary>パンチする速度</summary>
+    [SerializeField] float m_punchSpeed = 0.5f;
+    /// <summary>エネルギーの増加量</summary>
+    [SerializeField] int m_addEnergyValue = 3;
+
+    [Tooltip("パンチの当たり判定をするオブジェクト")]
+    [SerializeField] Collider m_punchRange = null;
     /// <summary>IKで右手を移動させるターゲット</summary>
     [SerializeField] Transform m_punchIKTarget = null;
     /// <summary>IKで右手を移動させるターゲット</summary>
@@ -40,16 +45,21 @@ public class HumanMoveController : MonoBehaviourPunCallbacks, IPunObservable, II
     bool m_isLeftAttacking = false;
     /// <summary>ビームで攻撃しているかどうか</summary>
     bool m_isRightAttacking = false;
+
     Rigidbody m_rb;
     Animator m_anim;
     RaycastHit m_hit;
 
-    
-    [HideInInspector]
-    public bool m_canMove = true;
-
     Transform m_leftArmOriginPos = null;
     Transform m_rightArmOriginPos = null;
+
+    int m_needEnergy = 100;
+    int m_currentEnergy = 0;
+
+    const float beamTime = 3f;
+
+    [HideInInspector]
+    public bool m_canMove = true;
 
     void Start()
     {
@@ -61,6 +71,7 @@ public class HumanMoveController : MonoBehaviourPunCallbacks, IPunObservable, II
 
         m_rb = GetComponent<Rigidbody>();
         MenuController.IsMove += IsMove;
+        EventSystem.Instance.Subscribe(AddEnergy);
     }
 
     void FixedUpdate()
@@ -80,21 +91,15 @@ public class HumanMoveController : MonoBehaviourPunCallbacks, IPunObservable, II
         m_input.y = Input.GetAxisRaw("Vertical");
 
         DoRotate();
-        
-        if (Input.GetButton("Fire1"))
-        {
-            Attack();
-        }
-        else if (Input.GetButtonUp("Fire1"))
-        {
-            StopAttack();
-        }
+        Attack();
     }
 
     void LateUpdate()
     {
         DoAnimation();
     }
+
+    private void OnDestroy() => EventSystem.Instance.Unsubscribe(AddEnergy);
 
     void Move()
     {
@@ -118,45 +123,87 @@ public class HumanMoveController : MonoBehaviourPunCallbacks, IPunObservable, II
 
     void Attack()
     {
-        if (PhotonNetwork.IsConnected)
+        if (Input.GetButton("Fire1") && m_currentEnergy >= m_needEnergy ||
+            Input.GetButton("Fire2") && m_currentEnergy >= m_needEnergy)
         {
-            photonView.RPC(nameof(StartCharge), RpcTarget.All);
+            StandByBeam();
+            if (!PhotonNetwork.IsConnected) return;
+            photonView.RPC(nameof(StandByBeam), RpcTarget.All);
         }
-        else
+        else if (Input.GetButtonDown("Fire1"))
         {
-            StartCharge();
-            //m_leftArmIKTarget = m_punchIKTarget;
-            //m_rightArmIKTarget = m_punchIKTarget;
+            m_isLeftAttacking = true;
+            StartPunching();
         }
-    }
-
-    void StopAttack()
-    {
-        if (PhotonNetwork.IsConnected)
+        else if (Input.GetButtonDown("Fire2"))
         {
-            photonView.RPC(nameof(StopCharge), RpcTarget.All);
+            m_isRightAttacking = true;
+            StartPunching();
         }
-        else
+        else if (Input.GetButtonUp("Fire1") && m_isBeamAttacking ||
+                Input.GetButtonUp("Fire2") && m_isBeamAttacking)
         {
-            if (m_isBeamAttacking)
-            {
-                StopCharge();
-            }
-            
-            //m_leftArmIKTarget = m_leftArmOriginPos;
-            //m_rightArmIKTarget = m_rightArmOriginPos;
+            FireBeam();
+            if (!PhotonNetwork.IsConnected) return;
+            photonView.RPC(nameof(FireBeam), RpcTarget.All);
         }
     }
 
     [PunRPC]
-    void StartCharge()
+    void StartPunching()
+    {
+        if (m_isBeamAttacking) return;
+        StartCoroutine(Punching());
+    }
+
+    IEnumerator Punching()
+    {
+        m_punchRange.enabled = true;
+
+        if (m_isLeftAttacking)
+        {
+            m_leftArmIKTarget = m_punchIKTarget;
+            yield return new WaitForSeconds(m_punchSpeed);
+            m_leftArmIKTarget = m_leftArmOriginPos;
+            m_isLeftAttacking = false;
+        }
+        else if (m_isRightAttacking)
+        {
+            m_rightArmIKTarget = m_punchIKTarget;
+            yield return new WaitForSeconds(m_punchSpeed);
+            m_rightArmIKTarget = m_rightArmOriginPos;
+            m_isRightAttacking = false;
+        }
+
+        m_punchRange.enabled = false;
+    }
+
+    void AddEnergy()
+    {
+        if (m_currentEnergy < m_needEnergy)
+        {
+            m_currentEnergy += m_addEnergyValue;
+        }
+        else
+        {
+            m_currentEnergy = m_needEnergy;
+        }
+    }
+
+    void CheckEnergy()
+    {
+
+    }
+
+    [PunRPC]
+    void StandByBeam()
     {
         m_isBeamAttacking = true;
         m_chargePrefab.SetActive(true);
     }
 
     [PunRPC]
-    void StopCharge()
+    void FireBeam()
     {
         StartCoroutine(Beam());
     }
@@ -165,9 +212,10 @@ public class HumanMoveController : MonoBehaviourPunCallbacks, IPunObservable, II
     {
         m_chargePrefab.SetActive(false);
         m_beamPrefab.SetActive(true);
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(beamTime);
         m_beamPrefab.SetActive(false);
         m_isBeamAttacking = false;
+        m_currentEnergy = 0;
     }
 
     void DoRotate()
@@ -258,7 +306,7 @@ public class HumanMoveController : MonoBehaviourPunCallbacks, IPunObservable, II
         if (stream.IsWriting && photonView.IsMine)
         {
             stream.SendNext(m_isBeamAttacking);
-            
+
             if (m_isBeamAttacking)
             {
                 stream.SendNext(m_localRightHandIkWeight);
@@ -273,10 +321,10 @@ public class HumanMoveController : MonoBehaviourPunCallbacks, IPunObservable, II
                 stream.SendNext(m_leftArmIKTarget.rotation);
             }
         }
-        else if(stream.IsReading && !photonView.IsMine)
+        else if (stream.IsReading && !photonView.IsMine)
         {
             m_isBeamAttacking = (bool)stream.ReceiveNext();
-            
+
             if (m_isBeamAttacking)
             {
                 m_localRightHandIkWeight = (float)stream.ReceiveNext();

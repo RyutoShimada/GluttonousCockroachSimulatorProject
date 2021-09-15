@@ -22,7 +22,7 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
 
-        EventSystem.Instance.Subscribe((EventSystem.ResetTransform)ResetPosition);
+        EventSystem.Instance.Subscribe((EventSystem.Reset)ResetPosition);
         Transform t = GameObject.Find("Canvas").transform;
         m_ui = Instantiate(m_humanUi, t);
         m_crossHair = m_ui.GetComponent<Image>();
@@ -36,7 +36,7 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
         m_cameraPos.rotation = Camera.main.transform.rotation;
     }
 
-    private void OnDestroy() => EventSystem.Instance.Unsubscribe((EventSystem.ResetTransform)ResetPosition);
+    private void OnDestroy() => EventSystem.Instance.Unsubscribe((EventSystem.Reset)ResetPosition);
 
     void VcamSetUp()
     {

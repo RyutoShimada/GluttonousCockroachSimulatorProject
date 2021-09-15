@@ -101,7 +101,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
-        EventSystem.Instance.Subscribe((EventSystem.CockroachIsDed)CockroachIsDed);
+        EventSystem.Instance.Subscribe((EventSystem.Life)CockroachIsDed);
 
         if (!PhotonNetwork.IsConnected)
         {
@@ -249,11 +249,11 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         if (m_operatedByPlayer == Charactor.Cockroach)
         {
             int random = Random.Range(0, m_cockroachSpawnPos.Length);
-            EventSystem.Instance.Reset(m_cockroachSpawnPos[random].position, m_cockroachSpawnPos[random].rotation);
+            EventSystem.Instance.ResetTransform(m_cockroachSpawnPos[random].position, m_cockroachSpawnPos[random].rotation);
         }
         else
         {
-            EventSystem.Instance.Reset(m_humanSpawnPos.position, m_humanSpawnPos.rotation);
+            EventSystem.Instance.ResetTransform(m_humanSpawnPos.position, m_humanSpawnPos.rotation);
         }
 
         m_canMove.IsMove(false);
@@ -383,7 +383,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         photonView.RPC(nameof(VictoryCharactor), RpcTarget.All, Charactor.Human);
         m_isGame = !isDed;
         EventSystem.Instance.IsMove(false);
-        EventSystem.Instance.Unsubscribe((EventSystem.CockroachIsDed)CockroachIsDed);
+        EventSystem.Instance.Unsubscribe((EventSystem.Life)CockroachIsDed);
     }
 
     #endregion
