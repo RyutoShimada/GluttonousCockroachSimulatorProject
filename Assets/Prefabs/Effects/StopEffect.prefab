@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1991458088120259273}
   - component: {fileID: 1842672278397689222}
   - component: {fileID: 1311520969653614148}
+  - component: {fileID: 2126621257518805545}
   m_Layer: 0
   m_Name: StopEffect
   m_TagString: Attack
@@ -4828,6 +4829,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3, y: 3, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0.19}
+--- !u!114 &2126621257518805545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 430118690034535967}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 627855c7f81362d41938ffe0b1475957, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SynchronizePosition: 1
+  m_SynchronizeRotation: 1
+  m_SynchronizeScale: 0
+  m_UseLocal: 1
 --- !u!1 &2044138682048782037
 GameObject:
   m_ObjectHideFlags: 0

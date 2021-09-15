@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class CockroachChildPoolManager : MonoBehaviour
+public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject m_generatePrefab = null;
     [SerializeField] int m_generateCount = 100;

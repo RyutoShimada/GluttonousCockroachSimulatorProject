@@ -2920,6 +2920,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4014849258446137384, guid: 6d50b5190b0154246ad3914b4a103d8f,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5157604874211441937, guid: 6d50b5190b0154246ad3914b4a103d8f,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 5581207269515582620, guid: 6d50b5190b0154246ad3914b4a103d8f,
         type: 3}
       propertyPath: m_hitActions.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -2950,6 +2960,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6646056718077619096, guid: 6d50b5190b0154246ad3914b4a103d8f,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6812935054743126941, guid: 6d50b5190b0154246ad3914b4a103d8f,
         type: 3}
