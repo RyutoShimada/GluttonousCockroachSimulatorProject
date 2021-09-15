@@ -13072,6 +13072,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_data: {fileID: 11400000, guid: 52bcaee4e0af08049b89f497b8fad617, type: 2}
   m_moveController: {fileID: 7155526751963773679}
+  m_dedEffect: {fileID: 37836029779743955, guid: a538ac3419b609f4bb5f4ed711ecf194,
+    type: 3}
+  m_clip: {fileID: 8300000, guid: 82b82a29d4c58cf4b907c142b3da478f, type: 3}
 --- !u!114 &7155526751963773679
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -6,9 +6,12 @@ public class NPCController : MonoBehaviour
 {
     [SerializeField] CockroachScriptableObject m_data = null;
     [SerializeField] CockroachMoveController m_moveController = null;
-
+    [SerializeField] GameObject m_dedEffect = null;
+    [SerializeField] AudioClip m_clip = null;
     float m_moveTimer;
     float m_jumpTimer;
+    bool m_isDed = false;
+
     void Start()
     {
         m_moveController.StartSet();
@@ -16,11 +19,20 @@ public class NPCController : MonoBehaviour
         StartCoroutine(Routine());
     }
 
+    private void OnEnable()
+    {
+        if (m_isDed)
+        {
+            m_isDed = false;
+            StartCoroutine(Routine());
+        }
+    }
+
     IEnumerator Routine()
     {
         int random;
 
-        while (!m_moveController.IsDed && m_moveController.m_canMove)
+        while (!m_isDed)
         {
             random = Random.Range(0, 2);
 
@@ -96,13 +108,21 @@ public class NPCController : MonoBehaviour
         m_moveController.Jump(true);
     }
 
+    void UnActive() => gameObject.SetActive(false);
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Attack")
         {
-            EventSystem.Instance.AddEnergy();
-            EventSystem.Instance.JudgeAttack(false);
-            gameObject.SetActive(false);
+            if (!m_isDed)
+            {
+                EventSystem.Instance.AddEnergy();
+                EventSystem.Instance.JudgeAttack(false);
+                AudioSource.PlayClipAtPoint(m_clip, transform.position, 0.3f);
+                Instantiate(m_dedEffect, transform.position + transform.up * 0.2f, transform.rotation);
+                m_isDed = true;
+                Invoke(nameof(UnActive), 0.1f);
+            }
         }
     }
 }

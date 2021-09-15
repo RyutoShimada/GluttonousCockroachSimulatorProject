@@ -42,7 +42,7 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
     Transform m_rightArmOriginPos = null;
 
     readonly int m_needEnergy = 100;
-    int m_currentEnergy = 100;
+    int m_currentEnergy = 0;
     bool m_chargeCompleted = false;
 
     Human m_human = null;
@@ -132,6 +132,7 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
         }
 
         m_punchRange.enabled = false;
+        m_human.JudgeAttack(false);
     }
 
     void AddEnergy()

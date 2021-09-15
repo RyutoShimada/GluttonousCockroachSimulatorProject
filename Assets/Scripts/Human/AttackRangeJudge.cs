@@ -18,14 +18,6 @@ public class AttackRangeJudge : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.tag == "Cockroach" || other.tag == "CockroachChild")
-        {
-            m_hitActions.Invoke();
-        }
-    }
-
     private void OnTriggerExit(Collider other)
     {
         if (other.tag == "Cockroach" || other.tag == "CockroachChild")
