@@ -8,18 +8,6 @@ public class EventSystem
 
     public static EventSystem Instance = new EventSystem();
 
-    //public static EventSystem Instance
-    //{
-    //    get
-    //    {
-    //        if (m_instance == null)
-    //        {
-    //            m_instance = new EventSystem();
-    //        }
-
-    //        return m_instance;
-    //    }
-    //}
 
     #region Definition Of Delegate
 
@@ -35,6 +23,9 @@ public class EventSystem
 
     public delegate void Add();
     event Add Energy;
+
+    public delegate void Judge(bool judge);
+    event Judge Attack;
 
     #endregion
 
@@ -62,6 +53,11 @@ public class EventSystem
         Energy += energy;
     }
 
+    public void Subscribe(Judge judge)
+    {
+        Attack += judge;
+    }
+
     #endregion
 
 
@@ -86,6 +82,11 @@ public class EventSystem
     public void Unsubscribe(Add energy)
     {
         Energy += energy;
+    }
+
+    public void Unsubscribe(Judge judge)
+    {
+        Attack += judge;
     }
 
     #endregion
@@ -123,6 +124,14 @@ public class EventSystem
         if (Energy != null)
         {
             Energy();
+        }
+    }
+
+    public void JudgeAttack(bool judge)
+    {
+        if (Attack != null)
+        {
+            Attack(judge);
         }
     }
 

@@ -3,75 +3,28 @@ using UnityEngine;
 using Photon.Pun;
 
 [RequireComponent(typeof(Rigidbody))]
-public class HumanMoveController : MonoBehaviourPunCallbacks, IPunObservable, IIsCanMove
+public class HumanMoveController : MonoBehaviourPunCallbacks, IIsCanMove
 {
+    [HideInInspector] public bool m_canMove = true;
+
     /// <summary>移動速度</summary>
     [SerializeField] float m_moveSpeed = 1f;
     /// <summary>体を回転する速度</summary>
     [SerializeField] float m_turnSpeed = 1f;
-    /// <summary>パンチする速度</summary>
-    [SerializeField] float m_punchSpeed = 0.5f;
-    /// <summary>エネルギーの増加量</summary>
-    [SerializeField] int m_addEnergyValue = 3;
 
-    [Tooltip("パンチの当たり判定をするオブジェクト")]
-    [SerializeField] Collider m_punchRange = null;
-    /// <summary>IKで右手を移動させるターゲット</summary>
-    [SerializeField] Transform m_punchIKTarget = null;
-    /// <summary>IKで右手を移動させるターゲット</summary>
-    [SerializeField] Transform m_rightHandIKTarget = null;
-    /// <summary>IKで右腕を移動させるターゲット</summary>
-    [SerializeField] Transform m_rightArmIKTarget = null;
-    /// <summary>IKで左腕を移動させるターゲット</summary>
-    [SerializeField] Transform m_leftArmIKTarget = null;
-    /// <summary>IKを滑らかに実行する速度</summary>
-    [SerializeField] float m_rightIKPositionWeightSpeed = 1f;
-    /// <summary>攻撃時のビームのパーティクル</summary>
-    [SerializeField] GameObject m_beamPrefab = null;
-    /// <summary>攻撃時のビームのパーティクル</summary>
-    [SerializeField] GameObject m_chargePrefab = null;
-    /// <summary>実際に変化するのIKのアニメーション速度</summary>
-    float m_localRightHandIkWeight = 0f;
-
-    /// <summary>垂直方向と水平方向の入力を受け付ける</summary>
     Vector2 m_input;
-    /// <summary>方向</summary>
-    Vector3 m_dir;
-    /// <summary>速度ベクト</summary>
-    Vector3 m_vel;
-    /// <summary>ビームで攻撃しているかどうか</summary>
-    bool m_isBeamAttacking = false;
-    /// <summary>ビームで攻撃しているかどうか</summary>
-    bool m_isLeftAttacking = false;
-    /// <summary>ビームで攻撃しているかどうか</summary>
-    bool m_isRightAttacking = false;
-
+    Vector3 m_direction;
+    Vector3 m_velocity;
     Rigidbody m_rb;
     Animator m_anim;
-    RaycastHit m_hit;
-
-    Transform m_leftArmOriginPos = null;
-    Transform m_rightArmOriginPos = null;
-
-    int m_needEnergy = 100;
-    int m_currentEnergy = 0;
-
-    const float beamTime = 3f;
-
-    [HideInInspector]
-    public bool m_canMove = true;
 
     void Start()
     {
         m_anim = GetComponent<Animator>();
-        m_leftArmOriginPos = m_leftArmIKTarget;
-        m_rightArmOriginPos = m_rightArmIKTarget;
 
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
-
         m_rb = GetComponent<Rigidbody>();
         MenuController.IsMove += IsMove;
-        EventSystem.Instance.Subscribe(AddEnergy);
     }
 
     void FixedUpdate()
@@ -91,7 +44,6 @@ public class HumanMoveController : MonoBehaviourPunCallbacks, IPunObservable, II
         m_input.y = Input.GetAxisRaw("Vertical");
 
         DoRotate();
-        Attack();
     }
 
     void LateUpdate()
@@ -99,123 +51,26 @@ public class HumanMoveController : MonoBehaviourPunCallbacks, IPunObservable, II
         DoAnimation();
     }
 
-    private void OnDestroy() => EventSystem.Instance.Unsubscribe(AddEnergy);
+    public void IsMove(bool isMove) => m_canMove = isMove;
 
     void Move()
     {
-        m_dir = Vector3.forward * m_input.y + Vector3.right * m_input.x;
+        m_direction = Vector3.forward * m_input.y + Vector3.right * m_input.x;
 
         if (m_input != Vector2.zero)
         {
             //カメラが向いている方向を基準にキャラクターが動くように、入力のベクトルを変換する
-            m_dir = Camera.main.transform.TransformDirection(m_dir);
-            m_dir.y = 0;
+            m_direction = Camera.main.transform.TransformDirection(m_direction);
+            m_direction.y = 0;
 
-            m_vel = m_dir.normalized * m_moveSpeed;
-            m_vel.y = m_rb.velocity.y;
-            m_rb.velocity = m_vel;
+            m_velocity = m_direction.normalized * m_moveSpeed;
+            m_velocity.y = m_rb.velocity.y;
+            m_rb.velocity = m_velocity;
         }
         else
         {
             m_rb.velocity = Vector3.zero;
         }
-    }
-
-    void Attack()
-    {
-        if (Input.GetButton("Fire1") && m_currentEnergy >= m_needEnergy ||
-            Input.GetButton("Fire2") && m_currentEnergy >= m_needEnergy)
-        {
-            StandByBeam();
-            if (!PhotonNetwork.IsConnected) return;
-            photonView.RPC(nameof(StandByBeam), RpcTarget.All);
-        }
-        else if (Input.GetButtonDown("Fire1"))
-        {
-            m_isLeftAttacking = true;
-            StartPunching();
-        }
-        else if (Input.GetButtonDown("Fire2"))
-        {
-            m_isRightAttacking = true;
-            StartPunching();
-        }
-        else if (Input.GetButtonUp("Fire1") && m_isBeamAttacking ||
-                Input.GetButtonUp("Fire2") && m_isBeamAttacking)
-        {
-            FireBeam();
-            if (!PhotonNetwork.IsConnected) return;
-            photonView.RPC(nameof(FireBeam), RpcTarget.All);
-        }
-    }
-
-    [PunRPC]
-    void StartPunching()
-    {
-        if (m_isBeamAttacking) return;
-        StartCoroutine(Punching());
-    }
-
-    IEnumerator Punching()
-    {
-        m_punchRange.enabled = true;
-
-        if (m_isLeftAttacking)
-        {
-            m_leftArmIKTarget = m_punchIKTarget;
-            yield return new WaitForSeconds(m_punchSpeed);
-            m_leftArmIKTarget = m_leftArmOriginPos;
-            m_isLeftAttacking = false;
-        }
-        else if (m_isRightAttacking)
-        {
-            m_rightArmIKTarget = m_punchIKTarget;
-            yield return new WaitForSeconds(m_punchSpeed);
-            m_rightArmIKTarget = m_rightArmOriginPos;
-            m_isRightAttacking = false;
-        }
-
-        m_punchRange.enabled = false;
-    }
-
-    void AddEnergy()
-    {
-        if (m_currentEnergy < m_needEnergy)
-        {
-            m_currentEnergy += m_addEnergyValue;
-        }
-        else
-        {
-            m_currentEnergy = m_needEnergy;
-        }
-    }
-
-    void CheckEnergy()
-    {
-
-    }
-
-    [PunRPC]
-    void StandByBeam()
-    {
-        m_isBeamAttacking = true;
-        m_chargePrefab.SetActive(true);
-    }
-
-    [PunRPC]
-    void FireBeam()
-    {
-        StartCoroutine(Beam());
-    }
-
-    IEnumerator Beam()
-    {
-        m_chargePrefab.SetActive(false);
-        m_beamPrefab.SetActive(true);
-        yield return new WaitForSeconds(beamTime);
-        m_beamPrefab.SetActive(false);
-        m_isBeamAttacking = false;
-        m_currentEnergy = 0;
     }
 
     void DoRotate()
@@ -239,107 +94,4 @@ public class HumanMoveController : MonoBehaviourPunCallbacks, IPunObservable, II
         }
 
     }
-
-    void BeamIkWeight()
-    {
-        // IKアニメーションを滑らかにする処理
-        if (m_isBeamAttacking)
-        {
-            if (m_localRightHandIkWeight < 1.0f)
-            {
-                m_localRightHandIkWeight += m_rightIKPositionWeightSpeed * Time.deltaTime;
-            }
-            else
-            {
-                m_localRightHandIkWeight = 1.0f;
-            }
-        }
-        else
-        {
-            if (m_localRightHandIkWeight > 0f)
-            {
-                m_localRightHandIkWeight -= m_rightIKPositionWeightSpeed * Time.deltaTime;
-            }
-            else
-            {
-                m_localRightHandIkWeight = 0f;
-            }
-        }
-    }
-
-    // IK を計算するためのコールバック
-    private void OnAnimatorIK(int layerIndex)
-    {
-        if (m_rightHandIKTarget == null || m_rightArmIKTarget == null || m_leftArmIKTarget == null) return;
-
-        BeamIkWeight();
-
-        if (m_anim)
-        {
-            // 右腕
-            m_anim.SetIKPosition(AvatarIKGoal.RightHand, m_rightArmIKTarget.position);
-            m_anim.SetIKRotation(AvatarIKGoal.RightHand, m_rightArmIKTarget.rotation);
-            m_anim.SetIKPositionWeight(AvatarIKGoal.RightHand, 1f);
-            m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, 1f);
-
-            // 左腕
-            m_anim.SetIKPosition(AvatarIKGoal.LeftHand, m_leftArmIKTarget.position);
-            m_anim.SetIKRotation(AvatarIKGoal.LeftHand, m_leftArmIKTarget.rotation);
-            m_anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1f);
-            m_anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1f);
-
-            if (!m_isBeamAttacking) return;
-            // ビームの時の手
-            m_anim.SetIKPosition(AvatarIKGoal.RightHand, m_rightHandIKTarget.position);
-            m_anim.SetIKRotation(AvatarIKGoal.RightHand, m_rightHandIKTarget.rotation);
-            m_anim.SetIKPositionWeight(AvatarIKGoal.RightHand, m_localRightHandIkWeight);
-            m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, m_localRightHandIkWeight);
-        }
-        else
-        {
-            Debug.LogError("m_anim が Null です");
-        }
-    }
-
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting && photonView.IsMine)
-        {
-            stream.SendNext(m_isBeamAttacking);
-
-            if (m_isBeamAttacking)
-            {
-                stream.SendNext(m_localRightHandIkWeight);
-                stream.SendNext(m_rightHandIKTarget.position);
-                stream.SendNext(m_rightHandIKTarget.rotation);
-            }
-            else
-            {
-                stream.SendNext(m_rightArmIKTarget.position);
-                stream.SendNext(m_rightArmIKTarget.rotation);
-                stream.SendNext(m_leftArmIKTarget.position);
-                stream.SendNext(m_leftArmIKTarget.rotation);
-            }
-        }
-        else if (stream.IsReading && !photonView.IsMine)
-        {
-            m_isBeamAttacking = (bool)stream.ReceiveNext();
-
-            if (m_isBeamAttacking)
-            {
-                m_localRightHandIkWeight = (float)stream.ReceiveNext();
-                m_rightHandIKTarget.position = (Vector3)stream.ReceiveNext();
-                m_rightHandIKTarget.rotation = (Quaternion)stream.ReceiveNext();
-            }
-            else
-            {
-                m_rightArmIKTarget.position = (Vector3)stream.ReceiveNext();
-                m_rightArmIKTarget.rotation = (Quaternion)stream.ReceiveNext();
-                m_leftArmIKTarget.position = (Vector3)stream.ReceiveNext();
-                m_leftArmIKTarget.rotation = (Quaternion)stream.ReceiveNext();
-            }
-        }
-    }
-
-    public void IsMove(bool isMove) => m_canMove = isMove;
 }

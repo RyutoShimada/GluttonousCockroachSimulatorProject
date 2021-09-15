@@ -4,15 +4,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using Cinemachine;
 using Photon.Pun;
+using DG.Tweening;
 
 public class Human : MonoBehaviourPunCallbacks, IIsCanMove
 {
     [SerializeField] Transform m_cameraPos = null;
     [SerializeField] GameObject m_vcamPrefab = null;
-    [SerializeField] GameObject m_humanUi = null;
+    [SerializeField] GameObject m_humanUiPrefab = null;
 
-    [HideInInspector] public Image m_crossHair = null;
-
+    Image m_crossHair = null;
+    Image m_gauge = null;
     HumanMoveController m_moveController = null;
     GameObject m_vcam = null;
     CinemachineVirtualCamera m_vcamBase = null;
@@ -22,10 +23,12 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
 
-        EventSystem.Instance.Subscribe((EventSystem.Reset)ResetPosition);
+        EventSystem.Instance.Subscribe(ResetPosition);
+        EventSystem.Instance.Subscribe((EventSystem.Judge)JudgeAttack);
         Transform t = GameObject.Find("Canvas").transform;
-        m_ui = Instantiate(m_humanUi, t);
-        m_crossHair = m_ui.GetComponent<Image>();
+        m_ui = Instantiate(m_humanUiPrefab, t);
+        m_crossHair = m_ui.transform.Find("CrossHair").GetComponent<Image>();
+        m_gauge = m_ui.transform.Find("Gauge").transform.Find("GaugeImage").GetComponent<Image>();
         m_moveController = GetComponent<HumanMoveController>();
         VcamSetUp();
     }
@@ -36,7 +39,32 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
         m_cameraPos.rotation = Camera.main.transform.rotation;
     }
 
-    private void OnDestroy() => EventSystem.Instance.Unsubscribe((EventSystem.Reset)ResetPosition);
+    private void OnDestroy()
+    {
+        EventSystem.Instance.Unsubscribe(ResetPosition);
+        EventSystem.Instance.Unsubscribe((EventSystem.Judge)JudgeAttack);
+    }
+
+    /// <summary>
+    /// 外部から呼ばれる。ゴキブリが攻撃可能範囲内にいればクロスヘアが赤くなる
+    /// </summary>
+    /// <param name="hit"></param>
+    public void JudgeAttack(bool hit)
+    {
+        if (hit)
+        {
+            m_crossHair.color = Color.red;
+        }
+        else
+        {
+            m_crossHair.color = Color.white;
+        }
+    }
+
+    public void ChangeGauge(int value, float time)
+    {
+        m_gauge.DOFillAmount(value * 0.01f, time);
+    }
 
     void VcamSetUp()
     {
