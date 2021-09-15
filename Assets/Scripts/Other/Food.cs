@@ -8,7 +8,7 @@ public class Food : MonoBehaviour
     /// <summary>回復する値</summary>
     public int m_heelValue = 10;
     /// <summary>FoodGeneraterNetWork からセットする</summary>
-    public FoodGeneraterNetWork m_foodGeneraterNetWork = null;
+    public FoodGenerater m_foodGeneraterNetWork = null;
 
     /// <summary>
     /// このオブジェクトを非アクティブにする。(Cockroachから呼ばれる)

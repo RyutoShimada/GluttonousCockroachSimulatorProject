@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2149442846936193193}
   - component: {fileID: 2149442846936193190}
   - component: {fileID: 2149442846936193191}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: G-RightMiddleLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -459,7 +459,7 @@ GameObject:
   - component: {fileID: 2149442846947179110}
   - component: {fileID: 2149442846947179111}
   - component: {fileID: 2149442846947179108}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: G-RightBackLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -903,7 +903,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2149442847069683030}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -937,7 +937,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2149442847211935098}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: RayOrigin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -970,7 +970,7 @@ GameObject:
   - component: {fileID: 2149442847243909584}
   - component: {fileID: 2149442847243909585}
   - component: {fileID: 2149442847243909614}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: G-LeftMiddleLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1417,7 +1417,7 @@ GameObject:
   - component: {fileID: 2149442847709156253}
   - component: {fileID: 2149442847709156250}
   - component: {fileID: 2149442847709156251}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: G-Body
   m_TagString: Cockroach
   m_Icon: {fileID: 0}
@@ -10014,7 +10014,7 @@ GameObject:
   - component: {fileID: 2149442847762665653}
   - component: {fileID: 2149442847762665650}
   - component: {fileID: 2149442847762665651}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: G-RightFrontLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10460,7 +10460,7 @@ GameObject:
   - component: {fileID: 2149442847838244210}
   - component: {fileID: 2149442847838244213}
   - component: {fileID: 5170632406957871911}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: GroundTriggaer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10519,7 +10519,7 @@ GameObject:
   - component: {fileID: 2149442847912580856}
   - component: {fileID: 2149442847912580857}
   - component: {fileID: 2149442847912580854}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: G-LeftFrontLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10963,7 +10963,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2149442847948395412}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: RotateRay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10996,7 +10996,7 @@ GameObject:
   - component: {fileID: 2149442848208215539}
   - component: {fileID: 2149442848208215536}
   - component: {fileID: 2149442848208215537}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: G-RightAntennae
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11775,7 +11775,7 @@ GameObject:
   - component: {fileID: 2149442848278913554}
   - component: {fileID: 2149442848278913555}
   - component: {fileID: 2149442848278913552}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: G-LeftAntennae
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12554,7 +12554,7 @@ GameObject:
   - component: {fileID: 2149442848301943636}
   - component: {fileID: 2149442848301943637}
   - component: {fileID: 2149442848301943634}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: G-LeftBackLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13003,9 +13003,9 @@ GameObject:
   - component: {fileID: -8143978585725167197}
   - component: {fileID: 7155526751963773679}
   - component: {fileID: 2931756358272658124}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: CockroachChild
-  m_TagString: Cockroach
+  m_TagString: CockroachChild
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -13018,7 +13018,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2149442848604006774}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.3927269, y: 0.6, z: 2.869085}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2149442847709156252}
@@ -13119,7 +13119,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2149442848723632277}
-  m_Layer: 10
+  m_Layer: 13
   m_Name: Left
   m_TagString: Untagged
   m_Icon: {fileID: 0}

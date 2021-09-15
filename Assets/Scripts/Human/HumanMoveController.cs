@@ -1,85 +1,98 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 [RequireComponent(typeof(Rigidbody))]
-
-public class HumanMoveController : MonoBehaviour
+public class HumanMoveController : MonoBehaviourPunCallbacks, IPunObservable, IIsCanMove
 {
+    static public GameObject m_Instance;
+
     /// <summary>移動速度</summary>
     [SerializeField] float m_moveSpeed = 1f;
     /// <summary>体を回転する速度</summary>
     [SerializeField] float m_turnSpeed = 1f;
-    /// <summary>攻撃する範囲のオブジェクト</summary>
-    [SerializeField] GameObject m_attackRangeObj = null;
-    /// <summary>Rayを飛ばす最大距離</summary>
-    [SerializeField] float m_maxRayDistance = 1f;
-
-    /// <summary>攻撃値</summary>
-    [SerializeField] int m_attackValue = 20; // 後で別のスクリプトに移すこと
-
+    /// <summary>IKで右手を移動させるターゲット</summary>
+    [SerializeField] Transform m_punchIKTarget = null;
     /// <summary>IKで右手を移動させるターゲット</summary>
     [SerializeField] Transform m_rightHandIKTarget = null;
+    /// <summary>IKで右腕を移動させるターゲット</summary>
+    [SerializeField] Transform m_rightArmIKTarget = null;
+    /// <summary>IKで左腕を移動させるターゲット</summary>
+    [SerializeField] Transform m_leftArmIKTarget = null;
     /// <summary>IKを滑らかに実行する速度</summary>
     [SerializeField] float m_rightIKPositionWeightSpeed = 1f;
-    /// <summary>攻撃時のスプレーのパーティクル</summary>
-    [SerializeField] GameObject m_sprayParticle = null;
+    /// <summary>攻撃時のビームのパーティクル</summary>
+    [SerializeField] GameObject m_beamPrefab = null;
+    /// <summary>攻撃時のビームのパーティクル</summary>
+    [SerializeField] GameObject m_chargePrefab = null;
     /// <summary>実際に変化するのIKのアニメーション速度</summary>
-    float m_IKWeight = 0f;
+    float m_localRightHandIkWeight = 0f;
 
-    /// <summary>スクリプト</summary>
-    [SerializeField] HumanSprayAttackRange m_HSAR = null;
     /// <summary>垂直方向と水平方向の入力を受け付ける</summary>
     Vector2 m_input;
     /// <summary>方向</summary>
     Vector3 m_dir;
     /// <summary>速度ベクト</summary>
     Vector3 m_vel;
-    /// <summary>攻撃しているかどうか</summary>
-    bool isSprayAttacking = false;
+    /// <summary>ビームで攻撃しているかどうか</summary>
+    bool m_isBeamAttacking = false;
+    /// <summary>ビームで攻撃しているかどうか</summary>
+    bool m_isLeftAttacking = false;
+    /// <summary>ビームで攻撃しているかどうか</summary>
+    bool m_isRightAttacking = false;
     Rigidbody m_rb;
     Animator m_anim;
     RaycastHit m_hit;
 
+    
+    [HideInInspector]
+    public bool m_canMove = true;
 
-    /// <summary>IKの動きを調整するときに使う</summary>
-    [SerializeField] bool isIKTest = false;
-    /// <summary>動けるかどうか</summary>
-    bool m_isCanMove = true;
-    /// <summary>動けるかどうか</summary>
-    public bool IsCanMove
-    {
-        get => m_isCanMove;
+    Transform m_leftArmOriginPos = null;
+    Transform m_rightArmOriginPos = null;
 
-        set
-        {
-            m_isCanMove = value;
-        }
-    }
-
-
-    // Start is called before the first frame update
     void Start()
     {
-        m_rb = GetComponent<Rigidbody>();
         m_anim = GetComponent<Animator>();
-        m_attackRangeObj.SetActive(false);
+        m_leftArmOriginPos = m_leftArmIKTarget;
+        m_rightArmOriginPos = m_rightArmIKTarget;
+
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+
+        m_rb = GetComponent<Rigidbody>();
+        MenuController.IsMove += IsMove;
     }
 
     void FixedUpdate()
     {
-        if (!m_isCanMove) return;
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+        if (!m_canMove) return;
         Move();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!m_isCanMove) return;
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+        if (!m_canMove) return;
+
         m_input.x = Input.GetAxisRaw("Horizontal");
         m_input.y = Input.GetAxisRaw("Vertical");
-        AttackSpray();
+
         DoRotate();
+        
+        if (Input.GetButton("Fire1"))
+        {
+            Attack();
+        }
+        else if (Input.GetButtonUp("Fire1"))
+        {
+            StopAttack();
+        }
+    }
+
+    void LateUpdate()
+    {
         DoAnimation();
     }
 
@@ -103,57 +116,62 @@ public class HumanMoveController : MonoBehaviour
         }
     }
 
-    bool RayOfAttack()
+    void Attack()
     {
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * m_maxRayDistance, Color.green);
-
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out m_hit, m_maxRayDistance))
+        if (PhotonNetwork.IsConnected)
         {
-            m_attackRangeObj.transform.position = new Vector3(m_hit.point.x, m_hit.point.y, m_hit.point.z);
-
-            if (m_HSAR.m_sprayHit)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            photonView.RPC(nameof(StartCharge), RpcTarget.All);
         }
         else
         {
-            m_attackRangeObj.transform.position = Camera.main.transform.position + (Camera.main.transform.forward * m_maxRayDistance);
-            return false;
+            StartCharge();
+            //m_leftArmIKTarget = m_punchIKTarget;
+            //m_rightArmIKTarget = m_punchIKTarget;
         }
     }
 
-    void AttackSpray()
+    void StopAttack()
     {
-        m_attackRangeObj.transform.rotation = Camera.main.transform.rotation;
-
-        if (Input.GetButton("Fire1") || isIKTest)
+        if (PhotonNetwork.IsConnected)
         {
-            isSprayAttacking = true;
-            m_sprayParticle.SetActive(true);
-            m_attackRangeObj.SetActive(true);
-
-            if (RayOfAttack())
+            photonView.RPC(nameof(StopCharge), RpcTarget.All);
+        }
+        else
+        {
+            if (m_isBeamAttacking)
             {
-                m_hit.collider.gameObject.GetComponent<CockroachTest>()?.BeAttacked(m_attackValue);
+                StopCharge();
             }
+            
+            //m_leftArmIKTarget = m_leftArmOriginPos;
+            //m_rightArmIKTarget = m_rightArmOriginPos;
         }
-        else if (Input.GetButtonUp("Fire1") || !isIKTest)
-        {
-            m_HSAR.m_crossHair.color = Color.white;
-            isSprayAttacking = false;
-            m_attackRangeObj.SetActive(false);
-            m_sprayParticle.SetActive(false);
-        }
+    }
+
+    [PunRPC]
+    void StartCharge()
+    {
+        m_isBeamAttacking = true;
+        m_chargePrefab.SetActive(true);
+    }
+
+    [PunRPC]
+    void StopCharge()
+    {
+        StartCoroutine(Beam());
+    }
+
+    IEnumerator Beam()
+    {
+        m_chargePrefab.SetActive(false);
+        m_beamPrefab.SetActive(true);
+        yield return new WaitForSeconds(3f);
+        m_beamPrefab.SetActive(false);
+        m_isBeamAttacking = false;
     }
 
     void DoRotate()
     {
-        if (isIKTest) return;
         //Playerの向きをカメラの向いている方向にする
         this.transform.rotation = Quaternion.Slerp(Camera.main.transform.rotation, this.transform.rotation, m_turnSpeed * Time.deltaTime);
         //Playerが倒れないようにする
@@ -174,39 +192,106 @@ public class HumanMoveController : MonoBehaviour
 
     }
 
-
-    // IK を計算するためのコールバック
-    private void OnAnimatorIK(int layerIndex)
+    void BeamIkWeight()
     {
-        if (m_rightHandIKTarget == null) return;
-
-        if (isSprayAttacking)
+        // IKアニメーションを滑らかにする処理
+        if (m_isBeamAttacking)
         {
-            if (m_IKWeight < 1.0f)
+            if (m_localRightHandIkWeight < 1.0f)
             {
-                m_IKWeight += m_rightIKPositionWeightSpeed * Time.deltaTime;
+                m_localRightHandIkWeight += m_rightIKPositionWeightSpeed * Time.deltaTime;
             }
             else
             {
-                m_IKWeight = 1.0f;
+                m_localRightHandIkWeight = 1.0f;
             }
         }
         else
         {
-            if (m_IKWeight > 0f)
+            if (m_localRightHandIkWeight > 0f)
             {
-                m_IKWeight -= m_rightIKPositionWeightSpeed * Time.deltaTime;
+                m_localRightHandIkWeight -= m_rightIKPositionWeightSpeed * Time.deltaTime;
             }
             else
             {
-                m_IKWeight = 0f;
+                m_localRightHandIkWeight = 0f;
             }
         }
-
-        m_anim.SetIKPositionWeight(AvatarIKGoal.RightHand, m_IKWeight);
-        m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, 1f);
-        m_anim.SetIKPosition(AvatarIKGoal.RightHand, m_rightHandIKTarget.position);
-        m_anim.SetIKRotation(AvatarIKGoal.RightHand, m_rightHandIKTarget.rotation);
-
     }
+
+    // IK を計算するためのコールバック
+    private void OnAnimatorIK(int layerIndex)
+    {
+        if (m_rightHandIKTarget == null || m_rightArmIKTarget == null || m_leftArmIKTarget == null) return;
+
+        BeamIkWeight();
+
+        if (m_anim)
+        {
+            // 右腕
+            m_anim.SetIKPosition(AvatarIKGoal.RightHand, m_rightArmIKTarget.position);
+            m_anim.SetIKRotation(AvatarIKGoal.RightHand, m_rightArmIKTarget.rotation);
+            m_anim.SetIKPositionWeight(AvatarIKGoal.RightHand, 1f);
+            m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, 1f);
+
+            // 左腕
+            m_anim.SetIKPosition(AvatarIKGoal.LeftHand, m_leftArmIKTarget.position);
+            m_anim.SetIKRotation(AvatarIKGoal.LeftHand, m_leftArmIKTarget.rotation);
+            m_anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1f);
+            m_anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1f);
+
+            if (!m_isBeamAttacking) return;
+            // ビームの時の手
+            m_anim.SetIKPosition(AvatarIKGoal.RightHand, m_rightHandIKTarget.position);
+            m_anim.SetIKRotation(AvatarIKGoal.RightHand, m_rightHandIKTarget.rotation);
+            m_anim.SetIKPositionWeight(AvatarIKGoal.RightHand, m_localRightHandIkWeight);
+            m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, m_localRightHandIkWeight);
+        }
+        else
+        {
+            Debug.LogError("m_anim が Null です");
+        }
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting && photonView.IsMine)
+        {
+            stream.SendNext(m_isBeamAttacking);
+            
+            if (m_isBeamAttacking)
+            {
+                stream.SendNext(m_localRightHandIkWeight);
+                stream.SendNext(m_rightHandIKTarget.position);
+                stream.SendNext(m_rightHandIKTarget.rotation);
+            }
+            else
+            {
+                stream.SendNext(m_rightArmIKTarget.position);
+                stream.SendNext(m_rightArmIKTarget.rotation);
+                stream.SendNext(m_leftArmIKTarget.position);
+                stream.SendNext(m_leftArmIKTarget.rotation);
+            }
+        }
+        else if(stream.IsReading && !photonView.IsMine)
+        {
+            m_isBeamAttacking = (bool)stream.ReceiveNext();
+            
+            if (m_isBeamAttacking)
+            {
+                m_localRightHandIkWeight = (float)stream.ReceiveNext();
+                m_rightHandIKTarget.position = (Vector3)stream.ReceiveNext();
+                m_rightHandIKTarget.rotation = (Quaternion)stream.ReceiveNext();
+            }
+            else
+            {
+                m_rightArmIKTarget.position = (Vector3)stream.ReceiveNext();
+                m_rightArmIKTarget.rotation = (Quaternion)stream.ReceiveNext();
+                m_leftArmIKTarget.position = (Vector3)stream.ReceiveNext();
+                m_leftArmIKTarget.rotation = (Quaternion)stream.ReceiveNext();
+            }
+        }
+    }
+
+    public void IsMove(bool isMove) => m_canMove = isMove;
 }

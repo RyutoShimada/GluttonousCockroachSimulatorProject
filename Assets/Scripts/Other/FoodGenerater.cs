@@ -1,9 +1,8 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
+using Photon.Pun;
 
-public class FoodGenerater : MonoBehaviour
+public class FoodGenerater : MonoBehaviourPunCallbacks, IPunObservable, IFoodGenerate
 {
     [SerializeField] GameObject[] m_foods = null;
     [SerializeField] Transform[] m_generatePos = null;
@@ -12,25 +11,30 @@ public class FoodGenerater : MonoBehaviour
     GameObject[] m_go;
     Vector3 m_beforePos = Vector3.zero;
 
-    private void Awake()
+    private void Start()
     {
+        if (m_foods.Length <= 0) return;
+
         m_go = new GameObject[m_foods.Length];
 
         for (int i = 0; i < m_foods.Length; i++)
         {
             m_go[i] = Instantiate(m_foods[i], m_generatePos[i].position, m_generatePos[i].rotation, transform);
+            m_go[i].GetComponent<Food>().m_foodGeneraterNetWork = this;
             m_go[i].SetActive(false);
         }
     }
 
-    private void Start()
+    public void Generate()
     {
-        if (m_foods.Length <= 0) return;
-        StartCoroutine(nameof(Generate));
+        Debug.Log("Generate!");
+        StartCoroutine(nameof(StartGenerate));
     }
 
-    public IEnumerator Generate()
+    public IEnumerator StartGenerate()
     {
+        if (PhotonNetwork.IsConnected && !PhotonNetwork.IsMasterClient) yield return null;
+
         foreach (var item in m_go)
         {
             if (item.activeSelf)
@@ -78,6 +82,25 @@ public class FoodGenerater : MonoBehaviour
         m_go[randomFood[currentCount]].transform.position = m_generatePos[randomPos[currentCount]].position;
         m_beforePos = m_go[randomFood[currentCount]].transform.position;
         currentCount++;
-        Debug.Log("Generated!");
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting && PhotonNetwork.IsMasterClient)
+        {
+            for (int i = 0; i < m_go.Length; i++)
+            {
+                stream.SendNext(m_go[i].transform.position);
+                stream.SendNext(m_go[i].gameObject.activeSelf);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < m_go.Length; i++)
+            {
+                m_go[i].transform.position = (Vector3)stream.ReceiveNext();
+                m_go[i].gameObject.SetActive((bool)stream.ReceiveNext());
+            }
+        }
     }
 }
