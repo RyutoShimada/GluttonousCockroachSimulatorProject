@@ -12,6 +12,7 @@ TagManager:
   - Cockroach
   - Food
   - Human
+  - Attack
   layers:
   - Default
   - TransparentFX

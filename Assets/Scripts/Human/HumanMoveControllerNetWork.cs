@@ -27,6 +27,10 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
 
     /// <summary>IKで右手を移動させるターゲット</summary>
     [SerializeField] Transform m_rightHandIKTarget = null;
+    /// <summary>IKで右腕を移動させるターゲット</summary>
+    [SerializeField] Transform m_rightArmIKTarget = null;
+    /// <summary>IKで左腕を移動させるターゲット</summary>
+    [SerializeField] Transform m_leftArmIKTarget = null;
     /// <summary>IKを滑らかに実行する速度</summary>
     [SerializeField] float m_rightIKPositionWeightSpeed = 1f;
     /// <summary>攻撃時のビームのパーティクル</summary>
@@ -34,7 +38,7 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
     /// <summary>攻撃時のビームのパーティクル</summary>
     [SerializeField] GameObject m_chargePrefab = null;
     /// <summary>実際に変化するのIKのアニメーション速度</summary>
-    float m_localIkWeight = 0f;
+    float m_localRightHandIkWeight = 0f;
 
     /// <summary>スクリプト</summary>
     [SerializeField] HumanSprayAttackControllerNetWork m_HSACN = null;
@@ -44,8 +48,12 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
     Vector3 m_dir;
     /// <summary>速度ベクト</summary>
     Vector3 m_vel;
-    /// <summary>攻撃しているかどうか</summary>
-    bool isSprayAttacking = false;
+    /// <summary>ビームで攻撃しているかどうか</summary>
+    bool m_isBeamAttacking = false;
+    /// <summary>ビームで攻撃しているかどうか</summary>
+    bool m_isLeftAttacking = false;
+    /// <summary>ビームで攻撃しているかどうか</summary>
+    bool m_isRightAttacking = false;
     Rigidbody m_rb;
     Animator m_anim;
     RaycastHit m_hit;
@@ -88,7 +96,7 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
             Debug.LogError("CinemachineVirtualCamera を GetComponent 出来ませんでした");
         }
 
-        m_attackRangeObj = transform.Find("CameraPos").transform.Find("AttackRange").gameObject;
+        //m_attackRangeObj = transform.Find("CameraPos").transform.Find("AttackRange").gameObject;
 
         if (m_attackRangeObj)
         {
@@ -125,8 +133,8 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
         else if (Input.GetButtonUp("Fire1"))
         {
             CancelAttackSpray();
-            m_HSACN.m_sprayHit = false;
-            m_HSACN.m_crossHair.color = Color.white;
+            //m_HSACN.m_hit = false;
+            //m_HSACN.m_crossHair.color = Color.white;
         }
     }
 
@@ -167,35 +175,35 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
         }
     }
 
-    bool RayOfAttack()
-    {
-        Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * m_maxRayDistance, Color.green);
+    //bool RayOfAttack()
+    //{
+    //    Debug.DrawRay(Camera.main.transform.position, Camera.main.transform.forward * m_maxRayDistance, Color.green);
 
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out m_hit, m_maxRayDistance))
-        {
-            if (m_hit.collider.tag == "Cockroach") return true;
+    //    if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out m_hit, m_maxRayDistance))
+    //    {
+    //        if (m_hit.collider.tag == "Cockroach") return true;
 
-            m_attackRangeObj.transform.position = new Vector3(m_hit.point.x, m_hit.point.y, m_hit.point.z);
+    //        m_attackRangeObj.transform.position = new Vector3(m_hit.point.x, m_hit.point.y, m_hit.point.z);
 
-            if (m_HSACN.m_sprayHit)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
-        {
-            m_attackRangeObj.transform.position = Camera.main.transform.position + (Camera.main.transform.forward * m_maxRayDistance);
-            return false;
-        }
-    }
+    //        if (m_HSACN.m_hit)
+    //        {
+    //            return true;
+    //        }
+    //        else
+    //        {
+    //            return false;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        m_attackRangeObj.transform.position = Camera.main.transform.position + (Camera.main.transform.forward * m_maxRayDistance);
+    //        return false;
+    //    }
+    //}
 
     void AttackSpray()
     {
-        isSprayAttacking = true;
+        m_isBeamAttacking = true;
 
         if (m_attackRangeObj)
         {
@@ -211,13 +219,13 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
             ActiveSpray();
         }
 
-        if (RayOfAttack())
-        {
-            if (m_hit.collider.gameObject.TryGetComponent(out Cockroach cockroachNetWork))
-            {
-                cockroachNetWork.BeAttacked(m_attackValue);
-            }
-        }
+        //if (RayOfAttack())
+        //{
+        //    if (m_hit.collider.gameObject.TryGetComponent(out Cockroach cockroachNetWork))
+        //    {
+        //        cockroachNetWork.BeAttacked(m_attackValue);
+        //    }
+        //}
     }
 
     void CancelAttackSpray()
@@ -255,7 +263,7 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
         m_beamPrefab.SetActive(true);
         yield return new WaitForSeconds(3f);
         m_beamPrefab.SetActive(false);
-        isSprayAttacking = false;
+        m_isBeamAttacking = false;
     }
 
     void DoRotate()
@@ -280,42 +288,64 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
 
     }
 
-    // IK を計算するためのコールバック
-    private void OnAnimatorIK(int layerIndex)
+    void BeamIkWeight()
     {
-        //if (!photonView.IsMine) return;
-        if (m_rightHandIKTarget == null) return;
-
         // IKアニメーションを滑らかにする処理
-        if (isSprayAttacking)
+        if (m_isBeamAttacking)
         {
-            if (m_localIkWeight < 1.0f)
+            if (m_localRightHandIkWeight < 1.0f)
             {
-                m_localIkWeight += m_rightIKPositionWeightSpeed * Time.deltaTime;
+                m_localRightHandIkWeight += m_rightIKPositionWeightSpeed * Time.deltaTime;
             }
             else
             {
-                m_localIkWeight = 1.0f;
+                m_localRightHandIkWeight = 1.0f;
             }
         }
         else
         {
-            if (m_localIkWeight > 0f)
+            if (m_localRightHandIkWeight > 0f)
             {
-                m_localIkWeight -= m_rightIKPositionWeightSpeed * Time.deltaTime;
+                m_localRightHandIkWeight -= m_rightIKPositionWeightSpeed * Time.deltaTime;
             }
             else
             {
-                m_localIkWeight = 0f;
+                m_localRightHandIkWeight = 0f;
             }
         }
+    }
+
+    // IK を計算するためのコールバック
+    private void OnAnimatorIK(int layerIndex)
+    {
+        if (m_rightHandIKTarget == null || m_rightArmIKTarget == null || m_leftArmIKTarget == null) return;
+
+        BeamIkWeight();
 
         if (m_anim)
         {
-            m_anim.SetIKPositionWeight(AvatarIKGoal.RightHand, m_localIkWeight);
-            m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, m_localIkWeight);
-            m_anim.SetIKPosition(AvatarIKGoal.RightHand, m_rightHandIKTarget.position);
-            m_anim.SetIKRotation(AvatarIKGoal.RightHand, m_rightHandIKTarget.rotation);
+            if (m_isBeamAttacking)
+            {
+                // 右手
+                m_anim.SetIKPosition(AvatarIKGoal.RightHand, m_rightHandIKTarget.position);
+                m_anim.SetIKRotation(AvatarIKGoal.RightHand, m_rightHandIKTarget.rotation);
+                m_anim.SetIKPositionWeight(AvatarIKGoal.RightHand, m_localRightHandIkWeight);
+                m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, m_localRightHandIkWeight);
+            }
+            else
+            {
+                // 右腕
+                m_anim.SetIKPosition(AvatarIKGoal.RightHand, m_rightArmIKTarget.position);
+                m_anim.SetIKRotation(AvatarIKGoal.RightHand, m_rightArmIKTarget.rotation);
+                m_anim.SetIKPositionWeight(AvatarIKGoal.RightHand, 1f);
+                m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, 1f);
+            }
+
+            // 左腕
+            m_anim.SetIKPosition(AvatarIKGoal.LeftHand, m_leftArmIKTarget.position);
+            m_anim.SetIKRotation(AvatarIKGoal.LeftHand, m_leftArmIKTarget.rotation);
+            m_anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1f);
+            m_anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1f);
         }
         else
         {
@@ -327,15 +357,15 @@ public class HumanMoveControllerNetWork : MonoBehaviourPunCallbacks, IPunObserva
     {
         if (stream.IsWriting)
         {
-            stream.SendNext(isSprayAttacking);
-            stream.SendNext(this.m_localIkWeight);
+            stream.SendNext(m_isBeamAttacking);
+            stream.SendNext(this.m_localRightHandIkWeight);
             stream.SendNext(this.m_rightHandIKTarget.position);
             stream.SendNext(this.m_rightHandIKTarget.rotation);
         }
         else
         {
-            isSprayAttacking = (bool)stream.ReceiveNext();
-            m_localIkWeight = (float)stream.ReceiveNext();
+            m_isBeamAttacking = (bool)stream.ReceiveNext();
+            m_localRightHandIkWeight = (float)stream.ReceiveNext();
             m_rightHandIKTarget.position = (Vector3)stream.ReceiveNext();
             m_rightHandIKTarget.rotation = (Quaternion)stream.ReceiveNext();
         }

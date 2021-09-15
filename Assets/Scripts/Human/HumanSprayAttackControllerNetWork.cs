@@ -11,23 +11,23 @@ public class HumanSprayAttackControllerNetWork : MonoBehaviourPunCallbacks
     GameObject m_ui = null;
 
     /// <summary>ゴキブリに当たっているかどうか</summary>
-    [HideInInspector] public bool m_sprayHit;
+    [HideInInspector] public bool m_hit;
 
-    private void Awake()
-    {
-        if (!photonView.IsMine) return;
-        m_sprayHit = false;
-        Transform t = GameObject.Find("Canvas")?.transform;
-        m_ui = Instantiate(m_humanUi, t);
-        m_crossHair = m_ui.GetComponent<Image>();
-    }
+    //private void Start()
+    //{
+    //    if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+    //    m_hit = false;
+    //    Transform t = GameObject.Find("Canvas")?.transform;
+    //    m_ui = Instantiate(m_humanUi, t);
+    //    m_crossHair = m_ui.GetComponent<Image>();
+    //}
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Cockroach")
         {
-            m_sprayHit = true;
-            m_crossHair.color = Color.red;
+            m_hit = true;
+            //m_crossHair.color = Color.red;
         }
     }
 
@@ -35,8 +35,8 @@ public class HumanSprayAttackControllerNetWork : MonoBehaviourPunCallbacks
     {
         if (other.gameObject.tag == "Cockroach")
         {
-            m_sprayHit = true;
-            m_crossHair.color = Color.red;
+            m_hit = true;
+            //m_crossHair.color = Color.red;
         }
     }
 
@@ -44,8 +44,8 @@ public class HumanSprayAttackControllerNetWork : MonoBehaviourPunCallbacks
     {
         if (other.gameObject.tag == "Cockroach")
         {
-            m_sprayHit = false;
-            m_crossHair.color = Color.white;
+            m_hit = false;
+            //m_crossHair.color = Color.white;
         }
     }
 

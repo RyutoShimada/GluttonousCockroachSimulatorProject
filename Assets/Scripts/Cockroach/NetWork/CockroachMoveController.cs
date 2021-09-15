@@ -247,7 +247,7 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks, IIsCanMove
 
     IEnumerator ChangeRotate(Vector3 nomal, float waitTime)
     {
-        if (m_isRotate) yield return null;
+        if (m_isRotate || !gameObject.activeSelf) yield return null;
 
         m_isRotate = true;
 
