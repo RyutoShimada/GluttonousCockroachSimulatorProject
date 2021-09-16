@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using System;
 
 public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, IIsCanMove
 {
+    public static Action<int> HitDamege;
+
     [HideInInspector] public bool m_canMove = true;
 
     /// <summary>パンチする速度</summary>
@@ -13,6 +16,8 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
     [SerializeField] int m_addEnergyValue = 3;
     [Tooltip("パンチの当たり判定をするオブジェクト")]
     [SerializeField] Collider m_punchRange = null;
+    [Tooltip("足の当たり判定をするオブジェクト")]
+    [SerializeField] GameObject m_foolAttack = null;
     /// <summary>IKで右手を移動させるターゲット</summary>
     [SerializeField] Transform m_punchIKTarget = null;
     /// <summary>IKで右手を移動させるターゲット</summary>
@@ -27,16 +32,25 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
     [SerializeField] GameObject m_beamPrefab = null;
     /// <summary>攻撃時のビームのパーティクル</summary>
     [SerializeField] GameObject m_chargePrefab = null;
-    /// <summary>実際に変化するのIKのアニメーション速度</summary>
-    float m_localRightHandIkWeight = 0f;
+    [Tooltip("エネルギーが溜まった音")]
+    [SerializeField] AudioClip m_energyChargedSE = null;
+    [Tooltip("チャージ音")]
+    [SerializeField] AudioClip m_chargedSE = null;
+    [Tooltip("ビーム音")]
+    [SerializeField] AudioClip m_beamSE = null;
 
-    Animator m_anim;
+    AudioSource m_audio = null;
+    Animator m_anim = null;
+    /// <summary>ビーム攻撃の準備ができているかどうか</summary>
+    bool m_isStandByBeam = false;
     /// <summary>ビームで攻撃しているかどうか</summary>
     bool m_isBeamAttacking = false;
     /// <summary>ビームで攻撃しているかどうか</summary>
     bool m_isLeftAttacking = false;
     /// <summary>ビームで攻撃しているかどうか</summary>
     bool m_isRightAttacking = false;
+    /// <summary>実際に変化するのIKのアニメーション速度</summary>
+    float m_localRightHandIkWeight = 0f;
 
     Transform m_leftArmOriginPos = null;
     Transform m_rightArmOriginPos = null;
@@ -51,6 +65,7 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
 
     void Start()
     {
+        m_audio = GetComponent<AudioSource>();
         m_anim = GetComponent<Animator>();
         m_leftArmOriginPos = m_leftArmIKTarget;
         m_rightArmOriginPos = m_rightArmIKTarget;
@@ -105,6 +120,15 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
         }
     }
 
+    public void FootAttack() => m_foolAttack.SetActive(true);
+    public void FootAttackCancel() => m_foolAttack.SetActive(false);
+
+    public void HitCockroach(int damge)
+    {
+        Debug.Log("Hit");
+        HitDamege.Invoke(damge);
+    }
+
     [PunRPC]
     void StartPunching()
     {
@@ -138,7 +162,7 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
     void AddEnergy()
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
-        if (m_isBeamAttacking) return;
+        if (m_isBeamAttacking || m_chargeCompleted) return;
 
         if (m_currentEnergy + m_addEnergyValue <= m_needEnergy)
         {
@@ -148,6 +172,7 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
         {
             m_currentEnergy = m_needEnergy;
             m_chargeCompleted = true;
+            m_audio.PlayOneShot(m_energyChargedSE);
         }
 
         m_human.ChangeGauge(m_currentEnergy, 0.2f); // UIのGaugeに反映
@@ -157,8 +182,12 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
     void StandByBeam()
     {
         if (m_isBeamAttacking) return;
-        m_isBeamAttacking = true;
-        m_chargePrefab.SetActive(true);
+
+        if (!m_isStandByBeam) m_isStandByBeam = true;
+        // チャージエフェクトを表示
+        if (!m_chargePrefab.activeSelf) m_chargePrefab.SetActive(true);
+        // SEを再生
+        if (!m_audio.isPlaying) m_audio.PlayOneShot(m_chargedSE);
     }
 
     [PunRPC]
@@ -169,20 +198,24 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
 
     IEnumerator Beam()
     {
+        m_isBeamAttacking = true;
         m_chargePrefab.SetActive(false);
         m_beamPrefab.SetActive(true);
         m_currentEnergy = 0;
         m_chargeCompleted = false;
+        m_audio.PlayOneShot(m_beamSE);
         m_human?.ChangeGauge(m_currentEnergy, beamTime); // UIのGaugeに反映
         yield return new WaitForSeconds(beamTime);
         m_beamPrefab.SetActive(false);
         m_isBeamAttacking = false;
+        m_isStandByBeam = false;
+        m_audio.Stop();
     }
 
     void BeamIkWeight()
     {
         // IKアニメーションを滑らかにする処理
-        if (m_isBeamAttacking)
+        if (m_isStandByBeam)
         {
             if (m_localRightHandIkWeight < 1.0f)
             {
@@ -209,34 +242,32 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
     // IK を計算するためのコールバック
     private void OnAnimatorIK(int layerIndex)
     {
-        if (m_rightHandIKTarget == null || m_rightArmIKTarget == null || m_leftArmIKTarget == null) return;
+        if (m_anim == null) return;
 
         BeamIkWeight();
 
-        if (m_anim)
+        if (m_rightArmIKTarget != null) // 右腕
         {
-            // 右腕
             m_anim.SetIKPosition(AvatarIKGoal.RightHand, m_rightArmIKTarget.position);
             m_anim.SetIKRotation(AvatarIKGoal.RightHand, m_rightArmIKTarget.rotation);
             m_anim.SetIKPositionWeight(AvatarIKGoal.RightHand, 1f);
             m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, 1f);
+        }
 
-            // 左腕
+        if (m_leftArmIKTarget != null) // 左腕
+        {
             m_anim.SetIKPosition(AvatarIKGoal.LeftHand, m_leftArmIKTarget.position);
             m_anim.SetIKRotation(AvatarIKGoal.LeftHand, m_leftArmIKTarget.rotation);
             m_anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1f);
             m_anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1f);
+        }
 
-            if (!m_isBeamAttacking) return;
-            // ビームの時の手
+        if (m_rightHandIKTarget != null && m_isStandByBeam) // ビームの時の手
+        {
             m_anim.SetIKPosition(AvatarIKGoal.RightHand, m_rightHandIKTarget.position);
             m_anim.SetIKRotation(AvatarIKGoal.RightHand, m_rightHandIKTarget.rotation);
             m_anim.SetIKPositionWeight(AvatarIKGoal.RightHand, m_localRightHandIkWeight);
             m_anim.SetIKRotationWeight(AvatarIKGoal.RightHand, m_localRightHandIkWeight);
-        }
-        else
-        {
-            Debug.LogError("m_anim が Null です");
         }
     }
 

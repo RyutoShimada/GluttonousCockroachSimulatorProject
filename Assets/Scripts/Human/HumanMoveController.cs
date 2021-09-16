@@ -92,6 +92,5 @@ public class HumanMoveController : MonoBehaviourPunCallbacks, IIsCanMove
         {
             m_anim.SetFloat("Speed", Mathf.Abs(m_input.y));
         }
-
     }
 }
