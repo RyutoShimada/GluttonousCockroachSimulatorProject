@@ -22,18 +22,23 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
 
     int m_energyValue = 0;
 
+    private void Awake()
+    {
+        m_moveController = GetComponent<HumanMoveController>();
+    }
+
     private void Start()
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
 
         EventSystem.Instance.Subscribe(ResetPosition);
         EventSystem.Instance.Subscribe((EventSystem.Judge)JudgeAttack);
+        MenuController.IsMove += IsMove;
         Transform t = GameObject.Find("Canvas").transform;
         m_ui = Instantiate(m_humanUiPrefab, t);
         m_crossHair = m_ui.transform.Find("CrossHair").GetComponent<Image>();
         m_gauge = m_ui.transform.Find("Gauge").transform.Find("GaugeImage").GetComponent<Image>();
         m_energyText = m_ui.GetComponentInChildren<Text>();
-        m_moveController = GetComponent<HumanMoveController>();
         VcamSetUp();
     }
 
@@ -122,6 +127,8 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
 
     public void IsMove(bool isMove)
     {
+        m_moveController.m_canMove = isMove;
+
         if (m_vcamBase)
         {
             m_vcamBase.enabled = isMove;

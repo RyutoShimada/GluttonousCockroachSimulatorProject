@@ -5,12 +5,13 @@ using Photon.Pun;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class CockroachChildPoolManager : MonoBehaviourPunCallbacks, IPunObservable
+public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject m_generatePrefab = null;
     [SerializeField] int m_generateCount = 100;
     [SerializeField] Text m_countText = null;
     int m_currentCount = 0;
+    bool m_isCockroachOperater = false;
 
     void Start()
     {
@@ -31,6 +32,7 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks, IPunObservab
     {
         if (PhotonNetwork.IsConnected)
         {
+            if(!m_isCockroachOperater) m_isCockroachOperater = true;
             photonView.RPC(nameof(ActiveRandomRotation), RpcTarget.All, count, pos, up);
         }
         else
@@ -42,10 +44,10 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks, IPunObservab
     [PunRPC]
     void ActiveRandomRotation(int count, Vector3 pos, Vector3 up)
     {
-        int i = 0;
+        int currentCount = 0;
         foreach (Transform t in transform)
         {
-            if (i == count) break;
+            if (currentCount == count) break;
             if (!t.gameObject.activeSelf)
             {
                 int random = Random.Range(0, 360);
@@ -53,10 +55,11 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks, IPunObservab
                 t.gameObject.transform.position = pos;
                 t.gameObject.transform.up = up;
                 t.gameObject.transform.rotation = Quaternion.Euler(0, random, 0);
-                i++;
+                currentCount++;
             }
         }
-        UpdateText(m_currentCount + i);
+
+        UpdateText(m_currentCount + currentCount);
     }
 
     public void DecreaseCount()
@@ -75,40 +78,43 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks, IPunObservab
     {
         // 数値を滑らかに変動させている
         DOTween.To(() => m_currentCount, n => m_currentCount = n, count, 0.5f)
-            .OnUpdate(() => m_countText.text = m_currentCount.ToString());
-
-        if (m_currentCount >= m_generateCount)
-        {
-            NetWorkGameManager.Instance.CockroachProliferationComplete();
-        }
+            .OnUpdate(() => m_countText.text = m_currentCount.ToString())
+            .OnComplete(() => 
+            {
+                if (m_currentCount >= m_generateCount)
+                {
+                    NetWorkGameManager.Instance.CockroachProliferationComplete();
+                }
+            });
     }
 
     [PunRPC]
     void Check()
     {
         UpdateText(m_currentCount - 1);
-        int i = 0;
-        foreach (Transform t in transform)
-        {
-            if (!t.gameObject.activeSelf) return;
-            i++;
-        }
 
-        if (i == m_currentCount)
+        if (m_isCockroachOperater)
         {
-            m_currentCount--;
-        }
-    }
+            int active = 0;
+            foreach (Transform t in transform)
+            {
+                if (t.gameObject.activeSelf)
+                {
+                    active++;
+                }
+            }
 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting && photonView.IsMine)
-        {
-            stream.SendNext(m_currentCount);
-        }
-        else if (stream.IsReading && !photonView.IsMine)
-        {
-            m_currentCount = (int)stream.ReceiveNext();
+            // DoTweenで反映されていないcurrentCountを-1する
+            int difference = active - (m_currentCount - 1);
+            foreach (Transform t in transform)
+            {
+                if (difference <= 0) break;
+                if (t.gameObject.activeSelf)
+                {
+                    t.gameObject.SetActive(false);
+                    difference--;
+                }
+            }
         }
     }
 }

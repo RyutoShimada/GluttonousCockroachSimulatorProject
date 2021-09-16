@@ -162,11 +162,11 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks
 
         if (m_isGrounded)
         {
-            m_anim.SetFloat("Velocity", virtical);
+            m_anim?.SetFloat("Velocity", virtical);
         }
         else
         {
-            m_anim.SetFloat("Velocity", 0);
+            m_anim?.SetFloat("Velocity", 0);
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class NPCController : MonoBehaviour
 {
@@ -12,6 +13,15 @@ public class NPCController : MonoBehaviour
     float m_moveTimer;
     float m_jumpTimer;
     bool m_isDed = false;
+
+    bool Active
+    {
+        get => gameObject.activeSelf;
+        set
+        {
+            gameObject.SetActive(value);
+        }
+    }
 
     void Start()
     {

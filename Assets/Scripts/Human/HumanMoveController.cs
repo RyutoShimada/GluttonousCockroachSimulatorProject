@@ -3,7 +3,7 @@ using UnityEngine;
 using Photon.Pun;
 
 [RequireComponent(typeof(Rigidbody))]
-public class HumanMoveController : MonoBehaviourPunCallbacks, IIsCanMove
+public class HumanMoveController : MonoBehaviourPunCallbacks
 {
     [HideInInspector] public bool m_canMove = true;
 
@@ -24,7 +24,6 @@ public class HumanMoveController : MonoBehaviourPunCallbacks, IIsCanMove
 
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
         m_rb = GetComponent<Rigidbody>();
-        MenuController.IsMove += IsMove;
     }
 
     void FixedUpdate()
@@ -49,9 +48,7 @@ public class HumanMoveController : MonoBehaviourPunCallbacks, IIsCanMove
     void LateUpdate()
     {
         DoAnimation();
-    }
-
-    public void IsMove(bool isMove) => m_canMove = isMove;
+    }    
 
     void Move()
     {

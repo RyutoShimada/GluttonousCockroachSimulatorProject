@@ -6,8 +6,7 @@ using Photon.Pun;
 public class PlayerInput : MonoBehaviourPunCallbacks, IIsCanMove
 {
     [SerializeField] CockroachMoveController m_moveController = null;
-    [HideInInspector]
-    public bool m_canMove = true;
+    [HideInInspector] public bool m_canMove = true;
     Cockroach m_cockroach = null;
 
     private void Awake()
@@ -26,7 +25,7 @@ public class PlayerInput : MonoBehaviourPunCallbacks, IIsCanMove
 
     IEnumerator UpdateCoroutine()
     {
-        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) yield return null;
         while (!m_cockroach.m_isDed && m_canMove)
         {
             m_moveController.Jump(Input.GetButtonDown("Jump"));
