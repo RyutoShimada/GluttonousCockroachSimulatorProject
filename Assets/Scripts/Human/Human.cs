@@ -14,10 +14,13 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
 
     Image m_crossHair = null;
     Image m_gauge = null;
+    Text m_energyText = null;
     HumanMoveController m_moveController = null;
     GameObject m_vcam = null;
     CinemachineVirtualCamera m_vcamBase = null;
     GameObject m_ui = null;
+
+    int m_energyValue = 0;
 
     private void Start()
     {
@@ -29,6 +32,7 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
         m_ui = Instantiate(m_humanUiPrefab, t);
         m_crossHair = m_ui.transform.Find("CrossHair").GetComponent<Image>();
         m_gauge = m_ui.transform.Find("Gauge").transform.Find("GaugeImage").GetComponent<Image>();
+        m_energyText = m_ui.GetComponentInChildren<Text>();
         m_moveController = GetComponent<HumanMoveController>();
         VcamSetUp();
     }
@@ -64,6 +68,9 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
     public void ChangeGauge(int value, float time)
     {
         m_gauge.DOFillAmount(value * 0.01f, time);
+        // 数値を滑らかに変動させている
+        DOTween.To(() => m_energyValue, n => m_energyValue = n, value, time)
+            .OnUpdate(() => m_energyText.text = m_energyValue.ToString());
     }
 
     void VcamSetUp()
@@ -117,10 +124,5 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
         {
             m_vcamBase.enabled = isMove;
         }
-    }
-
-    public void HitCockroach()
-    {
-        Debug.Log("Hit");
     }
 }

@@ -2,7 +2,6 @@
 using UnityEngine;
 using Photon.Pun;
 
-
 [RequireComponent(typeof(CockroachMoveController))]
 
 /// <summary>
@@ -10,8 +9,6 @@ using Photon.Pun;
 /// </summary>
 public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 {
-    static public GameObject m_Instance;
-
     [SerializeField] CockroachScriptableObject m_data = null;
     /// <summary>現在の体力値</summary>
     [SerializeField] int m_hp = 100;
@@ -53,15 +50,8 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         m_audio = GetComponent<AudioSource>();
         m_cockroachUINetWork = GetComponent<CockroachUI>();
         m_camera?.SetActive(true);
-
+        HumanAttackController.HitDamege += BeAttacked;
     }
-
-    //private void Update()
-    //{
-    //    if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
-    //    if (!NetWorkGameManager.m_Instance.IsGame) return;
-    //    if (m_isDed) return;
-    //}
 
     private void OnDestroy()
     {
@@ -128,18 +118,26 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 
         m_invincibleMode = true;
 
-        // 生存確認
-        photonView.RPC(nameof(CheckAlive), RpcTarget.All);
-        // 無敵モード開始
-        photonView.RPC(nameof(StartCoroutineInvicibleMode), RpcTarget.All);
-        // HPの同期（IsMine ではないオブジェクトからの同期なので OnPhotonSerializeView は使えない）
-        photonView.RPC(nameof(RefleshHp), RpcTarget.All, m_hp, damageValue);
+        if (PhotonNetwork.IsConnected)
+        {
+            // 生存確認
+            photonView.RPC(nameof(CheckAlive), RpcTarget.All);
+            // 無敵モード開始
+            photonView.RPC(nameof(StartCoroutineInvicibleMode), RpcTarget.All);
+            // HPの同期（IsMine ではないオブジェクトからの同期なので OnPhotonSerializeView は使えない）
+            photonView.RPC(nameof(RefleshHp), RpcTarget.All, m_hp, damageValue);
+        }
+        else
+        {
+            CheckAlive();
+            StartCoroutineInvicibleMode();
+            RefleshHp(m_hp, damageValue);
+        }
+
         // ダメージを受けたUI表示
-        //photonView.RPC(nameof(StartCoroutineDamegeImageChangeColor), RpcTarget.Others);
-        StartCoroutine(m_cockroachUINetWork.DamageColor());
+        StartCoroutine(m_cockroachUINetWork?.DamageColor());
         // HPバーを減少させる
-        //photonView.RPC(nameof(m_cockroachUINetWork.ReflectHPSlider), RpcTarget.Others, m_hp, m_maxHp);
-        m_cockroachUINetWork.ReflectHPSlider(m_hp, m_data.MaxHP);
+        m_cockroachUINetWork?.ReflectHPSlider(m_hp, m_data.MaxHP);
     }
 
     [PunRPC]

@@ -5,21 +5,20 @@ using Photon.Pun;
 
 public class Attack : MonoBehaviourPunCallbacks
 {
-    Human m_human = null;
-    HumanMoveController m_moveController = null;
+    [SerializeField] int m_damge = 10;
+    HumanAttackController m_human = null;
 
     void Start()
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
-        m_human = transform.root.GetComponent<Human>();
-        m_moveController = transform.root.GetComponent<HumanMoveController>();
+        m_human = transform.root.GetComponent<HumanAttackController>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Cockroach")
         {
-            m_human?.HitCockroach();
+            m_human?.HitCockroach(m_damge);
         }
     }
 
@@ -27,7 +26,7 @@ public class Attack : MonoBehaviourPunCallbacks
     {
         if (other.tag == "Cockroach")
         {
-            m_human?.HitCockroach();
+            m_human?.HitCockroach(m_damge);
         }
     }
 }
