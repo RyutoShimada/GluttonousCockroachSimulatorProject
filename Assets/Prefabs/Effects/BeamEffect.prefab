@@ -3741,7 +3741,7 @@ ParticleSystem:
     radiusScale: 1
     collidesWith:
       serializedVersion: 2
-      m_Bits: 4294967295
+      m_Bits: 23347
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
@@ -8495,7 +8495,7 @@ ParticleSystem:
     radiusScale: 1
     collidesWith:
       serializedVersion: 2
-      m_Bits: 4294967295
+      m_Bits: 23347
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
@@ -13267,7 +13267,7 @@ ParticleSystem:
     radiusScale: 1
     collidesWith:
       serializedVersion: 2
-      m_Bits: 4294967295
+      m_Bits: 23347
     maxCollisionShapes: 256
     quality: 0
     voxelSize: 0.5
@@ -14328,6 +14328,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_stopEffect: {fileID: 6310578974103923948}
+  m_layerMask:
+    serializedVersion: 2
+    m_Bits: 16384
 --- !u!114 &1285818927706573625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14474,6 +14477,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Thunder
       objectReference: {fileID: 0}
+    - target: {fileID: 7613657294181063854, guid: 571befa5f3173d742a6559c5ff0bc055,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 571befa5f3173d742a6559c5ff0bc055, type: 3}
 --- !u!4 &194471995857404955 stripped
@@ -14497,6 +14505,16 @@ PrefabInstance:
     - target: {fileID: 430118690034535967, guid: 10e25bae630c7c04cbb3c6e8ba780a4a,
         type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 430118690034535967, guid: 10e25bae630c7c04cbb3c6e8ba780a4a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2044138682048782037, guid: 10e25bae630c7c04cbb3c6e8ba780a4a,
+        type: 3}
+      propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6271034791444548788, guid: 10e25bae630c7c04cbb3c6e8ba780a4a,
@@ -14552,6 +14570,11 @@ PrefabInstance:
     - target: {fileID: 6271034791444548788, guid: 10e25bae630c7c04cbb3c6e8ba780a4a,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6957496061424317298, guid: 10e25bae630c7c04cbb3c6e8ba780a4a,
+        type: 3}
+      propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -23,8 +23,6 @@ public class FoodGenerater : MonoBehaviourPunCallbacks, IPunObservable, IFoodGen
             m_go[i].GetComponent<Food>().m_foodGeneraterNetWork = this;
             m_go[i].SetActive(false);
         }
-
-        Generate();
     }
 
     public void Generate()

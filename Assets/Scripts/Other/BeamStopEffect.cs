@@ -5,6 +5,7 @@ using UnityEngine;
 public class BeamStopEffect : MonoBehaviour
 {
     [SerializeField] GameObject m_stopEffect = null;
+    [SerializeField] LayerMask m_layerMask;
     RaycastHit m_hit;
     float m_distance;
 
@@ -16,10 +17,9 @@ public class BeamStopEffect : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Physics.Raycast(transform.position, transform.forward, out m_hit, m_distance))
+        if (Physics.Raycast(transform.position, transform.forward, out m_hit, m_distance, m_layerMask))
         {
             if (!m_stopEffect.activeSelf) m_stopEffect.SetActive(true);
-            if (m_hit.collider.tag == "Attack") return;
             m_stopEffect.transform.position = m_hit.point;
         }
     }
