@@ -40,7 +40,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 56746356485228762}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02135a2044a354a48aefb1763b880cdd, type: 3}
+  m_Script: {fileID: 11500000, guid: e8448c327e70a7d44a80daa3f6f4648f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_foods:
@@ -49,9 +49,6 @@ MonoBehaviour:
   - {fileID: 1997705620550999875, guid: 62c77a8435887d74481bb6628b54e4ea, type: 3}
   - {fileID: 6407508747041186944, guid: fe447d49bf3c4d746a2cebd310b67e84, type: 3}
   - {fileID: 1245383205480293808, guid: 44d62cafce5fd4042a5593dd9e8ab79e, type: 3}
-  m_generatePos:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  m_generatePos: []
+  m_interval: 2
+  m_generateCount: 2

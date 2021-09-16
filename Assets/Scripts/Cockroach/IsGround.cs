@@ -8,20 +8,17 @@ public class IsGround : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter(Collider other)
     {
-        DoTask();
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+        m_parent.IsGround(true);
     }
 
     private void OnTriggerStay(Collider other)
     {
-        DoTask();
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+        m_parent.IsGround(true);
     }
 
     private void OnTriggerExit(Collider other)
-    {
-        DoTask();
-    }
-
-    void DoTask()
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
         m_parent.IsGround(false);

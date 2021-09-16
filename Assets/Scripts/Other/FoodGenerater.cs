@@ -23,11 +23,12 @@ public class FoodGenerater : MonoBehaviourPunCallbacks, IPunObservable, IFoodGen
             m_go[i].GetComponent<Food>().m_foodGeneraterNetWork = this;
             m_go[i].SetActive(false);
         }
+
+        Generate();
     }
 
     public void Generate()
     {
-        Debug.Log("Generate!");
         StartCoroutine(nameof(StartGenerate));
     }
 
@@ -54,34 +55,31 @@ public class FoodGenerater : MonoBehaviourPunCallbacks, IPunObservable, IFoodGen
             randomFood[currentCount] = Random.Range(0, m_go.Length);
             randomPos[currentCount] = Random.Range(0, m_generatePos.Length);
 
-            // 前回と違う場所に生成するようにしている
-            if (m_generatePos[randomPos[currentCount]].position == m_beforePos) continue;
-
             if (currentCount == 0)
             {
-                ChangeFood(randomFood, randomPos, ref currentCount);
+                ChangeFood(randomFood, randomPos, currentCount);
+                currentCount++;
             }
             else
             {
                 for (int i = currentCount; i > 0; i--)
                 {
-                    if (randomFood[currentCount] != randomFood[currentCount - i])
+                    if (randomFood[currentCount] != randomFood[currentCount - i] &&
+                        randomPos[currentCount] != randomPos[currentCount - i])
                     {
-                        ChangeFood(randomFood, randomPos, ref currentCount);
+                        ChangeFood(randomFood, randomPos, currentCount);
+                        currentCount++;
                     }
                 }
-            }
+            }  
         }
-
-        Debug.Log("Generated!");
     }
 
-    void ChangeFood(int[] randomFood, int[] randomPos, ref int currentCount)
+    void ChangeFood(int[] randomFood, int[] randomPos, int currentCount)
     {
         m_go[randomFood[currentCount]].SetActive(true);
         m_go[randomFood[currentCount]].transform.position = m_generatePos[randomPos[currentCount]].position;
-        m_beforePos = m_go[randomFood[currentCount]].transform.position;
-        currentCount++;
+        //m_beforePos = m_go[randomFood[currentCount]].transform.position;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -94,7 +92,7 @@ public class FoodGenerater : MonoBehaviourPunCallbacks, IPunObservable, IFoodGen
                 stream.SendNext(m_go[i].gameObject.activeSelf);
             }
         }
-        else
+        else if (stream.IsReading && !PhotonNetwork.IsMasterClient)
         {
             for (int i = 0; i < m_go.Length; i++)
             {

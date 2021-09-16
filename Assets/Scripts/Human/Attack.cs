@@ -10,7 +10,11 @@ public class Attack : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+        if (PhotonNetwork.IsConnected && !photonView.IsMine)
+        {
+            GetComponent<Collider>().enabled = false;
+            return;
+        }
         m_human = transform.root.GetComponent<HumanAttackController>();
     }
 

@@ -8,12 +8,14 @@ public class NPCController : MonoBehaviour
     [SerializeField] CockroachMoveController m_moveController = null;
     [SerializeField] GameObject m_dedEffect = null;
     [SerializeField] AudioClip m_clip = null;
+    CockroachChildPoolManager m_poolManager = null;
     float m_moveTimer;
     float m_jumpTimer;
     bool m_isDed = false;
 
     void Start()
     {
+        m_poolManager = transform.GetComponentInParent<CockroachChildPoolManager>();
         m_moveController.StartSet();
         m_jumpTimer = Random.Range(m_data.MinJumpTime, m_data.MaxJumpTime);
         StartCoroutine(Routine());
@@ -121,6 +123,7 @@ public class NPCController : MonoBehaviour
                 AudioSource.PlayClipAtPoint(m_clip, transform.position, 0.3f);
                 Instantiate(m_dedEffect, transform.position + transform.up * 0.2f, transform.rotation);
                 m_isDed = true;
+                m_poolManager?.DecreaseCount();
                 Invoke(nameof(UnActive), 0.1f);
             }
         }

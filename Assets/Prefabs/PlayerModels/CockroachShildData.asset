@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: CockroachShildData
   m_EditorClassIdentifier: 
   m_maxHp: 100
-  m_moveSpeed: 5
-  m_jumpPower: 5
+  m_moveSpeed: 6
+  m_jumpPower: 3
   m_minMoveTime: 1
   m_maxMoveTime: 5
   m_afterMoveWaitTime: 2
   m_leftRotateRange: -50
   m_rightRotateRange: 50
-  m_minJumpTime: 2
-  m_maxJumpTime: 5
+  m_minJumpTime: 3
+  m_maxJumpTime: 10

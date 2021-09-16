@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using Photon.Pun;
+using System;
 
 [RequireComponent(typeof(CockroachMoveController))]
 
@@ -9,6 +10,7 @@ using Photon.Pun;
 /// </summary>
 public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 {
+    public static Action<int, Vector3, Vector3> GenerateChild;
     [SerializeField] CockroachScriptableObject m_data = null;
     /// <summary>現在の体力値</summary>
     [SerializeField] int m_hp = 100;
@@ -97,14 +99,11 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         m_anim.SetBool("Damage", false);
     }
 
-    /// <summary>
-    /// 食べ物を食べて、満腹ゲージを回復する。
-    /// </summary>
-    /// <param name="heelValue">体力に加算する値</param>
-    [PunRPC]
     void Eat()
     {
         // 子供の生成
+        int random = UnityEngine.Random.Range(5, 11);
+        GenerateChild.Invoke(random, transform.position, transform.up);
     }
 
     /// <summary>
@@ -156,20 +155,19 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     {
         //if (!photonView.IsMine) return;
 
-        if (other.tag == "Food")
-        {
-            m_audio?.Play();
+        if (other.tag != "Food") return;
 
-            if (!m_food)
-            {
-                m_food = other.gameObject.GetComponent<Food>();
-            }
-            else
-            {
-                photonView.RPC(nameof(Eat), RpcTarget.All, m_food.m_heelValue);
-                //Eat(m_food.m_heelValue);
-                m_food.UnActive();
-            }
+        m_audio?.Play();
+
+        if (!m_food)
+        {
+            m_food = other.gameObject.GetComponent<Food>();
+        }
+        else
+        {
+            m_food.UnActive();
+            if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+            Eat();
         }
     }
 
