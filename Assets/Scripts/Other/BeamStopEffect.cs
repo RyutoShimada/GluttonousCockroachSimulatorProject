@@ -5,7 +5,7 @@ using UnityEngine;
 public class BeamStopEffect : MonoBehaviour
 {
     [SerializeField] GameObject m_stopEffect = null;
-    [SerializeField] LayerMask m_layerMask;
+    [SerializeField] LayerMask m_layerMask = default;
     RaycastHit m_hit;
     float m_distance;
 

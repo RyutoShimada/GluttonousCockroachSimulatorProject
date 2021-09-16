@@ -55,6 +55,8 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
     /// <param name="hit"></param>
     public void JudgeAttack(bool hit)
     {
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+
         if (hit)
         {
             m_crossHair.color = Color.red;

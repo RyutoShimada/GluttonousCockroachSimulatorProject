@@ -93,6 +93,7 @@ public class CockroachUI : MonoBehaviourPunCallbacks
     /// <param name="maxHp">体力の最大値</param>
     public void ReflectHPSlider(int hp, int maxHp)
     {
+        Debug.Log("HPbar");
         m_hpSlider.DOValue((float)hp / (float)maxHp, m_afterSeconds);
     }
 

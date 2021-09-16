@@ -16,7 +16,7 @@ public class NPCController : MonoBehaviour
     void Start()
     {
         m_poolManager = transform.GetComponentInParent<CockroachChildPoolManager>();
-        m_moveController.StartSet();
+        m_moveController.StartSetNpc();
         m_jumpTimer = Random.Range(m_data.MinJumpTime, m_data.MaxJumpTime);
         StartCoroutine(Routine());
     }
@@ -120,7 +120,7 @@ public class NPCController : MonoBehaviour
             {
                 EventSystem.Instance.AddEnergy();
                 EventSystem.Instance.JudgeAttack(false);
-                AudioSource.PlayClipAtPoint(m_clip, transform.position, 0.3f);
+                AudioSource.PlayClipAtPoint(m_clip, transform.position, 0.5f);
                 Instantiate(m_dedEffect, transform.position + transform.up * 0.2f, transform.rotation);
                 m_isDed = true;
                 m_poolManager?.DecreaseCount();

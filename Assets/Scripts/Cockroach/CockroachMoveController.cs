@@ -7,7 +7,7 @@ using Photon.Pun;
 /// <summary>
 /// ゴキブリの動きに関するスクリプト
 /// </summary>
-public class CockroachMoveController : MonoBehaviourPunCallbacks, IIsCanMove
+public class CockroachMoveController : MonoBehaviourPunCallbacks
 {
     #region Private Serializable Fields
     [SerializeField] CockroachScriptableObject m_data = null;
@@ -53,9 +53,7 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks, IIsCanMove
     bool m_isDed = false;
 
     Animator m_anim;
-
-    [HideInInspector]
-    public bool m_canMove = true;
+    bool m_isNPCmode = false;
 
     /// <summary>死んでいるかどうか</summary>
     public bool IsDed
@@ -68,22 +66,29 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks, IIsCanMove
         }
     }
 
-    public void StartSet()
+    public void StartSetPlayer()
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
-
+        m_rb = GetComponent<Rigidbody>();
         m_currentMoveSpeed = m_data.Speed;
         m_currentJumpPower = m_data.JumpPower;
-        m_rb = GetComponent<Rigidbody>();
         m_anim = GetComponent<Animator>();
-        MenuController.IsMove += IsMove;
+        m_rb.useGravity = false;
+    }
+
+    public void StartSetNpc()
+    {
+        m_isNPCmode = true;
+        m_rb = GetComponent<Rigidbody>();
+        m_currentMoveSpeed = m_data.Speed;
+        m_currentJumpPower = m_data.JumpPower;
+        m_anim = GetComponent<Animator>();
         m_rb.useGravity = false;
     }
 
     void FixedUpdate()
     {
-        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
-        if (!m_canMove) return;
+        if (!m_isNPCmode &&PhotonNetwork.IsConnected && !photonView.IsMine) return;
         if (m_isDed) return;
         Gravity();
         //Move();
@@ -93,14 +98,9 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks, IIsCanMove
     // Update is called once per frame
     void Update()
     {
-        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
-        if (!m_canMove) return;
+        if (!m_isNPCmode && PhotonNetwork.IsConnected && !photonView.IsMine) return;
         if (m_isDed) return;
-
-        //m_v = Input.GetAxisRaw("Vertical");
         Ray();
-        //Jump();
-        //MouseMove();
     }
 
     public void Move(float virtical)
@@ -130,6 +130,12 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks, IIsCanMove
         }
         else // 止まる処理
         {
+            if (m_rb == null) 
+            {
+                // なぜか最初に NULL になる
+                m_rb = GetComponent<Rigidbody>();
+            }
+
             if (m_gravityDir == Vector3.up || m_gravityDir == Vector3.down)
             {
                 // 床か天井にいる時は、Y軸方向の速度以外を0
@@ -266,8 +272,6 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks, IIsCanMove
 
         m_isRotate = false;
     }
-
-    public void IsMove(bool isMove) => m_canMove = isMove;
 
     /// <summary>
     /// cockroachから呼ばれる

@@ -276,9 +276,10 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
         if (stream.IsWriting && photonView.IsMine)
         {
             stream.SendNext(m_isBeamAttacking);
+            stream.SendNext(m_isStandByBeam);
             stream.SendNext(m_currentEnergy);
 
-            if (m_isBeamAttacking)
+            if (m_isStandByBeam)
             {
                 stream.SendNext(m_localRightHandIkWeight);
                 stream.SendNext(m_rightHandIKTarget.position);
@@ -295,9 +296,10 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
         else if (stream.IsReading && !photonView.IsMine)
         {
             m_isBeamAttacking = (bool)stream.ReceiveNext();
+            m_isStandByBeam = (bool)stream.ReceiveNext();
             m_currentEnergy = (int)stream.ReceiveNext();
 
-            if (m_isBeamAttacking)
+            if (m_isStandByBeam)
             {
                 m_localRightHandIkWeight = (float)stream.ReceiveNext();
                 m_rightHandIKTarget.position = (Vector3)stream.ReceiveNext();

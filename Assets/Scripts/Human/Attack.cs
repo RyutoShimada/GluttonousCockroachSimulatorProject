@@ -25,12 +25,4 @@ public class Attack : MonoBehaviourPunCallbacks
             m_human?.HitCockroach(m_damge);
         }
     }
-
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.tag == "Cockroach")
-        {
-            m_human?.HitCockroach(m_damge);
-        }
-    }
 }

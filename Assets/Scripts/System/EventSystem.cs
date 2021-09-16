@@ -12,10 +12,7 @@ public class EventSystem
     #region Definition Of Delegate
 
     // 通知受け取りデリゲート定義
-    public delegate void Move(bool canMove);
-    event Move CanMove;
-
-    public delegate void Life(bool isDed);
+     public delegate void Life(bool isDed);
     event Life Ded;
 
     public delegate void Reset(Vector3 position, Quaternion rotation);
@@ -33,11 +30,6 @@ public class EventSystem
     #region Subscribe To Event
 
     // 通知受け取り登録
-    public void Subscribe(Move canMove)
-    {
-        CanMove += canMove;
-    }
-
     public void Subscribe(Life cockroachIsDed)
     {
         Ded += cockroachIsDed;
@@ -64,11 +56,6 @@ public class EventSystem
     #region Unsubscribe To Event
 
     // 通知受け取り登録解除
-    public void Unsubscribe(Move canMove)
-    {
-        CanMove -= canMove;
-    }
-
     public void Unsubscribe(Life cockroachIsDed)
     {
         Ded -= cockroachIsDed;
@@ -95,14 +82,6 @@ public class EventSystem
     #region DoEvent
 
     // 通知実行
-    public void IsMove(bool canMove)
-    {
-        if (CanMove != null)
-        {
-            CanMove(canMove);
-        }
-    }
-
     public void IsDed(bool isDed)
     {
         if (Ded != null)

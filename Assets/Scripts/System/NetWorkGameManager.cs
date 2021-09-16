@@ -21,7 +21,7 @@ enum GameSatate
 public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 {
     #region Public Fields
-    static public NetWorkGameManager m_Instance = null;
+    static public NetWorkGameManager Instance = null;
     [HideInInspector] public string m_operateCharactor = null;
     #endregion
 
@@ -96,7 +96,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     #region MonoBehaviour CallBacks
     private void Awake()
     {
-        m_Instance = this;
+        Instance = this;
     }
 
     void Start()
@@ -152,20 +152,20 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     }
 
 
-    void Update()
-    {
-        if (m_isGame)
-        {
-            TimeCountDown();
-        }
-        else
-        {
-            if (m_gameState == GameSatate.InGame)
-            {
-                photonView.RPC(nameof(GameOver), RpcTarget.AllViaServer);
-            }
-        }
-    }
+    //void Update()
+    //{
+    //    if (m_isGame)
+    //    {
+    //        TimeCountDown();
+    //    }
+    //    else
+    //    {
+    //        if (m_gameState == GameSatate.InGame)
+    //        {
+    //            photonView.RPC(nameof(GameOver), RpcTarget.AllViaServer);
+    //        }
+    //    }
+    //}
 
     #endregion
 
@@ -367,6 +367,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
                     photonView.RPC(nameof(VictoryCharactor), RpcTarget.All, Charactor.Cockroach);
                     m_minutes = 0;
                     m_seconds = 0;
+                    m_isGame = false;
                     Debug.Log("TimeUp!");
                 }
             }
@@ -382,7 +383,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     {
         photonView.RPC(nameof(VictoryCharactor), RpcTarget.All, Charactor.Human);
         m_isGame = !isDed;
-        EventSystem.Instance.IsMove(false);
+        photonView.RPC(nameof(GameOver), RpcTarget.AllViaServer);
         EventSystem.Instance.Unsubscribe((EventSystem.Life)CockroachIsDed);
     }
 
@@ -390,10 +391,17 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     #region Public Methods
 
+    public void CockroachProliferationComplete()
+    {
+        photonView.RPC(nameof(VictoryCharactor), RpcTarget.All, Charactor.Cockroach);
+        m_isGame = false;
+        photonView.RPC(nameof(GameOver), RpcTarget.AllViaServer);
+    }
+
     /// <summary>
     /// 降参する時ボタンから呼ぶ
     /// </summary>
-   public void GameOverCallBack()
+    public void GameOverCallBack()
     {
         if (m_operatedByPlayer == Charactor.Cockroach)
         {

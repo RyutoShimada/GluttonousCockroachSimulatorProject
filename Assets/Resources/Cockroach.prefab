@@ -145,7 +145,7 @@ GameObject:
   - component: {fileID: 5873278696812477320}
   - component: {fileID: 6530655287659478925}
   m_Layer: 10
-  m_Name: CockroachNetWork
+  m_Name: Cockroach
   m_TagString: Cockroach
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -237,7 +237,6 @@ MonoBehaviour:
   m_rayOriginPos: {fileID: 1380053711590895058}
   m_rotateRayPos: {fileID: 1380053710338534204}
   m_mouseSensitivity: 150
-  m_canMove: 1
 --- !u!114 &-3155712619565757723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,6 +256,10 @@ MonoBehaviour:
   m_addJumpValue: 5
   m_invincibleMode: 0
   m_camera: {fileID: 51643860216663672}
+  m_dedEffect: {fileID: 37836029779743955, guid: a538ac3419b609f4bb5f4ed711ecf194,
+    type: 3}
+  m_eatSE: {fileID: 8300000, guid: 246681058431a3149ade13db94cc57b1, type: 3}
+  m_dedSE: {fileID: 8300000, guid: 82b82a29d4c58cf4b907c142b3da478f, type: 3}
   m_isDed: 0
 --- !u!114 &8000153934261983132
 MonoBehaviour:
@@ -286,6 +289,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_moveController: {fileID: 1916137964568727336}
+  m_canMove: 1
 --- !u!114 &-2510330566171969012
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -360,8 +364,9 @@ AudioSource:
   m_GameObject: {fileID: 1380053710197772766}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 64a990154d92cd54c8c58a36fd2c39e3, type: 3}
+  OutputAudioMixerGroup: {fileID: -7949734552481416781, guid: 147d3429e6d17a4428c127c0ea99a9a4,
+    type: 2}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 0.5
   m_Pitch: 1.5

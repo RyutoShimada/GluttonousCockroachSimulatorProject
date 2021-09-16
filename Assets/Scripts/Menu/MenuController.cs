@@ -19,7 +19,7 @@ public class MenuController : MonoBehaviour
 
     private void Update()
     {
-        if (!NetWorkGameManager.m_Instance) return;
+        if (!NetWorkGameManager.Instance) return;
         if (Input.GetButtonDown("Start"))
         {
             if (!m_menu.activeSelf)
@@ -78,7 +78,7 @@ public class MenuController : MonoBehaviour
     {
         m_menu.gameObject.SetActive(false);
         IsMove?.Invoke(true);
-        if (!NetWorkGameManager.m_Instance) return;
+        if (!NetWorkGameManager.Instance) return;
         Cursor.visible = false;
     }
 }

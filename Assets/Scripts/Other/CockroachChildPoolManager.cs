@@ -5,9 +5,8 @@ using Photon.Pun;
 using UnityEngine.UI;
 using DG.Tweening;
 
-public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
+public class CockroachChildPoolManager : MonoBehaviourPunCallbacks, IPunObservable
 {
-    
     [SerializeField] GameObject m_generatePrefab = null;
     [SerializeField] int m_generateCount = 100;
     [SerializeField] Text m_countText = null;
@@ -62,7 +61,14 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
 
     public void DecreaseCount()
     {
-        UpdateText(m_currentCount - 1);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC(nameof(Check), RpcTarget.All);
+        }
+        else
+        {
+            Check();
+        }
     }
 
     void UpdateText(int count)
@@ -70,5 +76,39 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
         // 数値を滑らかに変動させている
         DOTween.To(() => m_currentCount, n => m_currentCount = n, count, 0.5f)
             .OnUpdate(() => m_countText.text = m_currentCount.ToString());
+
+        if (m_currentCount >= m_generateCount)
+        {
+            NetWorkGameManager.Instance.CockroachProliferationComplete();
+        }
+    }
+
+    [PunRPC]
+    void Check()
+    {
+        UpdateText(m_currentCount - 1);
+        int i = 0;
+        foreach (Transform t in transform)
+        {
+            if (!t.gameObject.activeSelf) return;
+            i++;
+        }
+
+        if (i == m_currentCount)
+        {
+            m_currentCount--;
+        }
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        if (stream.IsWriting && photonView.IsMine)
+        {
+            stream.SendNext(m_currentCount);
+        }
+        else if (stream.IsReading && !photonView.IsMine)
+        {
+            m_currentCount = (int)stream.ReceiveNext();
+        }
     }
 }

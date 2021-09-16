@@ -25,6 +25,12 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] GameObject m_camera = null;
 
+    [SerializeField] GameObject m_dedEffect = null;
+
+    [SerializeField] AudioClip m_eatSE = null;
+
+    [SerializeField] AudioClip m_dedSE = null;
+
     CockroachMoveController m_moveController = null;
     CockroachUI m_cockroachUINetWork = null;
 
@@ -33,7 +39,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     Animator m_anim;
 
     /// <summary>死んだかどうか</summary>
-    public bool m_isDed = false;
+    [HideInInspector] public bool m_isDed = false;
 
     private void Start()
     {
@@ -42,9 +48,10 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         EventSystem.Instance.Subscribe((EventSystem.Reset)ResetPosition);
         m_isDed = false;
         m_hp = m_data.MaxHP;
-
+        
         if (PhotonNetwork.IsConnected && !photonView.IsMine)
         {
+            HumanAttackController.HitDamege += BeAttacked;
             m_camera?.SetActive(false);
             return;
         }
@@ -52,7 +59,6 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         m_audio = GetComponent<AudioSource>();
         m_cockroachUINetWork = GetComponent<CockroachUI>();
         m_camera?.SetActive(true);
-        HumanAttackController.HitDamege += BeAttacked;
     }
 
     private void OnDestroy()
@@ -69,30 +75,38 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    [PunRPC]
     void CheckAlive()
     {
         if (m_hp > 0) return;
         m_hp = 0;
         m_isDed = true;
         m_moveController.IsDed = true;
+        Instantiate(m_dedEffect, transform.position + transform.up * 0.2f, transform.rotation);
+        if (PhotonNetwork.IsConnected && photonView.IsMine)
+        {
+            m_audio.PlayOneShot(m_dedSE);
+        }
+        else if (!PhotonNetwork.IsConnected)
+        {
+            m_audio.PlayOneShot(m_dedSE);
+        }
         EventSystem.Instance.IsDed(m_isDed);
-        Debug.Log("Ded!");
+        Invoke(nameof(UnActive), 0.2f);
     }
+
+    void UnActive() => gameObject.SetActive(false);
 
     /// <summary>
     /// 無敵モード
     /// </summary>
     IEnumerator InvincibleMode()
     {
-        Debug.Log("無敵モード開始");
         // 無敵モード開始
         m_moveController.InvincibleMode(m_invincibleMode, m_addSpeedValue, m_addJumpValue);
         m_anim.SetBool("Damage", true);
 
         yield return new WaitForSeconds(m_invincibleModeTime);
 
-        Debug.Log("無敵モード停止");
         // 無敵モード停止
         m_invincibleMode = false;
         m_moveController.InvincibleMode(m_invincibleMode, m_addSpeedValue, m_addJumpValue);
@@ -119,24 +133,22 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 
         if (PhotonNetwork.IsConnected)
         {
-            // 生存確認
-            photonView.RPC(nameof(CheckAlive), RpcTarget.All);
             // 無敵モード開始
             photonView.RPC(nameof(StartCoroutineInvicibleMode), RpcTarget.All);
             // HPの同期（IsMine ではないオブジェクトからの同期なので OnPhotonSerializeView は使えない）
             photonView.RPC(nameof(RefleshHp), RpcTarget.All, m_hp, damageValue);
+            // ダメージを受けたUI表示
+            photonView.RPC(nameof(StartCoroutineDamegeImageChangeColor), RpcTarget.Others);
+            // HPバーを減少させる
+            photonView.RPC(nameof(m_cockroachUINetWork.ReflectHPSlider), RpcTarget.Others, m_hp, m_data.MaxHP);
         }
         else
         {
-            CheckAlive();
             StartCoroutineInvicibleMode();
             RefleshHp(m_hp, damageValue);
+            StartCoroutine(m_cockroachUINetWork?.DamageColor());
+            m_cockroachUINetWork?.ReflectHPSlider(m_hp, m_data.MaxHP);
         }
-
-        // ダメージを受けたUI表示
-        StartCoroutine(m_cockroachUINetWork?.DamageColor());
-        // HPバーを減少させる
-        m_cockroachUINetWork?.ReflectHPSlider(m_hp, m_data.MaxHP);
     }
 
     [PunRPC]
@@ -153,11 +165,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 
     private void OnTriggerEnter(Collider other)
     {
-        //if (!photonView.IsMine) return;
-
         if (other.tag != "Food") return;
-
-        m_audio?.Play();
 
         if (!m_food)
         {
@@ -169,6 +177,9 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
             if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
             Eat();
         }
+
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+        m_audio.PlayOneShot(m_eatSE);
     }
 
     [PunRPC]
@@ -176,17 +187,17 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     {
         hp -= damage;
         this.m_hp = hp;
+        CheckAlive();
         Debug.Log("HP : " + m_hp);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        if (stream.IsWriting)
+        if (stream.IsWriting && photonView.IsMine)
         {
             stream.SendNext(m_isDed);
-
         }
-        else
+        else if (stream.IsReading && !photonView.IsMine)
         {
             m_isDed = (bool)stream.ReceiveNext();
         }
