@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using System;
 
-public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, IIsCanMove
+public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, IIsCanMove, IOnPhotonViewPreNetDestroy
 {
     public static Action<int> HitDamege;
 
@@ -313,5 +313,11 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
                 m_leftArmIKTarget.rotation = (Quaternion)stream.ReceiveNext();
             }
         }
+    }
+
+    public void OnPreNetDestroy(PhotonView rootView)
+    {
+        EventSystem.Instance.Unsubscribe(AddEnergy);
+        MenuController.IsMove -= IsMove;
     }
 }

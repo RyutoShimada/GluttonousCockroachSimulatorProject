@@ -53,6 +53,8 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove, IOnPhotonViewPreNetD
 
     private void OnDestroy()
     {
+        MenuController.IsMove -= IsMove;
+        NPCController.Ded -= PunRPCCockChilAttack;
         EventSystem.Instance.Unsubscribe(ResetPosition);
         EventSystem.Instance.Unsubscribe((EventSystem.Judge)JudgeAttack);
     }
@@ -153,5 +155,7 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove, IOnPhotonViewPreNetD
     {
         MenuController.IsMove -= IsMove;
         NPCController.Ded -= PunRPCCockChilAttack;
+        EventSystem.Instance.Unsubscribe(ResetPosition);
+        EventSystem.Instance.Unsubscribe((EventSystem.Judge)JudgeAttack);
     }
 }

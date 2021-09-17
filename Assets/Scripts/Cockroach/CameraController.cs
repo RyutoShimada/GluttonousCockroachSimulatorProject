@@ -23,6 +23,11 @@ public class CameraController : MonoBehaviour, IIsCanMove
         }
     }
 
+    private void OnDestroy()
+    {
+        MenuController.IsMove -= IsMove;
+    }
+
     public void IsMove(bool isMove) => m_canMove = isMove;
 
     void CameraControlle()
