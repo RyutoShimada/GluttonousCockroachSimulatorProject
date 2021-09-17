@@ -10,7 +10,7 @@ using System;
 /// </summary>
 public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 {
-    public static Action<int, Vector3, Vector3> GenerateChild;
+    public static Action<int, Vector3, Vector3> Generate;
     [SerializeField] CockroachScriptableObject m_data = null;
     /// <summary>現在の体力値</summary>
     [SerializeField] int m_hp = 100;
@@ -38,6 +38,8 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     AudioSource m_audio;
     Animator m_anim;
 
+    bool m_eating = false;
+
     /// <summary>死んだかどうか</summary>
     [HideInInspector] public bool m_isDed = false;
 
@@ -48,7 +50,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         EventSystem.Instance.Subscribe((EventSystem.Reset)ResetPosition);
         m_isDed = false;
         m_hp = m_data.MaxHP;
-        
+
         if (PhotonNetwork.IsConnected && !photonView.IsMine)
         {
             HumanAttackController.HitDamege += BeAttacked;
@@ -115,9 +117,18 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 
     void Eat()
     {
+        m_eating = true;
         // 子供の生成
         int random = UnityEngine.Random.Range(5, 11);
-        GenerateChild.Invoke(random, transform.position, transform.up);
+        photonView.RPC(nameof(CallGenerate), RpcTarget.All, random);
+    }
+
+    [PunRPC]
+    void CallGenerate(int count)
+    {
+        Debug.Log($"CallGenerate : generateCount {count}");
+        Generate.Invoke(count, transform.position, transform.up);
+        m_eating = false;
     }
 
     /// <summary>
@@ -174,7 +185,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         else
         {
             m_food.UnActive();
-            if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+            if (PhotonNetwork.IsConnected && !photonView.IsMine || m_eating) return;
             Eat();
         }
 

@@ -1,10 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Photon.Pun;
+using System;
 
 public class NPCController : MonoBehaviour
 {
+    public static Action Ded;
     [SerializeField] CockroachScriptableObject m_data = null;
     [SerializeField] CockroachMoveController m_moveController = null;
     [SerializeField] GameObject m_dedEffect = null;
@@ -27,7 +28,7 @@ public class NPCController : MonoBehaviour
     {
         m_poolManager = transform.GetComponentInParent<CockroachChildPoolManager>();
         m_moveController.StartSetNpc();
-        m_jumpTimer = Random.Range(m_data.MinJumpTime, m_data.MaxJumpTime);
+        m_jumpTimer = UnityEngine.Random.Range(m_data.MinJumpTime, m_data.MaxJumpTime);
         StartCoroutine(Routine());
     }
 
@@ -46,7 +47,7 @@ public class NPCController : MonoBehaviour
 
         while (!m_isDed)
         {
-            random = Random.Range(0, 2);
+            random = UnityEngine.Random.Range(0, 2);
 
             if (random > 0)
             {
@@ -63,13 +64,13 @@ public class NPCController : MonoBehaviour
 
     IEnumerator Move()
     {
-        m_moveTimer = Random.Range(m_data.MinMoveTime, m_data.MaxMoveTime);
+        m_moveTimer = UnityEngine.Random.Range(m_data.MinMoveTime, m_data.MaxMoveTime);
         while (m_moveTimer > 0)
         {
             m_jumpTimer -= Time.deltaTime;
             if (m_jumpTimer < 0)
             {
-                m_jumpTimer = Random.Range(m_data.MinJumpTime, m_data.MaxJumpTime);
+                m_jumpTimer = UnityEngine.Random.Range(m_data.MinJumpTime, m_data.MaxJumpTime);
                 yield return Rotate();
                 m_moveController.Move(1f);
                 Jump();
@@ -82,7 +83,7 @@ public class NPCController : MonoBehaviour
 
     IEnumerator MeandelingMove()
     {
-        m_moveTimer = Random.Range(m_data.MinMoveTime, m_data.MaxMoveTime);
+        m_moveTimer = UnityEngine.Random.Range(m_data.MinMoveTime, m_data.MaxMoveTime);
         m_jumpTimer = 0.3f;
 
         while (m_moveTimer > 0)
@@ -103,15 +104,15 @@ public class NPCController : MonoBehaviour
 
     IEnumerator Rotate()
     {
-        float waitTime = Random.Range(0, m_data.AftorMoveWaitTime);
+        float waitTime = UnityEngine.Random.Range(0, m_data.AftorMoveWaitTime);
         yield return new WaitForSeconds(waitTime);
-        waitTime = Random.Range(m_data.LeftRotateRange, m_data.RightRotateRange);
+        waitTime = UnityEngine.Random.Range(m_data.LeftRotateRange, m_data.RightRotateRange);
         m_moveController.MouseMove(waitTime, waitTime);
     }
 
     void Rotating()
     {
-        float rotate = Random.Range(m_data.LeftRotateRange, m_data.RightRotateRange);
+        float rotate = UnityEngine.Random.Range(m_data.LeftRotateRange, m_data.RightRotateRange);
         m_moveController.MouseMove(rotate, rotate);
     }
 
@@ -120,22 +121,26 @@ public class NPCController : MonoBehaviour
         m_moveController.Jump(true);
     }
 
-    void UnActive() => gameObject.SetActive(false);
+    void UnActive()
+    {
+        gameObject.SetActive(false);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Attack")
         {
-            if (!m_isDed)
-            {
-                EventSystem.Instance.AddEnergy();
-                EventSystem.Instance.JudgeAttack(false);
-                AudioSource.PlayClipAtPoint(m_clip, transform.position, 0.5f);
-                Instantiate(m_dedEffect, transform.position + transform.up * 0.2f, transform.rotation);
-                m_isDed = true;
-                m_poolManager?.DecreaseCount();
-                Invoke(nameof(UnActive), 0.1f);
-            }
+            if (m_isDed) return;
+
+            EventSystem.Instance.AddEnergy();
+            EventSystem.Instance.JudgeAttack(false);
+            AudioSource.PlayClipAtPoint(m_clip, transform.position, 0.5f);
+            Instantiate(m_dedEffect, transform.position + transform.up * 0.2f, transform.rotation);
+            m_isDed = true;
+            // ニンゲンに知らせて、同期させる
+            Ded.Invoke();
+            //m_poolManager?.DecreaseCount();
+            Invoke(nameof(UnActive), 0.1f);
         }
     }
 }

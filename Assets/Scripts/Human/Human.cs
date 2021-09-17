@@ -5,9 +5,11 @@ using UnityEngine.UI;
 using Cinemachine;
 using Photon.Pun;
 using DG.Tweening;
+using System;
 
-public class Human : MonoBehaviourPunCallbacks, IIsCanMove
+public class Human : MonoBehaviourPunCallbacks, IIsCanMove, IOnPhotonViewPreNetDestroy
 {
+    public static Action CockChildAttack;
     [SerializeField] Transform m_cameraPos = null;
     [SerializeField] GameObject m_vcamPrefab = null;
     [SerializeField] GameObject m_humanUiPrefab = null;
@@ -34,6 +36,7 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
         EventSystem.Instance.Subscribe(ResetPosition);
         EventSystem.Instance.Subscribe((EventSystem.Judge)JudgeAttack);
         MenuController.IsMove += IsMove;
+        NPCController.Ded += PunRPCCockChilAttack;
         Transform t = GameObject.Find("Canvas").transform;
         m_ui = Instantiate(m_humanUiPrefab, t);
         m_crossHair = m_ui.transform.Find("CrossHair").GetComponent<Image>();
@@ -133,5 +136,22 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
         {
             m_vcamBase.enabled = isMove;
         }
+    }
+
+    void PunRPCCockChilAttack()
+    {
+        photonView.RPC(nameof(CockChildAttacking), RpcTarget.All);
+    }
+
+    [PunRPC]
+    public void CockChildAttacking()
+    {
+        CockChildAttack.Invoke();
+    }
+
+    public void OnPreNetDestroy(PhotonView rootView)
+    {
+        MenuController.IsMove -= IsMove;
+        NPCController.Ded -= PunRPCCockChilAttack;
     }
 }

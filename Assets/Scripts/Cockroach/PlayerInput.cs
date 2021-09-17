@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class PlayerInput : MonoBehaviourPunCallbacks, IIsCanMove
+public class PlayerInput : MonoBehaviourPunCallbacks, IIsCanMove, IOnPhotonViewPreNetDestroy
 {
     [SerializeField] CockroachMoveController m_moveController = null;
     [HideInInspector] public bool m_canMove = true;
@@ -37,11 +37,18 @@ public class PlayerInput : MonoBehaviourPunCallbacks, IIsCanMove
 
     public void IsMove(bool isMove)
     {
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+
         m_canMove = isMove;
 
         if (m_canMove)
         {
             StartCoroutine(UpdateCoroutine());
         }
+    }
+
+    public void OnPreNetDestroy(PhotonView rootView)
+    {
+        MenuController.IsMove -= IsMove;
     }
 }

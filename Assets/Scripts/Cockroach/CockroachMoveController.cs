@@ -25,6 +25,8 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks
     [SerializeField] Transform m_rotateRayPos = null;
     // <summary>マウスの感度</summary>
     [SerializeField, Range(50f, 300f)] float m_mouseSensitivity = 50f;
+
+    [SerializeField] Animator m_anim = null;
     #endregion
 
 
@@ -52,7 +54,6 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks
     /// <summary>死んでいるかどうか</summary>
     bool m_isDed = false;
 
-    Animator m_anim;
     bool m_isNPCmode = false;
 
     /// <summary>死んでいるかどうか</summary>
@@ -162,11 +163,11 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks
 
         if (m_isGrounded)
         {
-            m_anim?.SetFloat("Velocity", virtical);
+            m_anim.SetFloat("Velocity", virtical);
         }
         else
         {
-            m_anim?.SetFloat("Velocity", 0);
+            m_anim.SetFloat("Velocity", 0);
         }
     }
 
@@ -259,7 +260,7 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks
             transform.DORotateQuaternion(toRotate, 0.25f).OnComplete(() =>
             {
                 // 回転した時にできた隙間を強制的に埋める
-                m_rb.AddForce(m_gravityDir * m_gravityPower, ForceMode.Impulse);
+                m_rb.AddForce(m_gravityDir * m_gravityPower * 10, ForceMode.Impulse);
             });
         }
         else

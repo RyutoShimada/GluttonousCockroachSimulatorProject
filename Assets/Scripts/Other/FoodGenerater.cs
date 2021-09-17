@@ -10,6 +10,7 @@ public class FoodGenerater : MonoBehaviourPunCallbacks, IPunObservable, IFoodGen
     [SerializeField] int m_generateCount = 2;
     GameObject[] m_go;
     Vector3 m_beforePos = Vector3.zero;
+    [SerializeField] bool m_testPlay = false;
 
     private void Start()
     {
@@ -22,6 +23,11 @@ public class FoodGenerater : MonoBehaviourPunCallbacks, IPunObservable, IFoodGen
             m_go[i] = Instantiate(m_foods[i], m_generatePos[i].position, m_generatePos[i].rotation, transform);
             m_go[i].GetComponent<Food>().m_foodGeneraterNetWork = this;
             m_go[i].SetActive(false);
+        }
+
+        if (m_testPlay)
+        {
+            Generate();
         }
     }
 
