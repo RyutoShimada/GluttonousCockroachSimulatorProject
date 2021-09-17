@@ -126,7 +126,6 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void CallGenerate(int count)
     {
-        Debug.Log($"CallGenerate : generateCount {count}");
         Generate.Invoke(count, transform.position, transform.up);
         m_eating = false;
     }

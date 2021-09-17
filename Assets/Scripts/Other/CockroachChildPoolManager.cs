@@ -62,21 +62,22 @@ public class CockroachChildPoolManager : MonoBehaviour
 
         m_currentCount += currentCount;
         UpdateText(m_currentCount);
-        Debug.Log($"ActiveRandomRotation : currentCount {m_currentCount}");
     }
 
-    public void DecreaseCount()
+    public void DecreaseCount(bool isCallChaild)
     {
         m_currentCount--;
         UpdateText(m_currentCount);
         Debug.Log($"Decrease : currentCount {m_currentCount}");
+
+        if (isCallChaild) return;
 
         foreach (Transform child in gameObject.transform)
         {
             if (child.gameObject.activeSelf)
             {
                 child.gameObject.SetActive(false);
-                return;
+                break;
             }
         }
     }

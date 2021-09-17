@@ -9,7 +9,7 @@ using System;
 
 public class Human : MonoBehaviourPunCallbacks, IIsCanMove, IOnPhotonViewPreNetDestroy
 {
-    public static Action CockChildAttack;
+    public static Action<bool> CockChildAttack;
     [SerializeField] Transform m_cameraPos = null;
     [SerializeField] GameObject m_vcamPrefab = null;
     [SerializeField] GameObject m_humanUiPrefab = null;
@@ -140,13 +140,13 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove, IOnPhotonViewPreNetD
 
     void PunRPCCockChilAttack()
     {
-        photonView.RPC(nameof(CockChildAttacking), RpcTarget.All);
+        photonView.RPC(nameof(CockChildAttacking), RpcTarget.OthersBuffered);
     }
 
     [PunRPC]
     public void CockChildAttacking()
     {
-        CockChildAttack.Invoke();
+        CockChildAttack.Invoke(false);
     }
 
     public void OnPreNetDestroy(PhotonView rootView)
