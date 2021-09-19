@@ -9,6 +9,7 @@ public class CockroachChildPoolManager : MonoBehaviour
     [SerializeField] GameObject m_generatePrefab = null;
     [SerializeField] int m_generateCount = 100;
     [SerializeField] Text m_countText = null;
+    [SerializeField] bool m_isTestPlay = false;
     int m_currentCount = 0;
 
     private void Awake()
@@ -21,6 +22,10 @@ public class CockroachChildPoolManager : MonoBehaviour
     {   
         Generate();
         UpdateText(m_currentCount);
+        if (m_isTestPlay)
+        {
+            ActiveRandomRotation(100, Vector3.zero, Vector3.up);
+        }
     }
 
     private void OnDestroy()
@@ -88,7 +93,7 @@ public class CockroachChildPoolManager : MonoBehaviour
 
         if (m_currentCount >= m_generateCount)
         {
-            NetWorkGameManager.Instance.CockroachProliferationComplete();
+            NetWorkGameManager.Instance?.CockroachProliferationComplete();
         }
 
         // 数値を滑らかに変動させている

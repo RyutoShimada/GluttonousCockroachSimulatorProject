@@ -127,7 +127,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh188248
+  m_Name: pb_Mesh-30124
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -362,6 +362,11 @@ PrefabInstance:
       propertyPath: m_countText
       value: 
       objectReference: {fileID: 1190948872589970244}
+    - target: {fileID: 2054435877952372390, guid: 821b3516b78c414439a00194b3dc9009,
+        type: 3}
+      propertyPath: m_isTestPlay
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2054435877952372391, guid: 821b3516b78c414439a00194b3dc9009,
         type: 3}
       propertyPath: sceneViewId
@@ -725,13 +730,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1321097192}
-  m_LocalRotation: {x: 0.14288804, y: 0, z: 0, w: 0.9897389}
-  m_LocalPosition: {x: 0, y: 8.83, z: -6.73}
+  m_LocalRotation: {x: 0.13349554, y: -0.35291606, z: 0.050950292, w: 0.92468005}
+  m_LocalPosition: {x: 6.33, y: 9.41, z: -8.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 16.43, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 16.43, y: -41.78, z: 0}
 --- !u!114 &1321097196
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -778,6 +783,11 @@ PrefabInstance:
       propertyPath: sceneViewId
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1460826044278861489, guid: 6d50b5190b0154246ad3914b4a103d8f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1460826044278861501, guid: 6d50b5190b0154246ad3914b4a103d8f,
         type: 3}
       propertyPath: m_Name
@@ -787,6 +797,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1460826044278861547, guid: 6d50b5190b0154246ad3914b4a103d8f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1460826044278861551, guid: 6d50b5190b0154246ad3914b4a103d8f,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1460826044279222939, guid: 6d50b5190b0154246ad3914b4a103d8f,
         type: 3}
@@ -987,6 +1007,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Cockroach
+      objectReference: {fileID: 0}
+    - target: {fileID: 1380053710197772766, guid: 611a1954a5117374084928d957476b7e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4890464094689666389, guid: 611a1954a5117374084928d957476b7e,
         type: 3}
@@ -1342,5 +1367,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Map
       objectReference: {fileID: 0}
+    - target: {fileID: 3517416511064128125, guid: 26c67b0e73b8008499f01a647e6f6b09,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 1ae6baa7fef30874f81f16adec5cb7ab, type: 2}
+    - target: {fileID: 5108060861030808549, guid: 26c67b0e73b8008499f01a647e6f6b09,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7706837388933644253, guid: 26c67b0e73b8008499f01a647e6f6b09,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 0a09332e1dfdbd14485398daf9937475, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 26c67b0e73b8008499f01a647e6f6b09, type: 3}
