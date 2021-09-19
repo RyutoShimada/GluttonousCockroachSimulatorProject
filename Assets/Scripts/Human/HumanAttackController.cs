@@ -38,6 +38,8 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
     [SerializeField] AudioClip m_chargedSE = null;
     [Tooltip("ビーム音")]
     [SerializeField] AudioClip m_beamSE = null;
+    [Tooltip("パンチ音")]
+    [SerializeField] AudioClip m_punchSE = null;
 
     AudioSource m_audio = null;
     Animator m_anim = null;
@@ -139,6 +141,7 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
     IEnumerator Punching()
     {
         m_punchRange.enabled = true;
+        m_audio.PlayOneShot(m_punchSE, 0.5f);
 
         if (m_isLeftAttacking)
         {

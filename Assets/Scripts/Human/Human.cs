@@ -142,7 +142,14 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove, IOnPhotonViewPreNetD
 
     void PunRPCCockChilAttack()
     {
-        photonView.RPC(nameof(CockChildAttacking), RpcTarget.OthersBuffered);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC(nameof(CockChildAttacking), RpcTarget.OthersBuffered);
+        }
+        else
+        {
+            CockChildAttacking();
+        }
     }
 
     [PunRPC]

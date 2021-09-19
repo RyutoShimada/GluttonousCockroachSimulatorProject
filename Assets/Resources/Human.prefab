@@ -825,6 +825,7 @@ MonoBehaviour:
   m_energyChargedSE: {fileID: 8300000, guid: 3971e6db387f0b44989893f9678861c3, type: 3}
   m_chargedSE: {fileID: 8300000, guid: 9990035efcc3a1b4bb8e9a4696921ebd, type: 3}
   m_beamSE: {fileID: 8300000, guid: 710fce1251b77fc46bf7ecd337e5601f, type: 3}
+  m_punchSE: {fileID: 8300000, guid: 21175ee71ac853040a235307e2d79149, type: 3}
 --- !u!114 &647363441909792519
 MonoBehaviour:
   m_ObjectHideFlags: 0
