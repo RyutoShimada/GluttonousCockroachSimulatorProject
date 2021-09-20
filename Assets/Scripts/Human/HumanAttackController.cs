@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 using System;
 
-public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, IIsCanMove, IOnPhotonViewPreNetDestroy
+public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, IIsCanMove
 {
     public static Action<int> HitDamege;
 
@@ -73,8 +73,9 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
         m_rightArmOriginPos = m_rightArmIKTarget;
 
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+        NPCController.Ded += AddEnergy;
         MenuController.IsMove += IsMove;
-        EventSystem.Instance.Subscribe(AddEnergy);
+        //EventSystem.Instance.Subscribe(AddEnergy);
         m_human = GetComponent<Human>();
     }
 
@@ -86,7 +87,12 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
         Attack();
     }
 
-    private void OnDestroy() => EventSystem.Instance.Unsubscribe(AddEnergy);
+    private void OnDestroy()
+    {
+        //EventSystem.Instance.Unsubscribe(AddEnergy);
+        MenuController.IsMove -= IsMove;
+        NPCController.Ded -= AddEnergy;
+    }
 
     public void IsMove(bool isMove) => m_canMove = isMove;
 
@@ -316,11 +322,5 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
                 m_leftArmIKTarget.rotation = (Quaternion)stream.ReceiveNext();
             }
         }
-    }
-
-    public void OnPreNetDestroy(PhotonView rootView)
-    {
-        EventSystem.Instance.Unsubscribe(AddEnergy);
-        MenuController.IsMove -= IsMove;
     }
 }

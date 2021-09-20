@@ -101,8 +101,8 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
-        EventSystem.Instance.Subscribe((EventSystem.Life)CockroachIsDed);
-
+        //EventSystem.Instance.Subscribe((EventSystem.Life)CockroachIsDed);
+        Cockroach.IsDed += CockroachIsDed;
         if (!PhotonNetwork.IsConnected)
         {
             // マスターサーバーへ接続できなかったらLuncherSceneをロードする
@@ -379,12 +379,13 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    void CockroachIsDed(bool isDed)
+    void CockroachIsDed()
     {
         photonView.RPC(nameof(VictoryCharactor), RpcTarget.All, Charactor.Human);
-        m_isGame = !isDed;
+        m_isGame = false;
         photonView.RPC(nameof(GameOver), RpcTarget.AllViaServer);
-        EventSystem.Instance.Unsubscribe((EventSystem.Life)CockroachIsDed);
+        //EventSystem.Instance.Unsubscribe((EventSystem.Life)CockroachIsDed);
+        Cockroach.IsDed -= CockroachIsDed;
     }
 
     #endregion

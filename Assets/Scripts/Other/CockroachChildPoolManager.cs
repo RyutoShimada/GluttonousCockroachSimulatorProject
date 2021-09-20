@@ -95,16 +95,5 @@ public class CockroachChildPoolManager : MonoBehaviour
         {
             NetWorkGameManager.Instance?.CockroachProliferationComplete();
         }
-
-        // 数値を滑らかに変動させている
-        //DOTween.To(() => m_currentCount, n => m_currentCount = n, count, 0.5f)
-        //    .OnUpdate(() => m_countText.text = m_currentCount.ToString())
-        //    .OnComplete(() =>
-        //    {
-        //        if (m_currentCount >= m_generateCount)
-        //        {
-        //            NetWorkGameManager.Instance.CockroachProliferationComplete();
-        //        }
-        //    });
     }
 }

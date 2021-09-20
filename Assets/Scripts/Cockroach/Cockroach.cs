@@ -10,6 +10,7 @@ using System;
 /// </summary>
 public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 {
+    public static Action IsDed;
     public static Action<int, Vector3, Vector3> Generate;
     [SerializeField] CockroachScriptableObject m_data = null;
     /// <summary>現在の体力値</summary>
@@ -92,7 +93,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         {
             m_audio.PlayOneShot(m_dedSE);
         }
-        EventSystem.Instance.IsDed(m_isDed);
+        IsDed?.Invoke();
         Invoke(nameof(UnActive), 0.2f);
     }
 

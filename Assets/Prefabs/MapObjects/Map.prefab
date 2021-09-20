@@ -8351,6 +8351,7 @@ GameObject:
   - component: {fileID: 4673100286407931325}
   - component: {fileID: 7439621929466462583}
   - component: {fileID: 6039972021412056282}
+  - component: {fileID: 5117462084470636647}
   m_Layer: 0
   m_Name: Kankisen
   m_TagString: Untagged
@@ -8433,6 +8434,19 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4068373912626513877, guid: fc2cb432f39754548a8ca5b67e7c3408, type: 3}
+--- !u!65 &5117462084470636647
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8952633560731328674}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.38, y: 0.01, z: 0.36}
+  m_Center: {x: 0, y: -0.18, z: 0}
 --- !u!1 &9016598908786736143
 GameObject:
   m_ObjectHideFlags: 0

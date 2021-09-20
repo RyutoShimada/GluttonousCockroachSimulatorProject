@@ -47,3 +47,4 @@ MonoBehaviour:
     type: 3}
   m_generateCount: 100
   m_countText: {fileID: 0}
+  m_isTestPlay: 0

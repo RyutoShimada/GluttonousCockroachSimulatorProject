@@ -132,13 +132,13 @@ public class NPCController : MonoBehaviour
         {
             if (m_isDed) return;
 
-            EventSystem.Instance.AddEnergy();
-            EventSystem.Instance.JudgeAttack(false);
+            //EventSystem.Instance.AddEnergy();
+            //EventSystem.Instance.JudgeAttack(false);
             AudioSource.PlayClipAtPoint(m_clip, transform.position, 0.5f);
             Instantiate(m_dedEffect, transform.position + transform.up * 0.2f, transform.rotation);
             m_isDed = true;
             // ニンゲンに知らせて、同期させる
-            Ded.Invoke();
+            Ded?.Invoke();
             m_poolManager?.DecreaseCount(true);
             Invoke(nameof(UnActive), 0.1f);
         }

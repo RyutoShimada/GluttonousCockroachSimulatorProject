@@ -7,7 +7,7 @@ using Photon.Pun;
 using DG.Tweening;
 using System;
 
-public class Human : MonoBehaviourPunCallbacks, IIsCanMove, IOnPhotonViewPreNetDestroy
+public class Human : MonoBehaviourPunCallbacks, IIsCanMove
 {
     public static Action<bool> CockChildAttack;
     [SerializeField] Transform m_cameraPos = null;
@@ -34,9 +34,9 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove, IOnPhotonViewPreNetD
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
 
         EventSystem.Instance.Subscribe(ResetPosition);
-        EventSystem.Instance.Subscribe((EventSystem.Judge)JudgeAttack);
         MenuController.IsMove += IsMove;
         NPCController.Ded += PunRPCCockChilAttack;
+        NPCController.Ded += JudgeAttackCockChilCallback;
         Transform t = GameObject.Find("Canvas").transform;
         m_ui = Instantiate(m_humanUiPrefab, t);
         m_crossHair = m_ui.transform.Find("CrossHair").GetComponent<Image>();
@@ -55,8 +55,8 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove, IOnPhotonViewPreNetD
     {
         MenuController.IsMove -= IsMove;
         NPCController.Ded -= PunRPCCockChilAttack;
+        NPCController.Ded -= JudgeAttackCockChilCallback;
         EventSystem.Instance.Unsubscribe(ResetPosition);
-        EventSystem.Instance.Unsubscribe((EventSystem.Judge)JudgeAttack);
     }
 
     /// <summary>
@@ -75,6 +75,12 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove, IOnPhotonViewPreNetD
         {
             m_crossHair.color = Color.white;
         }
+    }
+
+    void JudgeAttackCockChilCallback()
+    {
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+        m_crossHair.color = Color.white;
     }
 
     public void ChangeGauge(int value, float time)
@@ -156,13 +162,5 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove, IOnPhotonViewPreNetD
     public void CockChildAttacking()
     {
         CockChildAttack.Invoke(false);
-    }
-
-    public void OnPreNetDestroy(PhotonView rootView)
-    {
-        MenuController.IsMove -= IsMove;
-        NPCController.Ded -= PunRPCCockChilAttack;
-        EventSystem.Instance.Unsubscribe(ResetPosition);
-        EventSystem.Instance.Unsubscribe((EventSystem.Judge)JudgeAttack);
     }
 }
