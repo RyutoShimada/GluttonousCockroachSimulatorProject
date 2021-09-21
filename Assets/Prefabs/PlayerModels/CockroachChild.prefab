@@ -204,7 +204,7 @@ MonoBehaviour:
   m_moveController: {fileID: 7155526751963773679}
   m_dedEffect: {fileID: 37836029779743955, guid: a538ac3419b609f4bb5f4ed711ecf194,
     type: 3}
-  m_clip: {fileID: 8300000, guid: d688bd8faa295f24c99c005e14d8e167, type: 3}
+  m_clip: {fileID: 8300000, guid: b6a785781837a7e43a54ff7e2d6f4bb9, type: 3}
 --- !u!114 &7155526751963773679
 MonoBehaviour:
   m_ObjectHideFlags: 0

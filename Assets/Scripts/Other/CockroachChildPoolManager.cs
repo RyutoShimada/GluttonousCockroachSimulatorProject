@@ -2,20 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
+using Photon.Pun;
 
-public class CockroachChildPoolManager : MonoBehaviour
+public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] GameObject m_generatePrefab = null;
     [SerializeField] int m_generateCount = 100;
     [SerializeField] Text m_countText = null;
     [SerializeField] bool m_isTestPlay = false;
     int m_currentCount = 0;
+    bool m_isCallChaild = false;
 
     private void Awake()
     {
         Cockroach.Generate += Generate;
-        Human.CockChildAttack += DecreaseCount;
+        //Human.CockChildAttack += DecreaseCount;
     }
 
     void Start()
@@ -31,7 +32,7 @@ public class CockroachChildPoolManager : MonoBehaviour
     private void OnDestroy()
     {
         Cockroach.Generate -= Generate;
-        Human.CockChildAttack -= DecreaseCount;
+        //Human.CockChildAttack -= DecreaseCount;
     }
 
     void Generate()
@@ -45,9 +46,17 @@ public class CockroachChildPoolManager : MonoBehaviour
 
     public void Generate(int count, Vector3 pos, Vector3 up)
     {
-        ActiveRandomRotation(count, pos, up);
+        if (PhotonNetwork.IsConnected)
+        {
+            photonView.RPC(nameof(ActiveRandomRotation), RpcTarget.All, count, pos, up);
+        }
+        else
+        {
+            ActiveRandomRotation(count, pos, up);
+        }
     }
 
+    [PunRPC]
     void ActiveRandomRotation(int count, Vector3 pos, Vector3 up)
     {
         int currentCount = 0;
@@ -69,13 +78,28 @@ public class CockroachChildPoolManager : MonoBehaviour
         UpdateText(m_currentCount);
     }
 
-    public void DecreaseCount(bool isCallChaild)
+    public void DecreaseCount()
+    {
+        if (PhotonNetwork.IsConnected)
+        {
+            // ニンゲン側の子ゴキが呼ぶ
+            if (!m_isCallChaild) m_isCallChaild = true;
+            photonView.RPC(nameof(DecreaseCountRPC), RpcTarget.All);
+        }
+        else
+        {
+            DecreaseCountRPC();
+        }
+    }
+
+    [PunRPC]
+    public void DecreaseCountRPC()//bool isCallChaild)
     {
         m_currentCount--;
         UpdateText(m_currentCount);
         Debug.Log($"Decrease : currentCount {m_currentCount}");
 
-        if (isCallChaild) return;
+        if (m_isCallChaild) return;
 
         foreach (Transform child in gameObject.transform)
         {

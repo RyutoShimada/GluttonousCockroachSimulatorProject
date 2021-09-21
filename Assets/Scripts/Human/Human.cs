@@ -35,7 +35,7 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
 
         EventSystem.Instance.Subscribe(ResetPosition);
         MenuController.IsMove += IsMove;
-        NPCController.Ded += PunRPCCockChilAttack;
+        //NPCController.Ded += CockChilAttackRPC;
         NPCController.Ded += JudgeAttackCockChilCallback;
         Transform t = GameObject.Find("Canvas").transform;
         m_ui = Instantiate(m_humanUiPrefab, t);
@@ -54,7 +54,7 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
     private void OnDestroy()
     {
         MenuController.IsMove -= IsMove;
-        NPCController.Ded -= PunRPCCockChilAttack;
+        NPCController.Ded -= CockChilAttackRPC;
         NPCController.Ded -= JudgeAttackCockChilCallback;
         EventSystem.Instance.Unsubscribe(ResetPosition);
     }
@@ -146,15 +146,11 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
         }
     }
 
-    void PunRPCCockChilAttack()
+    void CockChilAttackRPC()
     {
         if (PhotonNetwork.IsConnected)
         {
             photonView.RPC(nameof(CockChildAttacking), RpcTarget.OthersBuffered);
-        }
-        else
-        {
-            CockChildAttacking();
         }
     }
 

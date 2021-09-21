@@ -139,7 +139,7 @@ public class NPCController : MonoBehaviour
             m_isDed = true;
             // ニンゲンに知らせて、同期させる
             Ded?.Invoke();
-            m_poolManager?.DecreaseCount(true);
+            m_poolManager?.DecreaseCount();//true);
             Invoke(nameof(UnActive), 0.1f);
         }
     }

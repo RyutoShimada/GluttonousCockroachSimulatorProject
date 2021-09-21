@@ -227,6 +227,11 @@ PrefabInstance:
       propertyPath: m_countText
       value: 
       objectReference: {fileID: 838399705}
+    - target: {fileID: 6214626129539679490, guid: 821b3516b78c414439a00194b3dc9009,
+        type: 3}
+      propertyPath: sceneViewId
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 821b3516b78c414439a00194b3dc9009, type: 3}
 --- !u!4 &110012157 stripped

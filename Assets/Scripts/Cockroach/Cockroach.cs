@@ -121,7 +121,8 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         m_eating = true;
         // 子供の生成
         int random = UnityEngine.Random.Range(5, 11);
-        photonView.RPC(nameof(CallGenerate), RpcTarget.All, random);
+        //photonView.RPC(nameof(CallGenerate), RpcTarget.All, random);
+        CallGenerate(random);
     }
 
     [PunRPC]

@@ -147,7 +147,7 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
     IEnumerator Punching()
     {
         m_punchRange.enabled = true;
-        m_audio.PlayOneShot(m_punchSE, 0.5f);
+        //m_audio.PlayOneShot(m_punchSE, 0.5f);
 
         if (m_isLeftAttacking)
         {
