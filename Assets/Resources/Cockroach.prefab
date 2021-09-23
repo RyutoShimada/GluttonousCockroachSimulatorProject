@@ -368,7 +368,6 @@ MonoBehaviour:
   m_maxRayDistance: 1
   m_rayOriginPos: {fileID: 1380053711590895058}
   m_rotateRayPos: {fileID: 1380053710338534204}
-  m_mouseSensitivity: 50
   m_anim: {fileID: 2705830272571634831}
 --- !u!114 &-3155712619565757723
 MonoBehaviour:
@@ -391,8 +390,8 @@ MonoBehaviour:
   m_camera: {fileID: 51643860216663672}
   m_dedEffect: {fileID: 37836029779743955, guid: a538ac3419b609f4bb5f4ed711ecf194,
     type: 3}
-  m_eatSE: {fileID: 8300000, guid: 246681058431a3149ade13db94cc57b1, type: 3}
-  m_dedSE: {fileID: 8300000, guid: 82b82a29d4c58cf4b907c142b3da478f, type: 3}
+  m_eatSE: {fileID: 8300000, guid: 3637eb7330a651c4186fee496fddf2b3, type: 3}
+  m_dedSE: {fileID: 8300000, guid: 2d4c4f0fe36d74741a98fce354aece13, type: 3}
   m_isDed: 0
 --- !u!114 &8000153934261983132
 MonoBehaviour:
@@ -423,6 +422,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_moveController: {fileID: 1916137964568727336}
   m_canMove: 1
+  m_sensitivity: 30
 --- !u!114 &-2510330566171969012
 MonoBehaviour:
   m_ObjectHideFlags: 0

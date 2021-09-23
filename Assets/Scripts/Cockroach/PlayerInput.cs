@@ -8,6 +8,27 @@ public class PlayerInput : MonoBehaviourPunCallbacks, IIsCanMove
     [SerializeField] CockroachMoveController m_moveController = null;
     [HideInInspector] public bool m_canMove = true;
     Cockroach m_cockroach = null;
+    [SerializeField, Range(0, 100)] int m_sensitivity = 1;
+
+    public int Sensitivity
+    {
+        get => m_sensitivity;
+        set
+        {
+            if (value < 0)
+            {
+                m_sensitivity = 0;
+            }
+            else if (value > 100)
+            {
+                m_sensitivity = 100;
+            }
+            else
+            {
+                m_sensitivity = value;
+            }
+        }
+    }
 
     private void Awake()
     {
@@ -35,7 +56,7 @@ public class PlayerInput : MonoBehaviourPunCallbacks, IIsCanMove
         {
             m_moveController.Jump(Input.GetButtonDown("Jump"));
             m_moveController.Move(Input.GetAxisRaw("Vertical"));
-            m_moveController.MouseMove(Input.GetAxisRaw("Horizontal"), Input.GetAxis("Look X"));
+            m_moveController.MouseMove(Input.GetAxisRaw("Horizontal") * m_sensitivity, Input.GetAxis("Look X") * m_sensitivity);
             yield return null;
         }
     }

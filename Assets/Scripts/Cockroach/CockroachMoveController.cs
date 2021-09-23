@@ -23,8 +23,6 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks
     [SerializeField] Transform m_rayOriginPos = null;
     /// <summary>回転する時に判定するためのRayをとばす位置</summary>
     [SerializeField] Transform m_rotateRayPos = null;
-    // <summary>マウスの感度</summary>
-    [SerializeField, Range(50f, 300f)] float m_mouseSensitivity = 50f;
 
     [SerializeField] Animator m_anim = null;
     #endregion
@@ -175,11 +173,11 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks
     {
         if (horizontal != 0)
         {
-            m_mouseMoveX = (horizontal * m_mouseSensitivity) * Time.deltaTime;
+            m_mouseMoveX = horizontal * Time.deltaTime;
         }
         else if (x != 0)
         {
-            m_mouseMoveX = (x * m_mouseSensitivity) * Time.deltaTime;
+            m_mouseMoveX = x * Time.deltaTime;
         }
         else
         {

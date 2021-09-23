@@ -5,10 +5,8 @@
 /// </summary>
 public class Food : MonoBehaviour
 {
-    /// <summary>回復する値</summary>
-    public int m_heelValue = 10;
     /// <summary>FoodGeneraterNetWork からセットする</summary>
-    public FoodGenerater m_foodGeneraterNetWork = null;
+    [HideInInspector] public FoodGenerater m_foodGeneraterNetWork = null;
 
     /// <summary>
     /// このオブジェクトを非アクティブにする。(Cockroachから呼ばれる)
