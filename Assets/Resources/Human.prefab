@@ -824,9 +824,9 @@ MonoBehaviour:
   m_beamPrefab: {fileID: 5174631999835350618}
   m_chargePrefab: {fileID: 3711991621748749915}
   m_energyChargedSE: {fileID: 8300000, guid: 3971e6db387f0b44989893f9678861c3, type: 3}
-  m_chargedSE: {fileID: 8300000, guid: 9990035efcc3a1b4bb8e9a4696921ebd, type: 3}
-  m_beamSE: {fileID: 8300000, guid: 710fce1251b77fc46bf7ecd337e5601f, type: 3}
-  m_punchSE: {fileID: 8300000, guid: f8e80758ae834f943a0ba05067072202, type: 3}
+  m_chargedSE: {fileID: 8300000, guid: f330267e8643b9b4295a6a31e2c3cab5, type: 3}
+  m_beamSE: {fileID: 8300000, guid: 247d0c994ceaffe4bacf91feaa426990, type: 3}
+  m_punchSE: {fileID: 8300000, guid: 1428ac4e995f3da42b940681c8ba49b0, type: 3}
 --- !u!114 &647363441909792519
 MonoBehaviour:
   m_ObjectHideFlags: 0

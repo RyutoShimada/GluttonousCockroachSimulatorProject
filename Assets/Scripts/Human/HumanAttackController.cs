@@ -141,13 +141,13 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
     void StartPunching()
     {
         if (m_isBeamAttacking) return;
+        m_audio.PlayOneShot(m_punchSE, 0.5f);
         StartCoroutine(Punching());
     }
 
     IEnumerator Punching()
     {
         m_punchRange.enabled = true;
-        m_audio.PlayOneShot(m_punchSE, 0.5f);
 
         if (m_isLeftAttacking)
         {
@@ -190,13 +190,14 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
     [PunRPC]
     void StandByBeam()
     {
+        // SEを再生
+        if (!m_audio.isPlaying) m_audio.PlayOneShot(m_chargedSE);
+
         if (m_isBeamAttacking) return;
 
         if (!m_isStandByBeam) m_isStandByBeam = true;
         // チャージエフェクトを表示
         if (!m_chargePrefab.activeSelf) m_chargePrefab.SetActive(true);
-        // SEを再生
-        if (!m_audio.isPlaying) m_audio.PlayOneShot(m_chargedSE);
     }
 
     [PunRPC]

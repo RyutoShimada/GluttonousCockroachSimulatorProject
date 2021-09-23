@@ -93,7 +93,7 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    public void DecreaseCountRPC()//bool isCallChaild)
+    public void DecreaseCountRPC()
     {
         m_currentCount--;
         UpdateText(m_currentCount);

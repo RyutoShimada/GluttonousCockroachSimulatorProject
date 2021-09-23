@@ -66,6 +66,8 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] GameObject m_menu = null;
 
+    [SerializeField] GameObject[] m_countDown = null;
+
     CockroachUI m_cockroachUINetWork = null;
 
     Human m_human = null;
@@ -259,7 +261,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         m_canMove.IsMove(false);
         //EventSystem.Instance.IsMove(false);
 
-        StartCoroutine(CoroutineGameStart(m_waitForSeconds));
+        StartCoroutine(CoroutineGameStart(m_waitForSeconds - 1));
     }
 
     [PunRPC]
@@ -308,10 +310,16 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
             if (i != 0)
             {
-                m_countDownText.text = i.ToString();
+                if (i + 1 < m_countDown.Length - 1)
+                {
+                    m_countDown[i + 1].SetActive(false);
+                }
+
+                m_countDown[i].SetActive(true);
             }
             else
             {
+                m_countDown[0].SetActive(false);
                 m_countDownText.text = "はじめ";
                 yield return new WaitForSeconds(0.5f);
                 m_feedBack.text = "";
