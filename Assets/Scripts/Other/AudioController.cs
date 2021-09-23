@@ -11,13 +11,9 @@ public class AudioController : MonoBehaviour
     [SerializeField] AudioMixerGroup m_BGM = null;
     [SerializeField] AudioMixerGroup m_SE = null;
 
-    [SerializeField] Slider m_MasterSlider = null;
-    [SerializeField] Slider m_BGMSlider = null;
-    [SerializeField] Slider m_SESlider = null;
-
-    public static float m_masterValue = 0;
-    public static float m_bgmValue = 0;
-    public static float m_seValue = 0;
+    public Slider m_MasterSlider = null;
+    public Slider m_BGMSlider = null;
+    public Slider m_SESlider = null;
 
     void Start()
     {
@@ -25,29 +21,21 @@ public class AudioController : MonoBehaviour
         UpdateBGMVolume();
         UpdateSEVolume();
 
-        m_MasterSlider.value = m_masterValue;
-        m_BGMSlider.value = m_bgmValue;
-        m_SESlider.value = m_seValue;
-
         SceneManager.sceneLoaded += SetValue;
-        SceneManager.sceneUnloaded += GetValue;
     }
 
     public void UpdateMasterVolume()
     {
-        m_masterValue = m_MasterSlider.value;
         m_Master.audioMixer.SetFloat(m_Master.name, ChangeDB(m_MasterSlider.value));
     }
 
     public void UpdateBGMVolume()
     {
-        m_bgmValue = m_BGMSlider.value;
         m_BGM.audioMixer.SetFloat(m_BGM.name, ChangeDB(m_BGMSlider.value));
     }
 
     public void UpdateSEVolume()
     {
-        m_seValue = m_SESlider.value;
         m_SE.audioMixer.SetFloat(m_SE.name, ChangeDB(m_SESlider.value));
     }
 
@@ -61,23 +49,12 @@ public class AudioController : MonoBehaviour
 
     void SetValue(Scene next, LoadSceneMode mode)
     {
-        if (m_MasterSlider.value == m_masterValue) return;
-        if (m_BGMSlider.value == m_bgmValue) return;
-        if (m_SESlider.value == m_seValue) return;
-
-        m_MasterSlider.value = m_masterValue;
-        m_BGMSlider.value = m_bgmValue;
-        m_SESlider.value = m_seValue;
-    }
-
-    void GetValue(Scene next)
-    {
-        if (m_MasterSlider.value == m_masterValue) return;
-        if (m_BGMSlider.value == m_bgmValue) return;
-        if (m_SESlider.value == m_seValue) return;
-
-        UpdateMasterVolume();
-        UpdateBGMVolume();
-        UpdateSEVolume();
+        var audioController = FindObjectOfType<AudioController>();
+        if (audioController != null)
+        {
+            audioController.m_MasterSlider.value = m_MasterSlider.value;
+            audioController.m_BGMSlider.value = m_BGMSlider.value;
+            audioController.m_SESlider.value = m_SESlider.value;
+        }
     }
 }

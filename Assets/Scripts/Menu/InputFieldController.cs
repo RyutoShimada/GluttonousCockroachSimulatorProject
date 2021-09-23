@@ -21,5 +21,11 @@ public class InputFieldController : MonoBehaviour
         }
     }
 
-    public void UpdateValue(Slider slider) => m_inputField.text = slider.value.ToString();
+    public void UpdateValue(Slider slider)
+    {
+        if (m_inputField != null)
+        {
+            m_inputField.text = slider.value.ToString();
+        }
+    }
 }
