@@ -401,11 +401,81 @@ PrefabInstance:
       propertyPath: m_Name
       value: MenuManager
       objectReference: {fileID: 0}
+    - target: {fileID: 311541354583907634, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 311541354583907634, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 311541354583907634, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 311541354583907634, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1667804968}
+    - target: {fileID: 311541354583907634, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: SetXSliderValueAsSensitivity
+      objectReference: {fileID: 0}
+    - target: {fileID: 311541354583907634, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 311541355513853091, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
         type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 311541355828414035, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 311541355828414035, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 311541355828414035, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 311541355828414035, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1667804968}
+    - target: {fileID: 311541355828414035, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: SetYSliderValueAsSensitivity
+      objectReference: {fileID: 0}
+    - target: {fileID: 311541355828414035, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4842484597175806333, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_xSlider
+      value: 
+      objectReference: {fileID: 41885032}
+    - target: {fileID: 4842484597175806333, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_ySlider
+      value: 
+      objectReference: {fileID: 41885033}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2d0b5a2ac664d3248ad362d37016f7f6, type: 3}
 --- !u!224 &41885031 stripped
@@ -414,6 +484,30 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 41885030}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &41885032 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 311541354583907634, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+    type: 3}
+  m_PrefabInstance: {fileID: 41885030}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &41885033 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 311541355828414035, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+    type: 3}
+  m_PrefabInstance: {fileID: 41885030}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &468568358 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1190948872509014629, guid: c2724bd98fdc5304a875389177176f77,
@@ -1057,7 +1151,7 @@ PrefabInstance:
     - target: {fileID: 1460826044278861501, guid: 6d50b5190b0154246ad3914b4a103d8f,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1460826044278861547, guid: 6d50b5190b0154246ad3914b4a103d8f,
         type: 3}
@@ -1217,6 +1311,18 @@ PrefabInstance:
       objectReference: {fileID: 8300000, guid: 767faaf607c2b5d48a0846f33cd525d4, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d50b5190b0154246ad3914b4a103d8f, type: 3}
+--- !u!114 &1667804968 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4842484597175806333, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+    type: 3}
+  m_PrefabInstance: {fileID: 41885030}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34b373f9d5355434699757d46b10d7b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2073294371
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1292,7 +1398,7 @@ PrefabInstance:
     - target: {fileID: 1380053710197772766, guid: 611a1954a5117374084928d957476b7e,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4890464094689666389, guid: 611a1954a5117374084928d957476b7e,
         type: 3}

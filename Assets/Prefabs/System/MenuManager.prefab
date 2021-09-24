@@ -835,6 +835,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 4842484597175806333}
+        m_MethodName: SetXSliderValueAsSensitivity
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &311541354583907637
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3562,6 +3573,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 4842484597175806333}
+        m_MethodName: SetYSliderValueAsSensitivity
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &311541355828414032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4970,10 +4992,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34b373f9d5355434699757d46b10d7b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_xSlider: {fileID: 0}
-  m_ySlider: {fileID: 0}
-  m_vcam: {fileID: 0}
-  playerInput: {fileID: 0}
+  m_xSlider: {fileID: 311541354583907634}
+  m_ySlider: {fileID: 311541355828414035}
 --- !u!1 &1067072993638982328
 GameObject:
   m_ObjectHideFlags: 0

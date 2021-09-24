@@ -175,11 +175,11 @@ public class CockroachMoveController : MonoBehaviourPunCallbacks
         {
             m_mouseMoveX = horizontal * Time.deltaTime;
         }
-        else if (x != 0)
+        if (x != 0)
         {
             m_mouseMoveX = x * Time.deltaTime;
         }
-        else
+        if(horizontal == 0 && x == 0)
         {
             m_mouseMoveX = 0;
         }

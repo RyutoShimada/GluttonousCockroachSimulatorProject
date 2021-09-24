@@ -19,7 +19,7 @@ public class MenuController : MonoBehaviour
 
     private void Update()
     {
-        if (!NetWorkGameManager.Instance) return;
+        //if (!NetWorkGameManager.Instance) return;
         if (Input.GetButtonDown("Start"))
         {
             if (!m_menu.activeSelf)

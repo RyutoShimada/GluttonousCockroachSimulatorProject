@@ -20,6 +20,7 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
     HumanMoveController m_moveController = null;
     GameObject m_vcam = null;
     CinemachineVirtualCamera m_vcamBase = null;
+    CinemachinePOV m_pov = null;
     GameObject m_ui = null;
 
     int m_energyValue = 0;
@@ -35,7 +36,8 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
 
         EventSystem.Instance.Subscribe(ResetPosition);
         MenuController.IsMove += IsMove;
-        //NPCController.Ded += CockChilAttackRPC;
+        SensitivityController.SetXSensitivity += SetXSensitivity;
+        SensitivityController.SetYSensitivity += SetYSensitivity;
         NPCController.Ded += JudgeAttackCockChilCallback;
         Transform t = GameObject.Find("Canvas").transform;
         m_ui = Instantiate(m_humanUiPrefab, t);
@@ -56,6 +58,8 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
         MenuController.IsMove -= IsMove;
         NPCController.Ded -= CockChilAttackRPC;
         NPCController.Ded -= JudgeAttackCockChilCallback;
+        SensitivityController.SetXSensitivity -= SetXSensitivity;
+        SensitivityController.SetYSensitivity -= SetYSensitivity;
         EventSystem.Instance.Unsubscribe(ResetPosition);
     }
 
@@ -107,6 +111,7 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
             m_vcamBase = vcam.GetComponent<CinemachineVirtualCamera>();
             vcam.Follow = m_cameraPos;
             m_vcamBase.GetCinemachineComponent<CinemachineTransposer>().m_FollowOffset = Vector3.zero;
+            m_pov = m_vcamBase.GetCinemachineComponent<CinemachinePOV>();
 
             if (!m_moveController.m_canMove)
             {
@@ -117,6 +122,16 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
         {
             Debug.LogError("CinemachineVirtualCamera を GetComponent 出来ませんでした");
         }
+    }
+
+    void SetXSensitivity(int value)
+    {
+        m_pov.m_HorizontalAxis.m_MaxSpeed = value;
+    }
+
+    void SetYSensitivity(int value)
+    {
+        m_pov.m_VerticalAxis.m_MaxSpeed = value;
     }
 
     void ResetPosition(Vector3 v, Quaternion q)

@@ -1122,6 +1122,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73fec77f5ab358f4296dc138197e0456, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &774513736
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 4365874180137463627}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4365874180137463628}
+  m_Layer: 0
+  m_Name: Missing Prefab (Dummy)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &822763022
 GameObject:
   m_ObjectHideFlags: 0
@@ -2272,6 +2288,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1969022949}
   m_CullTransparentMesh: 0
+--- !u!1 &2075480151
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 4365874180137463627}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2075480152}
+  m_Layer: 0
+  m_Name: Banana (Missing Prefab)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2075480152
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 4365874180137463627}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2075480151}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 4365874180137463628}
+  m_Father: {fileID: 4365874179611586896}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &254982333017519667
 GameObject:
   m_ObjectHideFlags: 0
@@ -2907,7 +2954,7 @@ Transform:
   m_LocalPosition: {x: -6.501, y: 4.505, z: -4.649}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4365874180137463628}
+  - {fileID: 2075480152}
   m_Father: {fileID: 6873538134143219632}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2984,12 +3031,21 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 461f0170c82b53340a9812199b63bbd4, type: 3}
---- !u!4 &4365874180137463628 stripped
+--- !u!4 &4365874180137463628
 Transform:
+  m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 400000, guid: 461f0170c82b53340a9812199b63bbd4,
     type: 3}
   m_PrefabInstance: {fileID: 4365874180137463627}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 774513736}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2075480152}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4586929893428657827
 GameObject:
   m_ObjectHideFlags: 0

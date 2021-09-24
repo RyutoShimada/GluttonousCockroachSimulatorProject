@@ -4,14 +4,35 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour, IIsCanMove
 {
-    [SerializeField] float m_sensitivity = 1f; // いわゆるマウス感度
+    [SerializeField] int m_sensitivity = 1;
     [SerializeField] float m_mouseYMaxRange = 300f;
     [SerializeField] float m_mouseYMinRange = 0f;
     bool m_canMove = true;
 
+    public int Sensitivity
+    {
+        get => m_sensitivity;
+        set
+        {
+            if (value < 0)
+            {
+                m_sensitivity = 0;
+            }
+            else if (value > 100)
+            {
+                m_sensitivity = 100;
+            }
+            else
+            {
+                m_sensitivity = value;
+            }
+        }
+    }
+
     private void Start()
     {
         MenuController.IsMove += IsMove;
+        SensitivityController.SetYSensitivity += SetYSensitivity;
     }
 
     // Update is called once per frame
@@ -26,13 +47,16 @@ public class CameraController : MonoBehaviour, IIsCanMove
     private void OnDestroy()
     {
         MenuController.IsMove -= IsMove;
+        SensitivityController.SetYSensitivity -= SetYSensitivity;
     }
 
     public void IsMove(bool isMove) => m_canMove = isMove;
 
+    void SetYSensitivity(int value) => Sensitivity = value;
+
     void CameraControlle()
     {
-        float mouse_move_y = -Input.GetAxis("Look Y") * m_sensitivity;
+        float mouse_move_y = (-Input.GetAxis("Look Y") * m_sensitivity) * Time.deltaTime;
 
         transform.Rotate(new Vector3(-mouse_move_y, 0f, 0f));
 

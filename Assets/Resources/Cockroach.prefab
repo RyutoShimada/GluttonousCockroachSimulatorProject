@@ -87,7 +87,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53f75ef0ffb86144caac7ef033ac4c87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensitivity: 0.2
+  m_sensitivity: 0
   m_mouseYMaxRange: 300
   m_mouseYMinRange: 0
 --- !u!1 &138664834100631786

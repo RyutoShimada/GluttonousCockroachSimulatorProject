@@ -40,6 +40,7 @@ public class PlayerInput : MonoBehaviourPunCallbacks, IIsCanMove
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
         MenuController.IsMove += IsMove;
+        SensitivityController.SetXSensitivity += SetXSensitivity;
         m_moveController.StartSetPlayer();
         StartCoroutine(UpdateCoroutine());
     }
@@ -47,7 +48,10 @@ public class PlayerInput : MonoBehaviourPunCallbacks, IIsCanMove
     private void OnDestroy()
     {
         MenuController.IsMove -= IsMove;
+        SensitivityController.SetXSensitivity -= SetXSensitivity;
     }
+
+    void SetXSensitivity(int value) => Sensitivity = value;
 
     IEnumerator UpdateCoroutine()
     {
