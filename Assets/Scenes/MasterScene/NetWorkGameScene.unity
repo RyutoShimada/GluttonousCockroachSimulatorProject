@@ -148,7 +148,7 @@ RectTransform:
   m_GameObject: {fileID: 6567795}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 1052769451}
   m_RootOrder: 2
@@ -472,10 +472,13 @@ MonoBehaviour:
   m_feedBack: {fileID: 1987264560}
   m_foodGeneraterNetWork: {fileID: 56746356067704078}
   m_menu: {fileID: 371494640}
+  m_resualtSelectButton: {fileID: 470641070}
   m_countDown:
   - {fileID: 6567795}
   - {fileID: 1230145502}
   - {fileID: 1365978339}
+  m_isResualt: 0
+  m_counting: 0
 --- !u!114 &168559892
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1077,8 +1080,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_seAudio: {fileID: 291978069926161720}
-  m_select: {fileID: 8300000, guid: 13ae85101965ab94090bdeffecd5ead3, type: 3}
-  m_submit: {fileID: 8300000, guid: c9890acfda852e146b634044b1d0fbf3, type: 3}
+  m_select: {fileID: 8300000, guid: 439ed4541a814bd4082405f236f1fbe5, type: 3}
+  m_submit: {fileID: 8300000, guid: c7e8b791902a63b4da0f5c9768843bbc, type: 3}
 --- !u!1 &579468966
 GameObject:
   m_ObjectHideFlags: 0
@@ -1643,15 +1646,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_seAudio: {fileID: 291978069926161720}
-  m_select: {fileID: 8300000, guid: 13ae85101965ab94090bdeffecd5ead3, type: 3}
-  m_submit: {fileID: 8300000, guid: c9890acfda852e146b634044b1d0fbf3, type: 3}
+  m_select: {fileID: 8300000, guid: 439ed4541a814bd4082405f236f1fbe5, type: 3}
+  m_submit: {fileID: 8300000, guid: c7e8b791902a63b4da0f5c9768843bbc, type: 3}
 --- !u!43 &1089386909
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-629524
+  m_Name: pb_Mesh521772
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1953,7 +1956,7 @@ RectTransform:
   m_GameObject: {fileID: 1230145502}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 1052769451}
   m_RootOrder: 1
@@ -2236,7 +2239,7 @@ RectTransform:
   m_GameObject: {fileID: 1365978339}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children: []
   m_Father: {fileID: 1052769451}
   m_RootOrder: 0
@@ -2822,11 +2825,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_foods:
-  - {fileID: 1178286649977641778, guid: 866bd318f261c714e875906dd347fac8, type: 3}
-  - {fileID: 5823695826454310058, guid: 798f2979d3389a441a2dac9817f0ad66, type: 3}
+  - {fileID: 1361528256805448557, guid: 29b25ae7b62165e48a3cc3493e9a0381, type: 3}
+  - {fileID: 2152867680397051114, guid: 426a021a243700641a46a0feadfd6535, type: 3}
   - {fileID: 1997705620550999875, guid: 62c77a8435887d74481bb6628b54e4ea, type: 3}
   - {fileID: 6407508747041186944, guid: fe447d49bf3c4d746a2cebd310b67e84, type: 3}
-  - {fileID: 1245383205480293808, guid: 44d62cafce5fd4042a5593dd9e8ab79e, type: 3}
+  - {fileID: 2108107790941182062, guid: a150423d082568343b2f9d854fbfd8f1, type: 3}
   m_generatePos:
   - {fileID: 738913535}
   - {fileID: 738913534}

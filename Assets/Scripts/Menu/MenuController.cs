@@ -19,7 +19,8 @@ public class MenuController : MonoBehaviour
 
     private void Update()
     {
-        //if (!NetWorkGameManager.Instance) return;
+        if (NetWorkGameManager.Instance.m_isResualt) return;
+
         if (Input.GetButtonDown("Start"))
         {
             if (!m_menu.activeSelf)
@@ -72,13 +73,18 @@ public class MenuController : MonoBehaviour
         m_menu.gameObject.SetActive(true);
         IsMove?.Invoke(false);
         Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     public void Close()
     {
         m_menu.gameObject.SetActive(false);
-        IsMove?.Invoke(true);
+        if (!NetWorkGameManager.Instance.m_isResualt || !NetWorkGameManager.Instance.m_counting)
+        {
+            IsMove?.Invoke(true);
+        }
         if (!NetWorkGameManager.Instance) return;
         Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 }

@@ -97,7 +97,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         Invoke(nameof(UnActive), 0.2f);
     }
 
-    void UnActive() => gameObject.SetActive(false);
+    void UnActive() => this.gameObject.SetActive(false);
 
     /// <summary>
     /// 無敵モード
@@ -120,8 +120,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     {
         m_eating = true;
         // 子供の生成
-        int random = UnityEngine.Random.Range(20, 31);
-        //photonView.RPC(nameof(CallGenerate), RpcTarget.All, random);
+        int random = UnityEngine.Random.Range(10, 21);
         CallGenerate(random);
     }
 

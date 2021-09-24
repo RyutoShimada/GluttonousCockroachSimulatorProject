@@ -61,6 +61,8 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
     int m_currentEnergy = 0;
     bool m_chargeCompleted = false;
 
+    float m_addEnergyChargeTime = 0;
+
     Human m_human = null;
 
     const float beamTime = 3f;
@@ -85,6 +87,7 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
         if (!m_canMove) return;
         Attack();
+        TimeAddEnergy();
     }
 
     private void OnDestroy()
@@ -108,6 +111,7 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
             }
             else if (Input.GetButtonUp("Jump"))
             {
+                m_audio.Stop();
                 FireBeam();
                 if (!PhotonNetwork.IsConnected) return;
                 photonView.RPC(nameof(FireBeam), RpcTarget.All);
@@ -187,15 +191,42 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
         m_human.ChangeGauge(m_currentEnergy, 0.2f); // UIのGaugeに反映
     }
 
+    void TimeAddEnergy()
+    {
+        if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
+        if (!NetWorkGameManager.Instance.IsGame) return;
+        if (m_isBeamAttacking || m_chargeCompleted) return;
+
+        m_addEnergyChargeTime += Time.deltaTime;
+
+        if (m_addEnergyChargeTime > 1)
+        {
+            m_addEnergyChargeTime = 0;
+            if (m_currentEnergy + 1 < m_needEnergy)
+            {
+                m_currentEnergy++;
+            }
+            else
+            {
+                m_currentEnergy = m_needEnergy;
+                m_chargeCompleted = true;
+                m_audio.PlayOneShot(m_energyChargedSE);
+            }
+
+            m_human.ChangeGauge(m_currentEnergy, 0.2f);
+        }
+    }
+
     [PunRPC]
     void StandByBeam()
     {
-        // SEを再生
-        if (!m_audio.isPlaying) m_audio.PlayOneShot(m_chargedSE);
-
         if (m_isBeamAttacking) return;
 
         if (!m_isStandByBeam) m_isStandByBeam = true;
+
+        // SEを再生
+        if (!m_audio.isPlaying) m_audio.PlayOneShot(m_chargedSE);
+
         // チャージエフェクトを表示
         if (!m_chargePrefab.activeSelf) m_chargePrefab.SetActive(true);
     }

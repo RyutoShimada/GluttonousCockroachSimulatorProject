@@ -66,6 +66,8 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] GameObject m_menu = null;
 
+    [SerializeField] Button m_resualtSelectButton = null;
+
     [SerializeField] GameObject[] m_countDown = null;
 
     CockroachUI m_cockroachUINetWork = null;
@@ -84,11 +86,12 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     GameSatate m_gameState = default;
 
     /// <summary>リザルトを表示しているかどうか</summary>
-    bool m_isResualt = false;
+    public bool m_isResualt = false;
+
+    public bool m_counting = false;
 
     bool m_isGame;
 
-    GameObject m_instance;
     #endregion
 
     #region Property
@@ -99,6 +102,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     private void Awake()
     {
         Instance = this;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Start()
@@ -168,6 +172,11 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     //        }
     //    }
     //}
+
+    private void OnDestroy()
+    {
+        Cursor.lockState = CursorLockMode.None;
+    }
 
     #endregion
 
@@ -261,7 +270,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         m_canMove.IsMove(false);
         //EventSystem.Instance.IsMove(false);
 
-        StartCoroutine(CoroutineGameStart(m_waitForSeconds - 1));
+        StartCoroutine(CoroutineGameStart(m_waitForSeconds));
     }
 
     [PunRPC]
@@ -304,18 +313,19 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     IEnumerator CoroutineGameStart(int waitSeconds)
     {
+        m_counting = true;
         for (int i = waitSeconds; i >= 0; i--)
         {
             yield return new WaitForSeconds(1f);
 
             if (i != 0)
             {
-                if (i + 1 < m_countDown.Length - 1)
+                if (i < m_countDown.Length)
                 {
-                    m_countDown[i + 1].SetActive(false);
+                    m_countDown[i].SetActive(false);
                 }
 
-                m_countDown[i].SetActive(true);
+                m_countDown[i - 1].SetActive(true);
             }
             else
             {
@@ -327,6 +337,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         }
 
         m_isGame = true;
+        m_counting = false;
         m_gameState = GameSatate.InGame;
         m_countDownText.gameObject.SetActive(false);
         m_canMove.IsMove(true);
@@ -344,6 +355,8 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         yield return new WaitForSeconds(1f);
         m_resultUi.SetActive(true);
         Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        m_resualtSelectButton?.Select();
 
         if (m_victoryPlayer == this.m_operatedByPlayer)
         {

@@ -12,6 +12,7 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
     [SerializeField] bool m_isTestPlay = false;
     int m_currentCount = 0;
     bool m_isCallChaild = false;
+    bool m_isGenerating = false;
 
     private void Awake()
     {
@@ -46,6 +47,7 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
 
     public void Generate(int count, Vector3 pos, Vector3 up)
     {
+        if (m_isGenerating) return;
         if (PhotonNetwork.IsConnected)
         {
             photonView.RPC(nameof(ActiveRandomRotation), RpcTarget.All, count, pos, up);
@@ -59,6 +61,7 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void ActiveRandomRotation(int count, Vector3 pos, Vector3 up)
     {
+        m_isGenerating = true;
         int currentCount = 0;
         foreach (Transform child in gameObject.transform)
         {
@@ -76,6 +79,7 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
 
         m_currentCount += currentCount;
         UpdateText(m_currentCount);
+        m_isGenerating = false;
     }
 
     public void DecreaseCount()

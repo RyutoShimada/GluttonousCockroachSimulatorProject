@@ -87,7 +87,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53f75ef0ffb86144caac7ef033ac4c87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_sensitivity: 0
+  m_sensitivity: 50
   m_mouseYMaxRange: 300
   m_mouseYMinRange: 0
 --- !u!1 &138664834100631786
@@ -422,7 +422,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_moveController: {fileID: 1916137964568727336}
   m_canMove: 1
-  m_sensitivity: 30
+  m_sensitivity: 50
 --- !u!114 &-2510330566171969012
 MonoBehaviour:
   m_ObjectHideFlags: 0
