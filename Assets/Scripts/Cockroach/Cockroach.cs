@@ -67,6 +67,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     private void OnDestroy()
     {
         EventSystem.Instance.Unsubscribe((EventSystem.Reset)ResetPosition);
+        HumanAttackController.HitDamege -= BeAttacked;
     }
 
     public void ResetPosition(Vector3 v, Quaternion q)
