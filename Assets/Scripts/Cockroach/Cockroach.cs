@@ -120,7 +120,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     {
         m_eating = true;
         // 子供の生成
-        int random = UnityEngine.Random.Range(10, 21);
+        int random = UnityEngine.Random.Range(20, 31);
         CallGenerate(random);
     }
 

@@ -103,13 +103,14 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
     {
         if (m_chargeCompleted)
         {
-            if (Input.GetButton("Jump"))
+            if (Input.GetButton("Fire3") || Input.GetAxisRaw("Fire3") > 0)
             {
+                m_human.ActiveBeamText(false);
                 StandByBeam();
                 if (!PhotonNetwork.IsConnected) return;
                 photonView.RPC(nameof(StandByBeam), RpcTarget.All);
             }
-            else if (Input.GetButtonUp("Jump"))
+            else if (Input.GetButtonUp("Fire3") || Input.GetAxisRaw("Fire3") == 0 && m_isStandByBeam)
             {
                 m_audio.Stop();
                 FireBeam();
@@ -186,6 +187,7 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
             m_currentEnergy = m_needEnergy;
             m_chargeCompleted = true;
             m_audio.PlayOneShot(m_energyChargedSE);
+            m_human.ActiveBeamText(true);
         }
 
         m_human.ChangeGauge(m_currentEnergy, 0.2f); // UIのGaugeに反映
@@ -194,7 +196,7 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
     void TimeAddEnergy()
     {
         if (PhotonNetwork.IsConnected && !photonView.IsMine) return;
-        if (!NetWorkGameManager.Instance.IsGame) return;
+        if (NetWorkGameManager.Instance && !NetWorkGameManager.Instance.IsGame) return;
         if (m_isBeamAttacking || m_chargeCompleted) return;
 
         m_addEnergyChargeTime += Time.deltaTime;
@@ -211,6 +213,7 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
                 m_currentEnergy = m_needEnergy;
                 m_chargeCompleted = true;
                 m_audio.PlayOneShot(m_energyChargedSE);
+                m_human.ActiveBeamText(true);
             }
 
             m_human.ChangeGauge(m_currentEnergy, 0.2f);

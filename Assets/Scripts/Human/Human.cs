@@ -17,6 +17,7 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
     Image m_crossHair = null;
     Image m_gauge = null;
     Text m_energyText = null;
+    Text m_beamText = null;
     HumanMoveController m_moveController = null;
     GameObject m_vcam = null;
     CinemachineVirtualCamera m_vcamBase = null;
@@ -43,6 +44,8 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
         m_ui = Instantiate(m_humanUiPrefab, t);
         m_crossHair = m_ui.transform.Find("CrossHair").GetComponent<Image>();
         m_gauge = m_ui.transform.Find("Gauge").transform.Find("GaugeImage").GetComponent<Image>();
+        m_beamText = m_ui.transform.Find("BeamText").GetComponent<Text>();
+        Debug.Log(m_beamText);
         m_energyText = m_ui.GetComponentInChildren<Text>();
         VcamSetUp();
     }
@@ -94,6 +97,8 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
         DOTween.To(() => m_energyValue, n => m_energyValue = n, value, time)
             .OnUpdate(() => m_energyText.text = m_energyValue.ToString());
     }
+
+    public void ActiveBeamText(bool value) => m_beamText.enabled = value;
 
     void VcamSetUp()
     {

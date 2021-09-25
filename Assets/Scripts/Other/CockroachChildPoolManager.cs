@@ -44,15 +44,26 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
 
     public void Generate(int count, Vector3 pos, Vector3 up)
     {
-        if (m_isGenerating) return;
-
         int[] id = new int[count];
         int currentCount = 0;
 
         for (int i = 0; i < count; i++)
         {
-            id[i] = ActiveCheack(false);
-            ActiveControll(i, true);
+            if (ActiveCheack(false) >= 0)
+            {
+                id[i] = ActiveCheack(false);
+            }
+            else
+            {
+                Debug.Log("MaxGenerate");
+                break;
+            }
+
+            ActiveControll(id[i], true);
+            int random = Random.Range(0, 360);
+            m_childs[id[i]].gameObject.transform.position = pos;
+            m_childs[id[i]].gameObject.transform.up = up;
+            m_childs[id[i]].gameObject.transform.rotation = Quaternion.Euler(0, random, 0);
             Debug.Log(id[i]);
             currentCount++;
         }
@@ -73,7 +84,6 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void ActiveRandomRotation(int[] id, Vector3 pos, Vector3 up)
     {
-        m_isGenerating = true;
         int currentCount = 0;
 
         for (int i = 0; i < id.Length; i++)
@@ -89,7 +99,6 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
 
         m_currentCount += currentCount;
         UpdateText(m_currentCount);
-        m_isGenerating = false;
     }
 
     public void DecreaseCount(int id)
@@ -113,7 +122,7 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
         UpdateText(m_currentCount);
 
         if (m_isCallChaild) return;
-
+        Debug.Log("Decrease");
         ActiveControll(id, false);
     }
 

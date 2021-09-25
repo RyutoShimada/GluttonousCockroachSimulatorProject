@@ -422,7 +422,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_moveController: {fileID: 1916137964568727336}
   m_canMove: 1
-  m_sensitivity: 50
+  m_sensitivity: 80
 --- !u!114 &-2510330566171969012
 MonoBehaviour:
   m_ObjectHideFlags: 0
