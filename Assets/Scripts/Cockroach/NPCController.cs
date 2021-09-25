@@ -14,6 +14,27 @@ public class NPCController : MonoBehaviour
     float m_moveTimer;
     float m_jumpTimer;
     bool m_isDed = false;
+    int m_id = 0;
+
+    public int Id
+    {
+        get => m_id;
+        set
+        {
+            if (value < 0)
+            {
+                m_id = 0;
+            }
+            else if (value > 100)
+            {
+                m_id = 100;
+            }
+            else
+            {
+                m_id = value;
+            }
+        }
+    }
 
     bool Active
     {
@@ -139,7 +160,7 @@ public class NPCController : MonoBehaviour
             m_isDed = true;
             // ニンゲンに知らせて、同期させる
             Ded?.Invoke();
-            m_poolManager?.DecreaseCount();//true);
+            m_poolManager?.DecreaseCount(m_id);//true);
             Invoke(nameof(UnActive), 0.1f);
         }
     }

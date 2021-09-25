@@ -9,10 +9,10 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
     [SerializeField] GameObject m_generatePrefab = null;
     [SerializeField] int m_generateCount = 100;
     [SerializeField] Text m_countText = null;
-    [SerializeField] bool m_isTestPlay = false;
     int m_currentCount = 0;
     bool m_isCallChaild = false;
     bool m_isGenerating = false;
+    Dictionary<int, GameObject> m_childs = new Dictionary<int, GameObject>();
 
     private void Awake()
     {
@@ -21,13 +21,9 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
     }
 
     void Start()
-    {   
+    {
         Generate();
         UpdateText(m_currentCount);
-        if (m_isTestPlay)
-        {
-            ActiveRandomRotation(100, Vector3.zero, Vector3.up);
-        }
     }
 
     private void OnDestroy()
@@ -40,41 +36,55 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
     {
         for (int i = 0; i < m_generateCount; i++)
         {
-            GameObject go = Instantiate(m_generatePrefab, transform);
-            go.SetActive(false);
+            m_childs.Add(i, Instantiate(m_generatePrefab, transform));
+            m_childs[i].GetComponent<NPCController>().Id = i;
+            m_childs[i].SetActive(false);
         }
     }
 
     public void Generate(int count, Vector3 pos, Vector3 up)
     {
         if (m_isGenerating) return;
+
+        int[] id = new int[count];
+        int currentCount = 0;
+
+        for (int i = 0; i < count; i++)
+        {
+            id[i] = ActiveCheack(false);
+            ActiveControll(i, true);
+            Debug.Log(id[i]);
+            currentCount++;
+        }
+
         if (PhotonNetwork.IsConnected)
         {
-            photonView.RPC(nameof(ActiveRandomRotation), RpcTarget.All, count, pos, up);
+            photonView.RPC(nameof(ActiveRandomRotation), RpcTarget.Others, id, pos, up);
         }
         else
         {
-            ActiveRandomRotation(count, pos, up);
+            ActiveRandomRotation(id, pos, up);
         }
+
+        m_currentCount += currentCount;
+        UpdateText(m_currentCount);
     }
 
     [PunRPC]
-    void ActiveRandomRotation(int count, Vector3 pos, Vector3 up)
+    void ActiveRandomRotation(int[] id, Vector3 pos, Vector3 up)
     {
         m_isGenerating = true;
         int currentCount = 0;
-        foreach (Transform child in gameObject.transform)
+
+        for (int i = 0; i < id.Length; i++)
         {
-            if (currentCount == count) break;
-            if (!child.gameObject.activeSelf)
-            {
-                int random = Random.Range(0, 360);
-                child.gameObject.SetActive(true);
-                child.gameObject.transform.position = pos;
-                child.gameObject.transform.up = up;
-                child.gameObject.transform.rotation = Quaternion.Euler(0, random, 0);
-                currentCount++;
-            }
+            ActiveControll(id[i], true);
+            Debug.Log(id[i]);
+            int random = Random.Range(0, 360);
+            m_childs[id[i]].gameObject.transform.position = pos;
+            m_childs[id[i]].gameObject.transform.up = up;
+            m_childs[id[i]].gameObject.transform.rotation = Quaternion.Euler(0, random, 0);
+            currentCount++;
         }
 
         m_currentCount += currentCount;
@@ -82,37 +92,29 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
         m_isGenerating = false;
     }
 
-    public void DecreaseCount()
+    public void DecreaseCount(int id)
     {
         if (PhotonNetwork.IsConnected)
         {
             // ニンゲン側の子ゴキが呼ぶ
             if (!m_isCallChaild) m_isCallChaild = true;
-            photonView.RPC(nameof(DecreaseCountRPC), RpcTarget.All);
+            photonView.RPC(nameof(DecreaseCountRPC), RpcTarget.All, id);
         }
         else
         {
-            DecreaseCountRPC();
+            DecreaseCountRPC(id);
         }
     }
 
     [PunRPC]
-    public void DecreaseCountRPC()
+    public void DecreaseCountRPC(int id)
     {
         m_currentCount--;
         UpdateText(m_currentCount);
-        Debug.Log($"Decrease : currentCount {m_currentCount}");
 
         if (m_isCallChaild) return;
 
-        foreach (Transform child in gameObject.transform)
-        {
-            if (child.gameObject.activeSelf)
-            {
-                child.gameObject.SetActive(false);
-                break;
-            }
-        }
+        ActiveControll(id, false);
     }
 
     void UpdateText(int count)
@@ -124,4 +126,31 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
             NetWorkGameManager.Instance?.CockroachProliferationComplete();
         }
     }
+
+    void ActiveControll(int id, bool active)
+    {
+        m_childs[id].SetActive(active);
+    }
+
+    /// <summary>
+    /// アクティブかどうか確認して、IDを返す
+    /// </summary>
+    /// <param name="value">調べたい状態</param>
+    /// <returns></returns>
+    int ActiveCheack(bool value)
+    {
+        foreach (var item in m_childs)
+        {
+            if (value)
+            {
+                if (item.Value.activeSelf) return item.Key;
+            }
+            else
+            {
+                if (!item.Value.activeSelf) return item.Key;
+            }
+        }
+        return -1;
+    }
+
 }
