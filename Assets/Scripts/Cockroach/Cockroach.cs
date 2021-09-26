@@ -26,6 +26,8 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 
     [SerializeField] GameObject m_camera = null;
 
+    [SerializeField] GameObject m_miniMapPrefab = null;
+
     [SerializeField] GameObject m_dedEffect = null;
 
     [SerializeField] AudioClip m_eatSE = null;
@@ -62,6 +64,8 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         m_audio = GetComponent<AudioSource>();
         m_cockroachUINetWork = GetComponent<CockroachUI>();
         m_camera?.SetActive(true);
+        GameObject go = Instantiate(m_miniMapPrefab);
+        go.transform.GetComponentInChildren<MiniMap>().m_player = this.gameObject;
     }
 
     private void OnDestroy()
@@ -77,6 +81,8 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
             this.transform.position = v;
             this.transform.rotation = q;
         }
+
+        CallGenerate(10);
     }
 
     void CheckAlive()
@@ -119,9 +125,8 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
 
     void Eat()
     {
-        m_eating = true;
         // 子供の生成
-        int random = UnityEngine.Random.Range(20, 31);
+        int random = UnityEngine.Random.Range(20, 26);
         CallGenerate(random);
     }
 
@@ -187,6 +192,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         {
             m_food.UnActive();
             if (PhotonNetwork.IsConnected && !photonView.IsMine || m_eating) return;
+            m_eating = true;
             Eat();
         }
 
@@ -200,7 +206,6 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         hp -= damage;
         this.m_hp = hp;
         CheckAlive();
-        Debug.Log("HP : " + m_hp);
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

@@ -389,7 +389,6 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
                     m_minutes = 0;
                     m_seconds = 0;
                     m_isGame = false;
-                    Debug.Log("TimeUp!");
                 }
             }
         }

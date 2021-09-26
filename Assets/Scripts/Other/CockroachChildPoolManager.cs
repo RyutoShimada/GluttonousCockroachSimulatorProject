@@ -10,8 +10,6 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
     [SerializeField] int m_generateCount = 100;
     [SerializeField] Text m_countText = null;
     int m_currentCount = 0;
-    bool m_isCallChaild = false;
-    bool m_isGenerating = false;
     Dictionary<int, GameObject> m_childs = new Dictionary<int, GameObject>();
 
     private void Awake()
@@ -55,16 +53,10 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
             }
             else
             {
-                Debug.Log("MaxGenerate");
                 break;
             }
 
-            ActiveControll(id[i], true);
-            int random = Random.Range(0, 360);
-            m_childs[id[i]].gameObject.transform.position = pos;
-            m_childs[id[i]].gameObject.transform.up = up;
-            m_childs[id[i]].gameObject.transform.rotation = Quaternion.Euler(0, random, 0);
-            Debug.Log(id[i]);
+            RandomRotateActive(id[i], pos, up);
             currentCount++;
         }
 
@@ -89,11 +81,7 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
         for (int i = 0; i < id.Length; i++)
         {
             ActiveControll(id[i], true);
-            Debug.Log(id[i]);
-            int random = Random.Range(0, 360);
-            m_childs[id[i]].gameObject.transform.position = pos;
-            m_childs[id[i]].gameObject.transform.up = up;
-            m_childs[id[i]].gameObject.transform.rotation = Quaternion.Euler(0, random, 0);
+            RandomRotateActive(id[i], pos, up);
             currentCount++;
         }
 
@@ -101,12 +89,20 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
         UpdateText(m_currentCount);
     }
 
+    void RandomRotateActive(int id, Vector3 pos, Vector3 up)
+    {
+        ActiveControll(id, true);
+        int random = Random.Range(0, 360);
+        m_childs[id].gameObject.transform.position = pos;
+        m_childs[id].gameObject.transform.up = up;
+        m_childs[id].gameObject.transform.rotation = Quaternion.Euler(0, random, 0);
+    }
+
     public void DecreaseCount(int id)
     {
         if (PhotonNetwork.IsConnected)
         {
             // ニンゲン側の子ゴキが呼ぶ
-            if (!m_isCallChaild) m_isCallChaild = true;
             photonView.RPC(nameof(DecreaseCountRPC), RpcTarget.All, id);
         }
         else
@@ -120,9 +116,6 @@ public class CockroachChildPoolManager : MonoBehaviourPunCallbacks
     {
         m_currentCount--;
         UpdateText(m_currentCount);
-
-        if (m_isCallChaild) return;
-        Debug.Log("Decrease");
         ActiveControll(id, false);
     }
 

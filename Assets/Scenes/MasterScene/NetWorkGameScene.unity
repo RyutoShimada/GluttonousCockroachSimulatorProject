@@ -1869,7 +1869,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 130871
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -2420,12 +2420,12 @@ PrefabInstance:
     - target: {fileID: 1190948872509014629, guid: c2724bd98fdc5304a875389177176f77,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -300
+      value: -400
       objectReference: {fileID: 0}
     - target: {fileID: 1190948872509014629, guid: c2724bd98fdc5304a875389177176f77,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 80
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: 1190948872509014629, guid: c2724bd98fdc5304a875389177176f77,
         type: 3}
@@ -2445,7 +2445,7 @@ PrefabInstance:
     - target: {fileID: 1190948872509014629, guid: c2724bd98fdc5304a875389177176f77,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1190948872509014629, guid: c2724bd98fdc5304a875389177176f77,
         type: 3}
@@ -2455,7 +2455,7 @@ PrefabInstance:
     - target: {fileID: 1190948872509014629, guid: c2724bd98fdc5304a875389177176f77,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1190948872509014629, guid: c2724bd98fdc5304a875389177176f77,
         type: 3}

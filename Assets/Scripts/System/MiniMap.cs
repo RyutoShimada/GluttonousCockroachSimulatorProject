@@ -4,16 +4,24 @@ using UnityEngine;
 
 public class MiniMap : MonoBehaviour
 {
-    [SerializeField] Cockroach player;
+    [HideInInspector] public GameObject m_player;
 
     void Update()
     {
-        var pos = player.transform.position;
+        ChangePosition();
+        ChangeForward();
+    }
+
+    void ChangePosition()
+    {
+        var pos = m_player.transform.position;
         pos.y = transform.position.y;
         transform.position = pos;
+    }
 
-        //var rot = player.transform.rotation;
-        //rot.y = transform.rotation.y;
-        //transform.rotation = rot;
+    void ChangeForward()
+    {
+        if (m_player.transform.up != Vector3.up) return;
+        transform.root.forward = m_player.transform.forward;
     }
 }
