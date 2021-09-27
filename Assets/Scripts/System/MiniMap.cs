@@ -8,6 +8,8 @@ public class MiniMap : MonoBehaviour
 
     void Update()
     {
+        if (NetWorkGameManager.Instance == null) return;
+        if (m_player == null) return;
         ChangePosition();
         ChangeForward();
     }

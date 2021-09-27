@@ -72,6 +72,8 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     CockroachUI m_cockroachUINetWork = null;
 
+    Cockroach m_cockroach = null;
+
     Human m_human = null;
 
     /// <summary>操作しているキャラクター</summary>
@@ -107,8 +109,6 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
-        //EventSystem.Instance.Subscribe((EventSystem.Life)CockroachIsDed);
-        Cockroach.IsDed += CockroachIsDed;
         if (!PhotonNetwork.IsConnected)
         {
             // マスターサーバーへ接続できなかったらLuncherSceneをロードする
@@ -134,8 +134,10 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
             if (m_operateCharactor == this.m_cockroachPrefab.name)
             {
                 // 部屋の中で、ローカルプレーヤー用の Cockroach を生成。PhotonNetwork.Instantiate()で同期。
+                Cockroach.IsDed += CockroachIsDed;
                 int random = Random.Range(0, m_cockroachSpawnPos.Length);
                 operate = PhotonNetwork.Instantiate(this.m_cockroachPrefab.name, m_cockroachSpawnPos[random].position, m_cockroachSpawnPos[random].rotation, 0);
+                m_cockroach = operate.GetComponent<Cockroach>();
                 m_cockroachUINetWork = operate.GetComponent<CockroachUI>(); // ゴキブリ用のUIを入れる
                 m_operatedByPlayer = Charactor.Cockroach;
             }
@@ -333,6 +335,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
                 m_countDownText.text = "はじめ";
                 yield return new WaitForSeconds(0.5f);
                 m_feedBack.text = "";
+                m_cockroach?.CallGenerate(10); //最初に10匹生成
             }
         }
 

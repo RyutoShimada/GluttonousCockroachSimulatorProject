@@ -553,6 +553,11 @@ PrefabInstance:
       propertyPath: m_StaticEditorFlags
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2077800977029083661, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
+        type: 3}
+      propertyPath: m_Text
+      value: "\u3084\u3081\u308B"
+      objectReference: {fileID: 0}
     - target: {fileID: 3510988771147367717, guid: 2d0b5a2ac664d3248ad362d37016f7f6,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target

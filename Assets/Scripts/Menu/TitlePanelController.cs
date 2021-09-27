@@ -9,7 +9,8 @@ public enum Panel
     Tutorial,
     Menu,
     Cockroach,
-    Human
+    Human,
+    Credit
 }
 
 public class TitlePanelController : MonoBehaviour
@@ -20,6 +21,7 @@ public class TitlePanelController : MonoBehaviour
     [SerializeField] Button m_menuStartSelect = null;
     [SerializeField] Button m_cockroachStartSelect = null;
     [SerializeField] Button m_humanStartSelect = null;
+    [SerializeField] Button m_creditStartSelect = null;
 
     /// <summary>
     /// 次に表示したいPanelを表示させて、それ以外は非表示にする
@@ -58,6 +60,10 @@ public class TitlePanelController : MonoBehaviour
             case Panel.Human:
                 ChangeActive(nextPanel);
                 m_humanStartSelect.Select();
+                break;
+            case Panel.Credit:
+                ChangeActive(nextPanel);
+                m_creditStartSelect.Select();
                 break;
             default:
                 break;

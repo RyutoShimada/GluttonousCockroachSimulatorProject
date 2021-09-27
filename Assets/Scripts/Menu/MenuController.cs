@@ -79,7 +79,8 @@ public class MenuController : MonoBehaviour
     public void Close()
     {
         m_menu.gameObject.SetActive(false);
-        if (!NetWorkGameManager.Instance.m_isResualt || !NetWorkGameManager.Instance.m_counting)
+        if (NetWorkGameManager.Instance && !NetWorkGameManager.Instance.m_isResualt || 
+            NetWorkGameManager.Instance && !NetWorkGameManager.Instance.m_counting)
         {
             IsMove?.Invoke(true);
         }

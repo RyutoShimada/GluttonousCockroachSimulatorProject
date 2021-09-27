@@ -81,8 +81,6 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
             this.transform.position = v;
             this.transform.rotation = q;
         }
-
-        CallGenerate(10);
     }
 
     void CheckAlive()
@@ -126,12 +124,11 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     void Eat()
     {
         // 子供の生成
-        int random = UnityEngine.Random.Range(20, 26);
+        int random = UnityEngine.Random.Range(30, 36);
         CallGenerate(random);
     }
 
-    [PunRPC]
-    void CallGenerate(int count)
+    public void CallGenerate(int count)
     {
         Generate.Invoke(count, transform.position, transform.up);
         m_eating = false;
@@ -152,17 +149,13 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         {
             // 無敵モード開始
             photonView.RPC(nameof(StartCoroutineInvicibleMode), RpcTarget.All);
-            // HPの同期（IsMine ではないオブジェクトからの同期なので OnPhotonSerializeView は使えない）
-            photonView.RPC(nameof(RefleshHp), RpcTarget.All, m_hp, damageValue);
-            // ダメージを受けたUI表示
-            photonView.RPC(nameof(StartCoroutineDamegeImageChangeColor), RpcTarget.Others);
-            // HPバーを減少させる
-            photonView.RPC(nameof(m_cockroachUINetWork.ReflectHPSlider), RpcTarget.Others, m_hp, m_data.MaxHP);
+            // HPの同期
+            photonView.RPC(nameof(RefleshHp), RpcTarget.Others, damageValue);
         }
         else
         {
             StartCoroutineInvicibleMode();
-            RefleshHp(m_hp, damageValue);
+            RefleshHp(damageValue);
             StartCoroutine(m_cockroachUINetWork?.DamageColor());
             m_cockroachUINetWork?.ReflectHPSlider(m_hp, m_data.MaxHP);
         }
@@ -172,12 +165,6 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     void StartCoroutineInvicibleMode()
     {
         StartCoroutine(InvincibleMode());
-    }
-
-    [PunRPC]
-    void StartCoroutineDamegeImageChangeColor()
-    {
-        StartCoroutine(m_cockroachUINetWork.DamageColor());
     }
 
     private void OnTriggerEnter(Collider other)
@@ -201,22 +188,19 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     }
 
     [PunRPC]
-    void RefleshHp(int hp, int damage)
+    void RefleshHp(int damage)
     {
-        hp -= damage;
-        this.m_hp = hp;
+        m_hp -= damage;
+        // HPバーを減少させる
+        m_cockroachUINetWork.ReflectHPSlider(m_hp, m_data.MaxHP);
+        // ダメージを受けたUI表示
+        StartCoroutine(m_cockroachUINetWork.DamageColor());
         CheckAlive();
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
-        if (stream.IsWriting && photonView.IsMine)
-        {
-            stream.SendNext(m_isDed);
-        }
-        else if (stream.IsReading && !photonView.IsMine)
-        {
-            m_isDed = (bool)stream.ReceiveNext();
-        }
+        // 実装しないと Observed scripts have to implement IPunObservable.
+        //このエラーが出る。インターフェイスの継承をつけていなくてもでる.
     }
 }

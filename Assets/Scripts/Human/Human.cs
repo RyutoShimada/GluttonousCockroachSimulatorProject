@@ -45,7 +45,6 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
         m_crossHair = m_ui.transform.Find("CrossHair").GetComponent<Image>();
         m_gauge = m_ui.transform.Find("Gauge").transform.Find("GaugeImage").GetComponent<Image>();
         m_beamText = m_ui.transform.Find("BeamText").GetComponent<Text>();
-        Debug.Log(m_beamText);
         m_energyText = m_ui.GetComponentInChildren<Text>();
         VcamSetUp();
     }

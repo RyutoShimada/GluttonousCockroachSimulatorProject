@@ -138,7 +138,6 @@ public class HumanAttackController : MonoBehaviourPunCallbacks, IPunObservable, 
 
     public void HitCockroach(int damge)
     {
-        Debug.Log("Hit");
         HitDamege.Invoke(damge);
     }
 
