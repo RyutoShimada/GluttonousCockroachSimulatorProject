@@ -98,6 +98,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         {
             m_audio.PlayOneShot(m_dedSE);
         }
+
         IsDed?.Invoke();
         Invoke(nameof(UnActive), 0.2f);
     }

@@ -18,7 +18,7 @@ enum GameSatate
     GameOver
 }
 
-public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
+public class NetWorkGameManager : MonoBehaviourPunCallbacks
 {
     #region Public Fields
     static public NetWorkGameManager Instance = null;
@@ -134,7 +134,6 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
             if (m_operateCharactor == this.m_cockroachPrefab.name)
             {
                 // 部屋の中で、ローカルプレーヤー用の Cockroach を生成。PhotonNetwork.Instantiate()で同期。
-                Cockroach.IsDed += CockroachIsDed;
                 int random = Random.Range(0, m_cockroachSpawnPos.Length);
                 operate = PhotonNetwork.Instantiate(this.m_cockroachPrefab.name, m_cockroachSpawnPos[random].position, m_cockroachSpawnPos[random].rotation, 0);
                 m_cockroach = operate.GetComponent<Cockroach>();
@@ -149,6 +148,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
                 m_operatedByPlayer = Charactor.Human;
             }
 
+            Cockroach.IsDed += CockroachIsDed;
             m_canMove = operate.GetComponent<IIsCanMove>();
             m_canMove.IsMove(true);
 
@@ -178,6 +178,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     private void OnDestroy()
     {
         Cursor.lockState = CursorLockMode.None;
+        Cockroach.IsDed -= CockroachIsDed;
     }
 
     #endregion
@@ -223,19 +224,19 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         SceneManager.LoadScene("LauncherScene");
     }
 
-    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-    {
-        if (stream.IsWriting && PhotonNetwork.IsMasterClient)
-        {
-            stream.SendNext(m_minutes);
-            stream.SendNext(m_seconds);
-        }
-        else if (!stream.IsWriting && !PhotonNetwork.IsMasterClient)
-        {
-            m_minutes = (int)stream.ReceiveNext();
-            m_seconds = (float)stream.ReceiveNext();
-        }
-    }
+    //public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    //{
+    //    if (stream.IsWriting && PhotonNetwork.IsMasterClient)
+    //    {
+    //        stream.SendNext(m_minutes);
+    //        stream.SendNext(m_seconds);
+    //    }
+    //    else if (!stream.IsWriting && !PhotonNetwork.IsMasterClient)
+    //    {
+    //        m_minutes = (int)stream.ReceiveNext();
+    //        m_seconds = (float)stream.ReceiveNext();
+    //    }
+    //}
 
     #endregion
 
@@ -289,6 +290,7 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
         m_canMove.IsMove(false);
         m_countDownText.gameObject.SetActive(true);
         m_countDownText.text = "そこまで";
+        Cockroach.IsDed -= CockroachIsDed;
 
         if (m_operatedByPlayer == Charactor.Cockroach && m_cockroachUINetWork)
         {
@@ -404,11 +406,19 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     void CockroachIsDed()
     {
-        photonView.RPC(nameof(VictoryCharactor), RpcTarget.All, Charactor.Human);
+        if (photonView != null)
+        {
+            photonView.RPC(nameof(VictoryCharactor), RpcTarget.All, Charactor.Human);
+            photonView.RPC(nameof(GameOver), RpcTarget.AllViaServer);
+        }
+        else
+        {
+            PhotonView view = GetComponent<PhotonView>();
+            view.RPC(nameof(VictoryCharactor), RpcTarget.All, Charactor.Human);
+            view.RPC(nameof(GameOver), RpcTarget.AllViaServer);
+        }
+        
         m_isGame = false;
-        photonView.RPC(nameof(GameOver), RpcTarget.AllViaServer);
-        //EventSystem.Instance.Unsubscribe((EventSystem.Life)CockroachIsDed);
-        Cockroach.IsDed -= CockroachIsDed;
     }
 
     #endregion
