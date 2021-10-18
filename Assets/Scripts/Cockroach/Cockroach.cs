@@ -125,7 +125,7 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     void Eat()
     {
         // 子供の生成
-        int random = UnityEngine.Random.Range(30, 36);
+        int random = UnityEngine.Random.Range(20, 31);
         CallGenerate(random);
     }
 
@@ -157,8 +157,6 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
         {
             StartCoroutineInvicibleMode();
             RefleshHp(damageValue);
-            StartCoroutine(m_cockroachUINetWork?.DamageColor());
-            m_cockroachUINetWork?.ReflectHPSlider(m_hp, m_data.MaxHP);
         }
     }
 
@@ -193,9 +191,9 @@ public class Cockroach : MonoBehaviourPunCallbacks, IPunObservable
     {
         m_hp -= damage;
         // HPバーを減少させる
-        m_cockroachUINetWork.ReflectHPSlider(m_hp, m_data.MaxHP);
+        m_cockroachUINetWork?.ReflectHPSlider(m_hp, m_data.MaxHP);
         // ダメージを受けたUI表示
-        StartCoroutine(m_cockroachUINetWork.DamageColor());
+        StartCoroutine(m_cockroachUINetWork?.DamageColor());
         CheckAlive();
     }
 
