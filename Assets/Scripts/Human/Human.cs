@@ -58,7 +58,6 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
     private void OnDestroy()
     {
         MenuController.IsMove -= IsMove;
-        NPCController.Ded -= CockChilAttackRPC;
         NPCController.Ded -= JudgeAttackCockChilCallback;
         SensitivityController.SetXSensitivity -= SetXSensitivity;
         SensitivityController.SetYSensitivity -= SetYSensitivity;
@@ -163,19 +162,5 @@ public class Human : MonoBehaviourPunCallbacks, IIsCanMove
         {
             m_vcamBase.enabled = isMove;
         }
-    }
-
-    void CockChilAttackRPC()
-    {
-        if (PhotonNetwork.IsConnected)
-        {
-            photonView.RPC(nameof(CockChildAttacking), RpcTarget.OthersBuffered);
-        }
-    }
-
-    [PunRPC]
-    public void CockChildAttacking()
-    {
-        CockChildAttack.Invoke(false);
     }
 }
