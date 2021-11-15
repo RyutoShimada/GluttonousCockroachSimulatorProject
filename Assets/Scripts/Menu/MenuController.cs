@@ -72,6 +72,7 @@ public class MenuController : MonoBehaviour
         m_menu.gameObject.SetActive(true);
         IsMove?.Invoke(false);
         Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
 
     public void Close()
@@ -80,5 +81,6 @@ public class MenuController : MonoBehaviour
         IsMove?.Invoke(true);
         if (!NetWorkGameManager.m_Instance) return;
         Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 }

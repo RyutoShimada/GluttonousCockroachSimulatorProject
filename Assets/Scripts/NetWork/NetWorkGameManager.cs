@@ -103,6 +103,8 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+
         EventSystem.Instance.Subscribe((EventSystem.CockroachIsDed)CockroachIsDed);
 
         if (!PhotonNetwork.IsConnected)
@@ -267,6 +269,8 @@ public class NetWorkGameManager : MonoBehaviourPunCallbacks, IPunObservable
     [PunRPC]
     void GameOver()
     {
+        Cursor.lockState = CursorLockMode.None;
+
         if (m_gameState == GameSatate.Stay) { LeaveRoom(); }
 
         if (m_countDownText.gameObject.activeSelf) return;
