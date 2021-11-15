@@ -26,7 +26,7 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
     /// <summary>回転する時に判定するためのRayをとばす位置</summary>
     [SerializeField] Transform m_rotateRayPos = null;
     // <summary>マウスの感度</summary>
-    [SerializeField, Range(50f, 300f)] float m_mouseSensitivity = 50f;
+    [SerializeField, Range(1f, 100)] float m_mouseSensitivity = 50f;
     #endregion
 
 
@@ -179,11 +179,11 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
     {
         if (Input.GetAxis("Horizontal") != 0)
         {
-            m_mouseMoveX = (Input.GetAxis("Horizontal") * m_mouseSensitivity) * Time.deltaTime;
+            m_mouseMoveX = Input.GetAxis("Horizontal") * (m_mouseSensitivity * Time.deltaTime);
         }
         else if (Input.GetAxis("Look X") != 0)
         {
-            m_mouseMoveX = (Input.GetAxis("Look X") * m_mouseSensitivity) * Time.deltaTime;
+            m_mouseMoveX = Input.GetAxis("Look X") * (m_mouseSensitivity * Time.deltaTime);
         }
         else
         {

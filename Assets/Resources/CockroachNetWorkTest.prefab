@@ -25,13 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 51643860216663672}
-  m_LocalRotation: {x: -0.004101589, y: 0, z: 0, w: 0.9999916}
-  m_LocalPosition: {x: 0, y: 0.24, z: -0.652}
+  m_LocalRotation: {x: -0.046060417, y: 0, z: 0, w: 0.9989387}
+  m_LocalPosition: {x: 0, y: 0.145, z: -0.546}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1380053710197772753}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: -0.47, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -5.28, y: 0, z: 0}
 --- !u!20 &6008262328749153883
 Camera:
   m_ObjectHideFlags: 0
@@ -82,7 +82,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 51643860216663672}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 53f75ef0ffb86144caac7ef033ac4c87, type: 3}
   m_Name: 
@@ -236,7 +236,7 @@ MonoBehaviour:
   m_maxRayDistance: 1
   m_rayOriginPos: {fileID: 1380053711590895058}
   m_rotateRayPos: {fileID: 1380053710338534204}
-  m_mouseSensitivity: 100
+  m_mouseSensitivity: 10
   m_canMove: 1
 --- !u!114 &-3155712619565757723
 MonoBehaviour:
