@@ -165,6 +165,7 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
 
         m_rb.velocity = m_velo;
 
+        // アニメーション
         if (m_isGrounded)
         {
             m_anim.SetFloat("Velocity", m_v);
@@ -177,6 +178,8 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
 
     private void MouseMove()
     {
+        // キー入力とマウス入力の両方を受け付けている
+
         if (Input.GetAxis("Horizontal") != 0)
         {
             m_mouseMoveX = Input.GetAxis("Horizontal") * (m_mouseSensitivity * Time.deltaTime);
@@ -209,6 +212,7 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
             m_rb.AddForce(-m_gravityDir.normalized * jumpPower, ForceMode.Impulse);
 
             if (m_gravityDir == Vector3.down) return;
+            // ジャンプしたら落下する処理
             m_jumpDir = -m_gravityDir;
             ChangeGravity(Vector3.down);
             StartCoroutine(ChangeRotate(Vector3.up, 0.1f));
@@ -303,6 +307,7 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
         m_isJumping = false;
         m_jumpDir = Vector3.zero;
 
+        // 衝突したオブジェクトの法線ベクトルを元に、重力方向を決める
         foreach (ContactPoint point in collision.contacts)
         {
             if (m_gravityDir == Vector3.down && point.normal == Vector3.up) return;
@@ -317,6 +322,9 @@ public class CockroachMoveControllerNetWork : MonoBehaviourPunCallbacks, IIsCanM
 
         if (!m_rotateHit.collider) { m_rotateHit.normal = -Vector3.down; }
 
+        // 回転するためのRayが当たっているオブジェクトの法線ベクトルと、
+        // 現在の重力方向が違っていたら
+        // 重力方向をRayが当たっている方向に変え、自身を回転させる
         if (m_rotateHit.normal != -m_gravityDir)
         {
             ChangeGravity(-m_rotateHit.normal);
